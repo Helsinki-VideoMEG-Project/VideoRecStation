@@ -68,7 +68,7 @@
       </widget>
      </item>
      <item row="1" column="7">
-      <widget class="QSlider" name="vrSlider">
+      <widget class="QSlider" name="balanceBlueSlider">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -89,16 +89,16 @@
       </widget>
      </item>
      <item row="0" column="7">
-      <widget class="QSlider" name="uvSlider">
+      <widget class="QSlider" name="balanceRedSlider">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
      <item row="0" column="6">
-      <widget class="QLabel" name="uvLabel">
+      <widget class="QLabel" name="balanceRedLabel">
        <property name="text">
-        <string>UV:</string>
+        <string>Red:</string>
        </property>
       </widget>
      </item>
@@ -110,9 +110,9 @@
       </widget>
      </item>
      <item row="1" column="6">
-      <widget class="QLabel" name="vrLabel">
+      <widget class="QLabel" name="balanceBlueLabel">
        <property name="text">
-        <string>VR:</string>
+        <string>Blue:</string>
        </property>
       </widget>
      </item>
@@ -210,10 +210,10 @@
    </hints>
   </connection>
   <connection>
-   <sender>uvSlider</sender>
+   <sender>balanceRedSlider</sender>
    <signal>sliderMoved(int)</signal>
    <receiver>VideoDialogClass</receiver>
-   <slot>onUVChanged(int)</slot>
+   <slot>onBalanceRedChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>875</x>
@@ -226,10 +226,10 @@
    </hints>
   </connection>
   <connection>
-   <sender>vrSlider</sender>
+   <sender>balanceBlueSlider</sender>
    <signal>sliderMoved(int)</signal>
    <receiver>VideoDialogClass</receiver>
-   <slot>onVRChanged(int)</slot>
+   <slot>onBalanceBlueChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>875</x>
@@ -246,7 +246,7 @@
   <slot>onLdsBoxToggled(bool)</slot>
   <slot>onShutterChanged(int)</slot>
   <slot>onGainChanged(int)</slot>
-  <slot>onUVChanged(int)</slot>
-  <slot>onVRChanged(int)</slot>
+  <slot>onBalanceRedChanged(int)</slot>
+  <slot>onBalanceBlueChanged(int)</slot>
  </slots>
 </ui>

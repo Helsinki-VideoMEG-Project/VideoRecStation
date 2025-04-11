@@ -47,10 +47,17 @@
 #define MIC_THREAD_PRIORITY 15
 #define SPK_THREAD_PRIORITY 5
 
-#define SHUTTER_MIN_VAL     1           // Milliseconds
-#define SHUTTER_MAX_VAL     200
-#define GAIN_MIN_VAL        0
-#define GAIN_MAX_VAL        48
+#define SHUTTER_SLIDER_MIN    1           // Milliseconds, need to be multiplied by 1000 before sending to the camera
+#define SHUTTER_SLIDER_MAX    200
+#define SHUTTER_SCALE         1000.0
+
+#define GAIN_SLIDER_MIN       0           // Doesn't need any conversion, can be sent to the camera as is
+#define GAIN_SLIDER_MAX       48
+#define GAIN_SCALE            1.0
+
+#define BALANCE_SLIDER_MIN    0           // Need to be divided by 100 before sending to the camera
+#define BALANCE_SLIDER_MAX    800
+#define BALANCE_SCALE         0.01
 
 // Used for storing application settings
 #define ORG_NAME "Helsinki VideoMEG Project"

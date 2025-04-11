@@ -43,8 +43,8 @@ public:
 public slots:
     void onShutterChanged(int _newVal);
     void onGainChanged(int _newVal);
-    void onUVChanged(int _newVal);
-    void onVRChanged(int _newVal);
+    void onBalanceRedChanged(int _newVal);
+    void onBalanceBlueChanged(int _newVal);
     void onNewFrame(unsigned char* _jpegBuf);
     void onLdsBoxToggled(bool _checked);
     void closeEvent(QCloseEvent* _event);

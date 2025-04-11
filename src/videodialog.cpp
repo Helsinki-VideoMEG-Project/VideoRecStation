@@ -50,17 +50,18 @@ VideoDialog::VideoDialog(VmbCPP::CameraPtr _camera, int _cameraIdx, QWidget *par
     QObject::connect(cycVideoBufJpeg, SIGNAL(chunkReady(unsigned char*)), this, SLOT(onNewFrame(unsigned char*)));
 
     // Setup gain/shutter sliders
-    ui.shutterSlider->setMinimum(SHUTTER_MIN_VAL);
-    ui.shutterSlider->setMaximum(SHUTTER_MAX_VAL);
+    ui.shutterSlider->setMinimum(SHUTTER_SLIDER_MIN);
+    ui.shutterSlider->setMaximum(SHUTTER_SLIDER_MAX);
 
-    ui.gainSlider->setMinimum(GAIN_MIN_VAL);
-    ui.gainSlider->setMaximum(GAIN_MAX_VAL);
+    ui.gainSlider->setMinimum(GAIN_SLIDER_MIN);
+    ui.gainSlider->setMaximum(GAIN_SLIDER_MAX);
 
-    //ui.uvSlider->setMinimum(UV_MIN_VAL);
-    //ui.uvSlider->setMaximum(UV_MAX_VAL);
+    ui.balanceRedSlider->setMinimum(BALANCE_SLIDER_MIN);
+    ui.balanceRedSlider->setMaximum(BALANCE_SLIDER_MAX);
 
-    //ui.vrSlider->setMinimum(VR_MIN_VAL);
-    //ui.vrSlider->setMaximum(VR_MAX_VAL);
+    ui.balanceBlueSlider->setMinimum(BALANCE_SLIDER_MIN);
+    ui.balanceBlueSlider->setMaximum(BALANCE_SLIDER_MAX);
+
 
     //if(settings.videoRects[idx].isValid())
     //    videoDialogs[idx]->setGeometry(settings.videoRects[idx]);
@@ -70,10 +71,10 @@ VideoDialog::VideoDialog(VmbCPP::CameraPtr _camera, int _cameraIdx, QWidget *par
     //videoDialogs[idx]->findChild<QSlider*>("vrSlider")->setValue(settings.videoVRs[idx]);
     //videoDialogs[idx]->findChild<QCheckBox*>("ldsBox")->setChecked(settings.videoLimits[idx]);
 
-    ui.uvSlider->setEnabled(settings.color);
-    ui.vrSlider->setEnabled(settings.color);
-    ui.uvLabel->setEnabled(settings.color);
-    ui.vrLabel->setEnabled(settings.color);
+    ui.balanceRedSlider->setEnabled(settings.color);
+    ui.balanceBlueSlider->setEnabled(settings.color);
+    ui.balanceRedLabel->setEnabled(settings.color);
+    ui.balanceBlueLabel->setEnabled(settings.color);
     ui.wbLabel->setEnabled(settings.color);
 
     // Start video running
@@ -117,7 +118,7 @@ void VideoDialog::onShutterChanged(int _newVal)
 {
     float       shutterVal;
 
-    shutterVal = _newVal * 1000.0;  // msec -> usec
+    shutterVal = _newVal * SHUTTER_SCALE;  // msec -> usec
     usbcamera->setExposureTime(shutterVal);
 }
 
@@ -126,23 +127,26 @@ void VideoDialog::onGainChanged(int _newVal)
 {
     float       gainVal;
 
-    gainVal = _newVal;
+    gainVal = _newVal * GAIN_SCALE;
     usbcamera->setGain(gainVal);
 }
 
 
-void VideoDialog::onUVChanged(int _newVal)
+void VideoDialog::onBalanceRedChanged(int _newVal)
 {
+    float       balanceVal;
 
-    // Add code here
-
+    balanceVal = _newVal * BALANCE_SCALE;
+    usbcamera->setBalance(balanceVal, "Red");
 }
 
 
-void VideoDialog::onVRChanged(int _newVal)
+void VideoDialog::onBalanceBlueChanged(int _newVal)
 {
+    float       balanceVal;
 
-    // Add code here
+    balanceVal = _newVal * BALANCE_SCALE;
+    usbcamera->setBalance(balanceVal, "Blue");
 
 }
 

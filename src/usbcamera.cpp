@@ -1,5 +1,5 @@
 /*
- * camerathread.cpp
+ * usbcamera.cpp
  *
  * Author: Andrey Zhdanov
  * Copyright (C) 2014 BioMag Laboratory, Helsinki University Central Hospital
@@ -207,6 +207,25 @@ void USBCamera::setGain(float _gain)
         (feature->SetValue(_gain) != VmbErrorSuccess))
     {
         cerr << "Could not set gain" << endl;
+        abort();
+    }
+}
+
+void USBCamera::setBalance(float _balance, char* _color)
+{
+    FeaturePtr  feature;
+
+    if ((camera->GetFeatureByName("BalanceRatioSelector", feature) != VmbErrorSuccess) ||
+        (feature->SetValue(_color) != VmbErrorSuccess))
+    {
+        cerr << "Could not set balance ratio selector" << endl;
+        abort();
+    }
+
+    if ((camera->GetFeatureByName("BalanceRatio", feature) != VmbErrorSuccess) ||
+        (feature->SetValue(_balance) != VmbErrorSuccess))
+    {
+        cerr << "Could not set balance ratio" << endl;
         abort();
     }
 }

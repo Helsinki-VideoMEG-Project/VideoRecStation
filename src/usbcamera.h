@@ -1,5 +1,5 @@
 /*
- * camerathread.h
+ * usbcamera.h
  *
  * Author: Andrey Zhdanov
  * Copyright (C) 2014 BioMag Laboratory, Helsinki University Central Hospital
@@ -52,6 +52,7 @@ public:
     void stopAquisition();
     void setExposureTime(float _exposureTime);
     void setGain(float _gain);
+    void setBalance(float _balance, char* _color);
 
 private:
     VmbCPP::CameraPtr   camera;
