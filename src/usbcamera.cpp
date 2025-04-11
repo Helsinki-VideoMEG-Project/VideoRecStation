@@ -197,4 +197,16 @@ void USBCamera::setExposureTime(float _exposureTime)
         cerr << "Could not set exposure time" << endl;
         abort();
     }
-} 
+}
+
+void USBCamera::setGain(float _gain)
+{
+    FeaturePtr  feature;
+
+    if ((camera->GetFeatureByName("Gain", feature) != VmbErrorSuccess) ||
+        (feature->SetValue(_gain) != VmbErrorSuccess))
+    {
+        cerr << "Could not set gain" << endl;
+        abort();
+    }
+}

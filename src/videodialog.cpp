@@ -53,8 +53,8 @@ VideoDialog::VideoDialog(VmbCPP::CameraPtr _camera, int _cameraIdx, QWidget *par
     ui.shutterSlider->setMinimum(SHUTTER_MIN_VAL);
     ui.shutterSlider->setMaximum(SHUTTER_MAX_VAL);
 
-    //ui.gainSlider->setMinimum(GAIN_MIN_VAL);
-    //ui.gainSlider->setMaximum(GAIN_MAX_VAL);
+    ui.gainSlider->setMinimum(GAIN_MIN_VAL);
+    ui.gainSlider->setMaximum(GAIN_MAX_VAL);
 
     //ui.uvSlider->setMinimum(UV_MIN_VAL);
     //ui.uvSlider->setMaximum(UV_MAX_VAL);
@@ -124,8 +124,10 @@ void VideoDialog::onShutterChanged(int _newVal)
 
 void VideoDialog::onGainChanged(int _newVal)
 {
+    float       gainVal;
 
-    // Add code here
+    gainVal = _newVal;
+    usbcamera->setGain(gainVal);
 }
 
 

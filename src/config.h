@@ -49,6 +49,8 @@
 
 #define SHUTTER_MIN_VAL     1           // Milliseconds
 #define SHUTTER_MAX_VAL     200
+#define GAIN_MIN_VAL        0
+#define GAIN_MAX_VAL        48
 
 // Used for storing application settings
 #define ORG_NAME "Helsinki VideoMEG Project"

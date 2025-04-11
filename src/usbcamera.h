@@ -51,6 +51,7 @@ public:
     void startAquisition();
     void stopAquisition();
     void setExposureTime(float _exposureTime);
+    void setGain(float _gain);
 
 private:
     VmbCPP::CameraPtr   camera;
