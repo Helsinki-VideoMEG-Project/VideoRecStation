@@ -50,6 +50,7 @@ public:
     virtual ~USBCamera();
     void startAquisition();
     void stopAquisition();
+    void setExposureTime(float _exposureTime);
 
 private:
     VmbCPP::CameraPtr   camera;

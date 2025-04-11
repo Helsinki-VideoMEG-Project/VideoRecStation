@@ -50,8 +50,8 @@ VideoDialog::VideoDialog(VmbCPP::CameraPtr _camera, int _cameraIdx, QWidget *par
     QObject::connect(cycVideoBufJpeg, SIGNAL(chunkReady(unsigned char*)), this, SLOT(onNewFrame(unsigned char*)));
 
     // Setup gain/shutter sliders
-    //ui.shutterSlider->setMinimum(SHUTTER_MIN_VAL);
-    //ui.shutterSlider->setMaximum(SHUTTER_MAX_VAL);
+    ui.shutterSlider->setMinimum(SHUTTER_MIN_VAL);
+    ui.shutterSlider->setMaximum(SHUTTER_MAX_VAL);
 
     //ui.gainSlider->setMinimum(GAIN_MIN_VAL);
     //ui.gainSlider->setMaximum(GAIN_MAX_VAL);
@@ -115,9 +115,10 @@ void VideoDialog::closeEvent(QCloseEvent *event)
 
 void VideoDialog::onShutterChanged(int _newVal)
 {
+    float       shutterVal;
 
-    // Add code here
-
+    shutterVal = _newVal * 1000.0;  // msec -> usec
+    usbcamera->setExposureTime(shutterVal);
 }
 
 

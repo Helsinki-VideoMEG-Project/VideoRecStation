@@ -47,6 +47,9 @@
 #define MIC_THREAD_PRIORITY 15
 #define SPK_THREAD_PRIORITY 5
 
+#define SHUTTER_MIN_VAL     1           // Milliseconds
+#define SHUTTER_MAX_VAL     200
+
 // Used for storing application settings
 #define ORG_NAME "Helsinki VideoMEG Project"
 #define APP_NAME "VideoRecStation"

@@ -119,6 +119,31 @@ USBCamera::USBCamera(CameraPtr _camera, CycDataBuffer* _cycBuf, bool _color)
         abort();
     }
 
+    // Turn off the USB trottling
+    // This is needed to get the maximum throughput from the camera
+    if ((camera->GetFeatureByName("DeviceLinkThroughputLimitMode", feature) != VmbErrorSuccess) ||
+    (feature->SetValue("Off") != VmbErrorSuccess))
+    {
+        cerr << "Could not set up device throughput limit mode" << endl;
+        abort();
+    }
+
+    // Make sure the exposure can be controlled by the slider
+    if ((camera->GetFeatureByName("ExposureMode", feature) != VmbErrorSuccess) ||
+    (feature->SetValue("Timed") != VmbErrorSuccess))
+    {
+        cerr << "Could not set up device exposure mode" << endl;
+        abort();
+    }
+
+    if ((camera->GetFeatureByName("ExposureAuto", feature) != VmbErrorSuccess) ||
+    (feature->SetValue("Off") != VmbErrorSuccess))
+    {
+        cerr << "Could not turn off the autoexposure" << endl;
+        abort();
+    }
+
+
     if (camera->GetPayloadSize(payloadSize) != VmbErrorSuccess)
     {
         cerr << "Could not get the camera payload size" << endl;
@@ -161,3 +186,15 @@ void USBCamera::stopAquisition()
         abort();
     }
 }
+
+void USBCamera::setExposureTime(float _exposureTime)
+{
+    FeaturePtr  feature;
+
+    if ((camera->GetFeatureByName("ExposureTime", feature) != VmbErrorSuccess) ||
+        (feature->SetValue(_exposureTime) != VmbErrorSuccess))
+    {
+        cerr << "Could not set exposure time" << endl;
+        abort();
+    }
+} 
