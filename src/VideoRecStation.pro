@@ -25,7 +25,6 @@ HEADERS += settings.h \
     stoppablethread.h \
     speakerthread.h \
     nonblockingbuffer.h \
-    common.h \
     audiofilewriter.h \
     cycdatabuffer.h \
     microphonethread.h \

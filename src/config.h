@@ -18,11 +18,6 @@
  */
 
 #ifndef CONFIG_H_
-#include "common.h"
-
-// Audio configuration
-#define N_CHANS             2           // stereo
-#define N_BUF_4_VOL_IND     10          // number of buffers used by volume indicator
 
 // Buffer parameters
 #define CIRC_BUF_MARG       0.2         // When less than this fraction of the buffer
@@ -62,6 +57,29 @@
 // Used for storing application settings
 #define ORG_NAME "Helsinki VideoMEG Project"
 #define APP_NAME "VideoRecStation"
+
+
+
+// Camera configuration
+#define VIDEO_HEIGHT        1472
+#define VIDEO_WIDTH         1944
+#define MAX_CAMERAS         6
+
+// Audio configuration
+#define N_CHANS             20          // number of channels provided by the sound card
+#define N_CHANS_2_RECORD    8           // number of channels to record
+#define N_BUF_4_VOL_IND     10          // number of buffers used by volume indicator
+
+#define AUDIO_FORMAT        SND_PCM_FORMAT_S32_LE   // from <alsa/asoundlib.h>
+#define AUDIO_DATA_TYPE     int32_t                 // should match AUDIO_FORMAT
+#define MAX_AUDIO_VAL       INT32_MAX               // should match AUDIO_FORMAT
+
+#define AUDIO_FILE_VERSION  1
+#define VIDEO_FILE_VERSION  1
+
+#define MAGIC_VIDEO_STR     "HELSINKI_VIDEO_MEG_PROJECT_VIDEO_FILE"
+#define MAGIC_AUDIO_STR     "HELSINKI_VIDEO_MEG_PROJECT_AUDIO_FILE"
+
 
 #define CONFIG_H_
 

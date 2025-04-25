@@ -21,7 +21,7 @@
 #define SETTINGS_H_
 
 #include <QRect>
-#include <common.h>
+#include "config.h"
 
 //! Application-wide settings preserved across multiple invocations.
 /*!
