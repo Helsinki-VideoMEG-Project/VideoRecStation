@@ -84,15 +84,27 @@ MainDialog::MainDialog(QWidget *parent)
 
     if (settings.metersUseDB)
     {
-        ui.levelLeft->setRange(-60, 0);
-        ui.levelRight->setRange(-60, 0);
+        ui.level1->setRange(-60, 0);
+        ui.level2->setRange(-60, 0);
+        ui.level3->setRange(-60, 0);
+        ui.level4->setRange(-60, 0);
+        ui.level5->setRange(-60, 0);
+        ui.level6->setRange(-60, 0);
+        ui.level7->setRange(-60, 0);
+        ui.level8->setRange(-60, 0);
         ui.levelBottomLabel->setText("-60 dB");
         ui.levelTopLabel->setText("0 dB");
     }
     else
     {
-        ui.levelLeft->setMaximum(MAX_AUDIO_VAL);
-        ui.levelRight->setMaximum(MAX_AUDIO_VAL);
+        ui.level1->setMaximum(MAX_AUDIO_VAL);
+        ui.level2->setMaximum(MAX_AUDIO_VAL);
+        ui.level3->setMaximum(MAX_AUDIO_VAL);
+        ui.level4->setMaximum(MAX_AUDIO_VAL);
+        ui.level5->setMaximum(MAX_AUDIO_VAL);
+        ui.level6->setMaximum(MAX_AUDIO_VAL);
+        ui.level7->setMaximum(MAX_AUDIO_VAL);
+        ui.level8->setMaximum(MAX_AUDIO_VAL);
     }
 
     // Start audio running
@@ -256,16 +268,28 @@ void MainDialog::onAudioUpdate(unsigned char* _data)
         }
     }
 
-    // Update only two level bars
+    // Update only eight level bars
     if (settings.metersUseDB)
     {
-        ui.levelLeft->setValue(20 * log10((double)maxvals[0] / MAX_AUDIO_VAL));
-        ui.levelRight->setValue(20 * log10((double)maxvals[1] / MAX_AUDIO_VAL));
+        ui.level1->setValue(20 * log10((double)maxvals[0] / MAX_AUDIO_VAL));
+        ui.level2->setValue(20 * log10((double)maxvals[1] / MAX_AUDIO_VAL));
+        ui.level3->setValue(20 * log10((double)maxvals[2] / MAX_AUDIO_VAL));
+        ui.level4->setValue(20 * log10((double)maxvals[3] / MAX_AUDIO_VAL));
+        ui.level5->setValue(20 * log10((double)maxvals[4] / MAX_AUDIO_VAL));
+        ui.level6->setValue(20 * log10((double)maxvals[5] / MAX_AUDIO_VAL));
+        ui.level7->setValue(20 * log10((double)maxvals[6] / MAX_AUDIO_VAL));
+        ui.level8->setValue(20 * log10((double)maxvals[7] / MAX_AUDIO_VAL));
     }
     else
     {
-        ui.levelLeft->setValue(maxvals[0]);
-        ui.levelRight->setValue(maxvals[1]);
+        ui.level1->setValue(maxvals[0]);
+        ui.level2->setValue(maxvals[1]);
+        ui.level3->setValue(maxvals[2]);
+        ui.level4->setValue(maxvals[3]);
+        ui.level5->setValue(maxvals[4]);
+        ui.level6->setValue(maxvals[5]);
+        ui.level7->setValue(maxvals[6]);
+        ui.level8->setValue(maxvals[7]);
     }
     if (maxvals[0] >= MAX_AUDIO_VAL || maxvals[1] >= MAX_AUDIO_VAL)
         ui.clipLabel->setVisible(true);
