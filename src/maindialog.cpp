@@ -61,10 +61,12 @@ MainDialog::MainDialog(QWidget *parent)
     initVideo();
 
     // Set up audio recording
-    cycAudioBuf = new CycDataBuffer(CIRC_AUDIO_BUFF_SZ);
-    microphoneThread = new MicrophoneThread(cycAudioBuf);
-    audioFileWriter = new AudioFileWriter(cycAudioBuf, settings.storagePath.toLocal8Bit().data());
-    QObject::connect(cycAudioBuf, SIGNAL(chunkReady(unsigned char*)), this, SLOT(onAudioUpdate(unsigned char*)));
+    cycAudioBufRaw = new CycDataBuffer(CIRC_AUDIO_BUFF_SZ);
+    cycAudioBufCompressed = new CycDataBuffer(CIRC_AUDIO_BUFF_SZ);
+    audioCompressorThread = new AudioCompressorThread(cycAudioBufRaw, cycAudioBufCompressed, N_CHANS, N_CHANS_2_RECORD);
+    microphoneThread = new MicrophoneThread(cycAudioBufRaw);
+    audioFileWriter = new AudioFileWriter(cycAudioBufCompressed, settings.storagePath.toLocal8Bit().data());
+    QObject::connect(cycAudioBufRaw, SIGNAL(chunkReady(unsigned char*)), this, SLOT(onAudioUpdate(unsigned char*)));
 
     // Initialize volume indicator history
     memset(volMaxvals, 0, N_CHANS * N_BUF_4_VOL_IND * sizeof(AUDIO_DATA_TYPE));
@@ -109,6 +111,7 @@ MainDialog::MainDialog(QWidget *parent)
 
     // Start audio running
     audioFileWriter->start();
+    audioCompressorThread->start();
     microphoneThread->start();
 
     // Start speaker thread
@@ -155,6 +158,16 @@ void MainDialog::updateDiskSpace()
 
 MainDialog::~MainDialog()
 {
+    audioFileWriter->stop();
+    audioCompressorThread->stop();
+    microphoneThread->stop();
+
+    delete cycAudioBufRaw;
+    delete cycAudioBufCompressed;
+    delete audioCompressorThread;
+    delete audioFileWriter;
+    delete audioCompressorThread;
+
     VmbSystem& system = VmbSystem::GetInstance();
     system.Shutdown();
 
@@ -191,7 +204,7 @@ void MainDialog::onStartRec()
             videoDialogs[i]->setIsRec(true);
         }
     }
-    cycAudioBuf->setIsRec(true);
+    cycAudioBufCompressed->setIsRec(true);
     updateElapsed->start();
     updateTimer->start();
 }
@@ -218,7 +231,7 @@ void MainDialog::onStopRec()
         }
     }
 
-    cycAudioBuf->setIsRec(false);
+    cycAudioBufCompressed->setIsRec(false);
     QString fileName = QString(audioFileWriter->readableFileName);
     fileName.chop(13);
     statusLeft->setText(QString("Saved %1...").arg(fileName));

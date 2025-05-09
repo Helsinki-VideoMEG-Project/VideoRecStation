@@ -36,6 +36,7 @@
 #include "audiofilewriter.h"
 #include "speakerthread.h"
 #include "videocompressorthread.h"
+#include "audiocompressorthread.h"
 #include "videodialog.h"
 #include "settings.h"
 
@@ -71,9 +72,11 @@ private:
     unsigned int        numCameras;
     QSpacerItem*        vertSpacer;
 
-    MicrophoneThread*   microphoneThread;
-    CycDataBuffer*      cycAudioBuf;
-    AudioFileWriter*    audioFileWriter;
+    MicrophoneThread*       microphoneThread;
+    CycDataBuffer*          cycAudioBufRaw;
+    CycDataBuffer*          cycAudioBufCompressed;
+    AudioFileWriter*        audioFileWriter;
+    AudioCompressorThread*  audioCompressorThread;
 
     QLabel*         statusLeft;
     QLabel*         statusRight;

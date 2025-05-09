@@ -20,6 +20,7 @@
 
 #include <iostream>
 #include <stdlib.h>
+#include <assert.h>
 
 #include "config.h"
 #include "audiofilewriter.h"
@@ -31,12 +32,13 @@ AudioFileWriter::AudioFileWriter(CycDataBuffer* _cycBuf, const char* _path)
     :   FileWriter(_cycBuf, _path, "_audio", "aud", 0)
 {
     Settings    settings;
-    uint32_t    nchans = N_CHANS;
+    uint32_t    nchans = N_CHANS_2_RECORD;
     uint32_t    srate = settings.sampRate;
     uint32_t    ver = AUDIO_FILE_VERSION;
 
     // Create header
-    bufLen = strlen(MAGIC_AUDIO_STR) + 3 * sizeof(uint32_t);
+    assert(strlen(AUDIO_DATA_TYPE_STR) == 2);
+    bufLen = strlen(MAGIC_AUDIO_STR) + 3 * sizeof(uint32_t) + 2;
     buf = (unsigned char*)malloc(bufLen);
 
     if(!buf)
@@ -49,6 +51,7 @@ AudioFileWriter::AudioFileWriter(CycDataBuffer* _cycBuf, const char* _path)
     memcpy(buf + strlen(MAGIC_AUDIO_STR), &ver, sizeof(uint32_t));                          // version of file format
     memcpy(buf + strlen(MAGIC_AUDIO_STR) + sizeof(uint32_t), &srate, sizeof(uint32_t));     // sampling rate
     memcpy(buf + strlen(MAGIC_AUDIO_STR) + 2*sizeof(uint32_t), &nchans, sizeof(uint32_t));  // number of channels
+    memcpy(buf + strlen(MAGIC_AUDIO_STR) + 3*sizeof(uint32_t), AUDIO_DATA_TYPE_STR, 2);     // data type
 }
 
 

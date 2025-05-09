@@ -58,8 +58,6 @@
 #define ORG_NAME "Helsinki VideoMEG Project"
 #define APP_NAME "VideoRecStation"
 
-
-
 // Camera configuration
 #define VIDEO_HEIGHT        1472
 #define VIDEO_WIDTH         1944
@@ -73,15 +71,14 @@
 #define AUDIO_FORMAT        SND_PCM_FORMAT_S32_LE   // from <alsa/asoundlib.h>
 #define AUDIO_DATA_TYPE     int32_t                 // should match AUDIO_FORMAT
 #define MAX_AUDIO_VAL       INT32_MAX               // should match AUDIO_FORMAT
+#define AUDIO_DATA_TYPE_STR "<i"                    // Python struct format for a single sample, should match AUDIO_FORMAT. Must be 2 byes long.
 
-#define AUDIO_FILE_VERSION  1
-#define VIDEO_FILE_VERSION  1
+#define AUDIO_FILE_VERSION  0
+#define VIDEO_FILE_VERSION  0
 
 #define MAGIC_VIDEO_STR     "HELSINKI_VIDEO_MEG_PROJECT_VIDEO_FILE"
 #define MAGIC_AUDIO_STR     "HELSINKI_VIDEO_MEG_PROJECT_AUDIO_FILE"
 
-
 #define CONFIG_H_
-
 
 #endif /* CONFIG_H_ */

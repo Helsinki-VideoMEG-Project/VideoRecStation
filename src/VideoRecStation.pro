@@ -22,6 +22,7 @@ HEADERS += settings.h \
     videodialog.h \
     filewriter.h \
     videocompressorthread.h \
+    audiocompressorthread.h \
     stoppablethread.h \
     speakerthread.h \
     nonblockingbuffer.h \
@@ -37,6 +38,7 @@ SOURCES += settings.cpp \
     videodialog.cpp \
     filewriter.cpp \
     videocompressorthread.cpp \
+    audiocompressorthread.cpp \
     stoppablethread.cpp \
     speakerthread.cpp \
     nonblockingbuffer.cpp \
