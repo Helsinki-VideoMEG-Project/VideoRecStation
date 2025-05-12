@@ -42,6 +42,8 @@ Settings::Settings()
     // Video size
     width = settings.value("video/width", 640).toInt();
     height = settings.value("video/height", 480).toInt();
+    offsetx = settings.value("video/offset_x", 0).toInt();
+    offsety = settings.value("video/offset_y", 0).toInt();
 
     // Capture settings
     for (unsigned int i=0; i<MAX_CAMERAS; i++)
@@ -96,6 +98,8 @@ Settings::~Settings()
     settings.setValue("video/color", color);
     settings.setValue("video/width", width);
     settings.setValue("video/height", height);
+    settings.setValue("video/offset_x", offsetx);
+    settings.setValue("video/offset_y", offsety);
     for (unsigned int i=0; i<MAX_CAMERAS; i++)
     {
         settings.setValue(QString("control/viewer_%1_window").arg(i+1), videoRects[i]);

@@ -106,9 +106,13 @@ USBCamera::USBCamera(CameraPtr _camera, CycDataBuffer* _cycBuf, bool _color)
     if ((camera->GetFeatureByName("Width", feature) != VmbErrorSuccess) ||
         (feature->SetValue(settings.width) != VmbErrorSuccess) ||
         (camera->GetFeatureByName("Height", feature) != VmbErrorSuccess) ||
-        (feature->SetValue(settings.height) != VmbErrorSuccess))
+        (feature->SetValue(settings.height) != VmbErrorSuccess) ||
+        (camera->GetFeatureByName("OffsetX", feature) != VmbErrorSuccess) ||
+        (feature->SetValue(settings.offsetx) != VmbErrorSuccess) ||
+        (camera->GetFeatureByName("OffsetY", feature) != VmbErrorSuccess) ||
+        (feature->SetValue(settings.offsety) != VmbErrorSuccess))
     {
-        cerr << "Could not set up the video resolution" << endl;
+        cerr << "Could not set up the ROI size/offset" << endl;
         abort();
     }
 

@@ -46,6 +46,8 @@ public:
     bool            color;
     unsigned int    width;
     unsigned int    height;
+    unsigned int    offsetx;
+    unsigned int    offsety;
 
     // audio
     unsigned int    sampRate;
