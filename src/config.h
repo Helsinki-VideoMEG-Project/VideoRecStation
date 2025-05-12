@@ -59,8 +59,6 @@
 #define APP_NAME "VideoRecStation"
 
 // Camera configuration
-#define VIDEO_HEIGHT        1472
-#define VIDEO_WIDTH         1944
 #define MAX_CAMERAS         6
 
 // Audio configuration

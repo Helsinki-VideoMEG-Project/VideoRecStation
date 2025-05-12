@@ -39,6 +39,10 @@ Settings::Settings()
     // Use color mode
     color = settings.value("video/color", true).toBool();
 
+    // Video size
+    width = settings.value("video/width", 640).toInt();
+    height = settings.value("video/height", 480).toInt();
+
     // Capture settings
     for (unsigned int i=0; i<MAX_CAMERAS; i++)
     {
@@ -90,6 +94,8 @@ Settings::~Settings()
 
     settings.setValue("video/jpeg_quality", jpgQuality);
     settings.setValue("video/color", color);
+    settings.setValue("video/width", width);
+    settings.setValue("video/height", height);
     for (unsigned int i=0; i<MAX_CAMERAS; i++)
     {
         settings.setValue(QString("control/viewer_%1_window").arg(i+1), videoRects[i]);

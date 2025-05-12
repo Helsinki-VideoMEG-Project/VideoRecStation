@@ -22,6 +22,7 @@
 
 #include <VmbCPP/VmbCPP.h>
 #include "cycdatabuffer.h"
+#include "settings.h"
 
 class FrameObserver : public VmbCPP::IFrameObserver
 {
@@ -59,6 +60,7 @@ private:
     CycDataBuffer*      cycBuf;
     bool                color;
     FrameObserver*      frameObserver;
+    Settings            settings;
 };
 
 #endif /* USBCAMERA_H_ */

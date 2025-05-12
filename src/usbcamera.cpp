@@ -104,9 +104,9 @@ USBCamera::USBCamera(CameraPtr _camera, CycDataBuffer* _cycBuf, bool _color)
     }
 
     if ((camera->GetFeatureByName("Width", feature) != VmbErrorSuccess) ||
-        (feature->SetValue(VIDEO_WIDTH) != VmbErrorSuccess) ||
+        (feature->SetValue(settings.width) != VmbErrorSuccess) ||
         (camera->GetFeatureByName("Height", feature) != VmbErrorSuccess) ||
-        (feature->SetValue(VIDEO_HEIGHT) != VmbErrorSuccess))
+        (feature->SetValue(settings.height) != VmbErrorSuccess))
     {
         cerr << "Could not set up the video resolution" << endl;
         abort();

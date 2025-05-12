@@ -21,6 +21,7 @@
 #define VIDEOWIDGET_H_
 
 #include <QLabel>
+#include "settings.h"
 
 class VideoWidget : public QLabel
 {
@@ -37,6 +38,7 @@ public slots:
 
 private:
     char*       imBuf;
+    Settings    settings;
 };
 
 #endif /* VIDEOWIDGET_H_ */

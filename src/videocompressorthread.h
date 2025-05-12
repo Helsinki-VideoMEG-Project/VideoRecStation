@@ -22,6 +22,7 @@
 
 #include "stoppablethread.h"
 #include "cycdatabuffer.h"
+#include "settings.h"
 
 class VideoCompressorThread : public StoppableThread
 {
@@ -37,6 +38,7 @@ private:
     CycDataBuffer*  outBuf;
     bool            color;
     int             jpgQuality;
+    Settings        settings;
 };
 
 #endif /* VIDEOCOMPRESSORTHREAD_H_ */

@@ -42,8 +42,10 @@ public:
     ~Settings();
 
     // video
-    int             jpgQuality;
+    unsigned int    jpgQuality;
     bool            color;
+    unsigned int    width;
+    unsigned int    height;
 
     // audio
     unsigned int    sampRate;

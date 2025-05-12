@@ -47,8 +47,8 @@ void VideoWidget::onDrawFrame(unsigned char* _jpegBuf)
 
     if (limitDisplaySize)
     {
-        width = min(width, VIDEO_WIDTH);
-        height = min(height, VIDEO_HEIGHT);
+        width = min(width, int(settings.width));
+        height = min(height, int(settings.height));
     }
     chunkAttrib = *((ChunkAttrib*)(_jpegBuf-sizeof(ChunkAttrib)));
 

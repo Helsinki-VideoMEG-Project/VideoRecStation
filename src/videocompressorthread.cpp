@@ -61,8 +61,8 @@ void VideoCompressorThread::stoppableRun()
         jpeg_mem_dest(&cinfo, &jpgBuf, &jpgBufLen);
 
         // Set the parameters of the output file
-        cinfo.image_width = VIDEO_WIDTH;
-        cinfo.image_height = VIDEO_HEIGHT;
+        cinfo.image_width = settings.width;
+        cinfo.image_height = settings.height;
         cinfo.input_components = (color ? 3 : 1);
         cinfo.in_color_space = (color ? JCS_RGB : JCS_GRAYSCALE);
 
