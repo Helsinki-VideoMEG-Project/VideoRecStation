@@ -224,7 +224,7 @@ void MainDialog::onStopRec()
 
     for (unsigned int i=0; i<numCameras; i++)
     {
-        camCheckBoxes[i]->setEnabled(cameras[i] != NULL || settings.dummyMode);
+        camCheckBoxes[i]->setEnabled(cameras[i] != NULL);
         if(camCheckBoxes[i]->checkState() == Qt::Checked)
         {
             videoDialogs[i]->setIsRec(false);

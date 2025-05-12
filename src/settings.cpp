@@ -82,9 +82,6 @@ Settings::Settings()
 
     // Data storage folder
     storagePath = settings.value("misc/data_storage_path", "/videodat").toString();
-
-    // Camera dummy mode
-    dummyMode = settings.value("misc/dummy_mode", false).toBool();
 }
 
 Settings::~Settings()
@@ -114,7 +111,6 @@ Settings::~Settings()
     settings.setValue("audio/output_audio_device", outAudioDev);
 
     settings.setValue("misc/data_storage_path", storagePath);
-    settings.setValue("misc/dummy_mode", dummyMode);
 
     settings.sync();
 }

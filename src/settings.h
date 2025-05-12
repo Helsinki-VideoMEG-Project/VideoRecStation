@@ -53,6 +53,7 @@ public:
     QString         inpAudioDev;
     QString         outAudioDev;
     bool            useFeedback;
+
     QRect           controllerRect;
     QRect           videoRects[MAX_CAMERAS];
     unsigned int    videoShutters[MAX_CAMERAS];
@@ -63,7 +64,6 @@ public:
 
     // misc
     QString         storagePath;
-    bool            dummyMode;
     bool            controlOnTop;
     double          lowDiskSpaceWarning;
     bool            confirmStop;
