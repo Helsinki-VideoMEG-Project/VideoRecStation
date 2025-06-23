@@ -42,7 +42,7 @@
 #define MIC_THREAD_PRIORITY 15
 #define SPK_THREAD_PRIORITY 5
 
-#define SHUTTER_SLIDER_MIN    1           // Milliseconds, need to be multiplied by 1000 before sending to the camera
+#define SHUTTER_SLIDER_MIN    7           // Milliseconds, need to be multiplied by 1000 before sending to the camera
 #define SHUTTER_SLIDER_MAX    200
 #define SHUTTER_SCALE         1000.0
 

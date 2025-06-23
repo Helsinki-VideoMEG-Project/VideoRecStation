@@ -199,7 +199,7 @@ USBCamera::~USBCamera()
 
 void USBCamera::startAquisition()
 {
-    if (camera->StartContinuousImageAcquisition(1, IFrameObserverPtr(frameObserver)) != VmbErrorSuccess)
+    if (camera->StartContinuousImageAcquisition(5, IFrameObserverPtr(frameObserver)) != VmbErrorSuccess)
     {
         cerr << "Could not start camera acquisition" << endl;
         abort();
