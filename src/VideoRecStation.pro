@@ -54,12 +54,12 @@ FORMS += videodialog.ui \
     maindialog.ui
 INCLUDEPATH += /usr/include/c++/4.4 \
     /usr/include \
-    /opt/VimbaX_2024-1/api/include
+    /opt/VimbaX_2025-1/api/include
 LIBS += -L/usr/local/lib \
     -L/usr/lib \
     -lasound \
     -ljpeg \
-    -L/opt/VimbaX_2024-1/api/lib \
+    -L/opt/VimbaX_2025-1/api/lib \
     -lVmbCPP
 RESOURCES += 
 DEFINES += __STDC_LIMIT_MACROS
