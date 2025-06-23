@@ -154,6 +154,31 @@ USBCamera::USBCamera(CameraPtr _camera, CycDataBuffer* _cycBuf, bool _color)
         abort();
     }
 
+    if (settings.useExternalTrigger)
+    {
+        // Set the camera to external trigger mode
+        if ((camera->GetFeatureByName("TriggerMode", feature) != VmbErrorSuccess) ||
+            (feature->SetValue("On") != VmbErrorSuccess) ||
+            (camera->GetFeatureByName("TriggerSource", feature) != VmbErrorSuccess) ||
+            (feature->SetValue(settings.externalTriggerSource.toUtf8().constData()) != VmbErrorSuccess) ||
+            (camera->GetFeatureByName("TriggerActivation", feature) != VmbErrorSuccess) ||
+            (feature->SetValue("RisingEdge") != VmbErrorSuccess))
+        {
+            cerr << "Could not set up external trigger mode" << endl;
+            abort();
+        }
+    }
+    else
+    {
+        // Set the camera to free run mode
+        if ((camera->GetFeatureByName("TriggerMode", feature) != VmbErrorSuccess) ||
+            (feature->SetValue("Off") != VmbErrorSuccess))
+        {
+            cerr << "Could not set up free run mode" << endl;
+            abort();
+        }
+    }
+
     frameObserver = new FrameObserver(camera, cycBuf, (unsigned int)payloadSize);
 }
 

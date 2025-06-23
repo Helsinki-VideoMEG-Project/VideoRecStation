@@ -46,6 +46,9 @@ Settings::Settings()
     offsety = settings.value("video/offset_y", 0).toInt();
 
     // Capture settings
+    useExternalTrigger = settings.value("video/use_external_trigger", false).toBool();
+    externalTriggerSource = settings.value("video/external_trigger_source", "Line0").toString();
+
     for (unsigned int i=0; i<MAX_CAMERAS; i++)
     {
         videoRects[i] = settings.value(QString("control/viewer_%1_window").arg(i+1), QRect(-1, -1, -1, -1)).toRect();
@@ -100,6 +103,8 @@ Settings::~Settings()
     settings.setValue("video/height", height);
     settings.setValue("video/offset_x", offsetx);
     settings.setValue("video/offset_y", offsety);
+    settings.setValue("video/use_external_trigger", useExternalTrigger);
+    settings.setValue("video/external_trigger_source", externalTriggerSource);
     for (unsigned int i=0; i<MAX_CAMERAS; i++)
     {
         settings.setValue(QString("control/viewer_%1_window").arg(i+1), videoRects[i]);

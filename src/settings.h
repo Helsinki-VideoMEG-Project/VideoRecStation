@@ -48,6 +48,8 @@ public:
     unsigned int    height;
     unsigned int    offsetx;
     unsigned int    offsety;
+    bool            useExternalTrigger;
+    QString         externalTriggerSource;
 
     // audio
     unsigned int    sampRate;
