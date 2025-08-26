@@ -40,10 +40,10 @@ Settings::Settings()
     color = settings.value("video/color", true).toBool();
 
     // Video size
-    width = settings.value("video/width", 640).toInt();
-    height = settings.value("video/height", 480).toInt();
-    offsetx = settings.value("video/offset_x", 0).toInt();
-    offsety = settings.value("video/offset_y", 0).toInt();
+    width = settings.value("video/width", 976).toInt();
+    height = settings.value("video/height", 736).toInt();
+    offsetx = settings.value("video/offset_x", 488).toInt();
+    offsety = settings.value("video/offset_y", 368).toInt();
 
     // Capture settings
     useExternalTrigger = settings.value("video/use_external_trigger", false).toBool();
@@ -60,7 +60,7 @@ Settings::Settings()
     controlOnTop = settings.value("control/controller_on_top", false).toBool();
     lowDiskSpaceWarning = settings.value("control/low_disk_space_warning", 0).toDouble();
     confirmStop = settings.value("control/confirm_on_stop", false).toBool();
-    metersUseDB = settings.value("control/meters_use_db", false).toBool();
+    metersUseDB = settings.value("control/meters_use_db", true).toBool();
 
     //---------------------------------------------------------------------
     // Audio settings
@@ -90,7 +90,7 @@ Settings::Settings()
     //
 
     // Data storage folder
-    storagePath = settings.value("misc/data_storage_path", "/videodat").toString();
+    storagePath = settings.value("misc/data_storage_path", "/tmp").toString();
 }
 
 Settings::~Settings()
