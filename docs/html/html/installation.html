@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Installation Instructions &#8212; Video Recording Station  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="File Format Description" href="file-format-description.html" />
+    <link rel="prev" title="Video Recording Station documentation" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="installation-instructions">
+<h1>Installation Instructions<a class="headerlink" href="#installation-instructions" title="Link to this heading">¶</a></h1>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">¶</a></h2>
+<p>VideoRecStation runs on Ubuntu 24.04 LTS (Jammy Jellyfish) on amd64 architecture. It might work on other versions of Ubuntu or other Linux distributions, but this has not been tested.</p>
+</section>
+<section id="install-3-rd-party-components">
+<h2>Install 3-rd party components<a class="headerlink" href="#install-3-rd-party-components" title="Link to this heading">¶</a></h2>
+<p>Before you can use VideoRecStation, you need to install VimbaX and ALSA Scarlett Control Panel (alsa-scarlett-gui). The latter is, strictly speaking, optional, but it provides a convenient GUI for controlling the audio settings of your Scarlett interface.</p>
+<section id="install-vimbax">
+<h3>Install VimbaX<a class="headerlink" href="#install-vimbax" title="Link to this heading">¶</a></h3>
+<p>VimbaX is a software package for controlling USB cameras made by Allied Vision Technologies. You can download it from the <a class="reference external" href="https://www.alliedvision.com/en/products/software/vimba-x-sdk/">Allied Vision website</a>. Assume you have downloaded it to <code class="docutils literal notranslate"><span class="pre">~/Downloads/VimbaX_Setup-2025-2-Linux64.tar.gz</span></code>, and want to install it to <code class="docutils literal notranslate"><span class="pre">/opt/VimbaX_2025-2</span></code>. You can do this by running the following commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>mkdir<span class="w"> </span>/opt/VimbaX_2025-2
+sudo<span class="w"> </span>tar<span class="w"> </span>-xvzf<span class="w"> </span>~/Downloads/VimbaX_Setup-2025-2-Linux64.tar.gz<span class="w"> </span>-C<span class="w"> </span>/opt/VimbaX_2025-2<span class="w"> </span>--strip-components<span class="o">=</span><span class="m">1</span>
+</pre></div>
+</div>
+<p>Now you need to install VimbaX transport layers. Run the following commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>/opt/VimbaX_2025-2/cti
+sudo<span class="w"> </span>./Install_GenTL_Path.sh
+</pre></div>
+</div>
+<p>and reboot your system. You can now test the VimbaX by connecting an Alvium USB camera to your computer and running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>/opt/VimbaX_2025-2/bin/VimbaXViewer
+</pre></div>
+</div>
+<p>The Vimba X Viewer window should appear and you should see the camera in the list of detected cameras.</p>
+<p>Finally, add the VimbaX library path to your system’s library path. You can do this by creating a new file in the <code class="docutils literal notranslate"><span class="pre">/etc/ld.so.conf.d/</span></code> directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;/opt/VimbaX_2025-2/api/lib&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/ld.so.conf.d/vimbax.conf
+</pre></div>
+</div>
+<p>Then, update the linker cache:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>ldconfig
+</pre></div>
+</div>
+</section>
+<section id="install-alsa-scarlett-control-panel">
+<h3>Install ALSA Scarlett Control Panel<a class="headerlink" href="#install-alsa-scarlett-control-panel" title="Link to this heading">¶</a></h3>
+<p>The ALSA Scarlett Control Panel (alsa-scarlett-gui) is a graphical user interface for controlling the audio settings of your Scarlett audio interface box. You can install it by following the <a class="reference external" href="https://github.com/geoffreybennett/alsa-scarlett-gui/blob/master/docs/INSTALL.md">instructions</a> from the project’s <a class="reference external" href="https://github.com/geoffreybennett/alsa-scarlett-gui">GitHub page</a>. In a nutshell:</p>
+<p>Install the packages needed to build the software:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>-y<span class="w"> </span>install<span class="w"> </span>git<span class="w"> </span>make<span class="w"> </span>gcc<span class="w"> </span>libgtk-4-dev<span class="w"> </span>libasound2-dev<span class="w"> </span>libssl-dev
+</pre></div>
+</div>
+<p>Clone the repository:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/geoffreybennett/alsa-scarlett-gui.git
+</pre></div>
+</div>
+<p>Build and install the software:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>alsa-scarlett-gui/src
+make<span class="w"> </span>-j<span class="k">$(</span>nproc<span class="k">)</span>
+sudo<span class="w"> </span>make<span class="w"> </span>install
+</pre></div>
+</div>
+<p>You now should be able to run ALSA Scarlett Control Panel from the Ubuntu applications menu.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The installation instructions for VimbaX and ALSA Scarlett Control Panel were tested in Aug 2025. As these are provided by third parties, there are no guarantees that the instructions will work in the future (or that these components will be available at all for that matter). If you have problems with installing VimbaX and/or ALSA Scarlett Control Panel, try checking their respective web pages.</p>
+</div>
+</section>
+</section>
+<section id="increase-the-usbfs-buffer-size">
+<h2>Increase the USBFS buffer size<a class="headerlink" href="#increase-the-usbfs-buffer-size" title="Link to this heading">¶</a></h2>
+<p>To avoid potential problems when using VideoRecStation you need to configure something called the Full Speed USB (USBFS) buffer size. By default, the USBFS buffer size is set to 16MB, which might not be enough, especially when using multiple cameras. You can check the current buffer size by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat<span class="w"> </span>/sys/module/usbcore/parameters/usbfs_memory_mb
+</pre></div>
+</div>
+<p>To increase the buffer size permanently to 1000MB (which is probably sufficient for most use cases), add the kernel parameter <code class="docutils literal notranslate"><span class="pre">usbcore.usbfs_memory_mb=1000</span></code> to the bootloader configuration. To do this you have to edit the GRUB configuration file <code class="docutils literal notranslate"><span class="pre">/etc/default/grub</span></code>. Find the line that looks like this:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">GRUB_CMDLINE_LINUX_DEFAULT</span><span class="o">=</span><span class="s2">&quot;quiet splash&quot;</span>
+</pre></div>
+</div>
+<p>and add <code class="docutils literal notranslate"><span class="pre">usbcore.usbfs_memory_mb=1000</span></code> to it, so that it looks like this:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">GRUB_CMDLINE_LINUX_DEFAULT</span><span class="o">=</span><span class="s2">&quot;quiet splash usbcore.usbfs_memory_mb=1000&quot;</span>
+</pre></div>
+</div>
+<p>After that, update the GRUB configuration by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>update-grub
+</pre></div>
+</div>
+<p>And reboot your system. After rebooting, running</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat<span class="w"> </span>/sys/module/usbcore/parameters/usbfs_memory_mb
+</pre></div>
+</div>
+<p>should show 1000.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can temporarily (until next reboot) change the USBFS buffer size by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;echo 1000 &gt; /sys/module/usbcore/parameters/usbfs_memory_mb&#39;</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="install-the-videorecstation-software">
+<h2>Install the VideoRecStation software<a class="headerlink" href="#install-the-videorecstation-software" title="Link to this heading">¶</a></h2>
+<section id="build-and-install-videorecstation-binary">
+<h3>Build and install VideoRecStation binary<a class="headerlink" href="#build-and-install-videorecstation-binary" title="Link to this heading">¶</a></h3>
+<p>Install the packages needed to build VideoRecStation:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>-y<span class="w"> </span>install<span class="w"> </span>qt6-base-dev<span class="w"> </span>designer-qt6<span class="w"> </span>libjpeg-turbo8<span class="w"> </span>libjpeg8-dev<span class="w"> </span>libasound2-dev<span class="w"> </span>g++
+</pre></div>
+</div>
+<p>Clone the repository:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Helsinki-VideoMEG-Project/VideoRecStation.git
+</pre></div>
+</div>
+<p>Modify the <code class="docutils literal notranslate"><span class="pre">INCLUDEPATH</span></code> and <code class="docutils literal notranslate"><span class="pre">LIBS</span></code> sections of the file <code class="docutils literal notranslate"><span class="pre">src/VideoRecStation.pro</span></code> to reflect the location where you have installed VimbaX (e.g., <code class="docutils literal notranslate"><span class="pre">/opt/VimbaX_2025-2/api/include</span></code> and <code class="docutils literal notranslate"><span class="pre">/opt/VimbaX_2025-2/api/lib</span></code> if you installed VimbaX in <code class="docutils literal notranslate"><span class="pre">/opt/VimbaX_2025-2</span></code>).</p>
+<p>Build and install the software:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>VideoRecStation
+qmake6<span class="w"> </span>src/VideoRecStation.pro
+make<span class="w"> </span>-f<span class="w"> </span>Makefile.Release
+sudo<span class="w"> </span>cp<span class="w"> </span>VideoRecStation<span class="w"> </span>/usr/local/bin/
+</pre></div>
+</div>
+<p>You now should be able to run VideoRecStation from the command line by typing:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>VideoRecStation
+</pre></div>
+</div>
+</section>
+<section id="configure-videorecstation">
+<h3>Configure VideoRecStation<a class="headerlink" href="#configure-videorecstation" title="Link to this heading">¶</a></h3>
+<p>When you run VideoRecStation for the first time, it will create a configuration file <code class="docutils literal notranslate"><span class="pre">~/.config/Helsinki</span> <span class="pre">VideoMEG</span> <span class="pre">Project/VideoRecStation.conf</span></code> with default settings. You should edit this file to set the parameters according to your setup. In particular, you should modify the sound card configuration and the storage path.</p>
+<section id="configure-audio-settings">
+<h4>Configure audio settings<a class="headerlink" href="#configure-audio-settings" title="Link to this heading">¶</a></h4>
+<p>We assume you want to use a Focusrite Scarlett 18i20 audio interface with the VideoRecStation. For that we need to find the ALSA device name through which Linux can access the Scarlett box. First, connect the Scarlett interface to your computer and turn it on. Next run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>arecord<span class="w"> </span>-L<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A1<span class="w"> </span><span class="s2">&quot;^hw:&quot;</span>
+</pre></div>
+</div>
+<p>This should provide an output that looks something like this:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>hw:CARD<span class="o">=</span>sofhdadsp,DEV<span class="o">=</span><span class="m">0</span>
+<span class="w">    </span>sof-hda-dsp,
+--
+hw:CARD<span class="o">=</span>sofhdadsp,DEV<span class="o">=</span><span class="m">6</span>
+<span class="w">    </span>sof-hda-dsp,
+--
+hw:CARD<span class="o">=</span>sofhdadsp,DEV<span class="o">=</span><span class="m">7</span>
+<span class="w">    </span>sof-hda-dsp,
+--
+hw:CARD<span class="o">=</span>USB,DEV<span class="o">=</span><span class="m">0</span>
+<span class="w">    </span>Scarlett<span class="w"> </span>18i20<span class="w"> </span>USB,<span class="w"> </span>USB<span class="w"> </span>Audio
+</pre></div>
+</div>
+<p>Note the line <code class="docutils literal notranslate"><span class="pre">Scarlett</span> <span class="pre">18i20</span> <span class="pre">USB,</span> <span class="pre">USB</span> <span class="pre">Audio</span></code>. The line above it reads <code class="docutils literal notranslate"><span class="pre">hw:CARD=USB,DEV=0</span></code>. In this case the ALSA device name that we are looking for is <code class="docutils literal notranslate"><span class="pre">hw:USB,0</span></code> (note that it might be something different on your system).</p>
+<p>Assuming that the device name is <code class="docutils literal notranslate"><span class="pre">hw:USB,0</span></code>, modify the <code class="docutils literal notranslate"><span class="pre">[audio]</span></code> section of the file <code class="docutils literal notranslate"><span class="pre">~/.config/Helsinki</span> <span class="pre">VideoMEG</span> <span class="pre">Project/VideoRecStation.conf</span></code> as follows:</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[audio]</span>
+<span class="na">frames_per_period</span><span class="o">=</span><span class="s">940</span>
+<span class="na">input_audio_device</span><span class="o">=</span><span class="s">&quot;hw:USB,0&quot;</span>
+<span class="na">num_periods</span><span class="o">=</span><span class="s">10</span>
+<span class="na">output_audio_device</span><span class="o">=</span><span class="s">&quot;hw:USB,0&quot;</span>
+<span class="na">sampling_rate</span><span class="o">=</span><span class="s">44100</span>
+<span class="na">speaker_buffer_size</span><span class="o">=</span><span class="s">4</span>
+<span class="na">use_speaker_feedback</span><span class="o">=</span><span class="s">true</span>
+</pre></div>
+</div>
+</section>
+<section id="configure-data-storage-path">
+<h4>Configure data storage path<a class="headerlink" href="#configure-data-storage-path" title="Link to this heading">¶</a></h4>
+<p>Create a folder where you want to store the recorded video and audio data and make sure that the user running VideoRecStation has write permissions to it. Then modify the <code class="docutils literal notranslate"><span class="pre">data_storage_path</span></code> parameter in the <code class="docutils literal notranslate"><span class="pre">[misc]</span></code> section of the file <code class="docutils literal notranslate"><span class="pre">~/.config/Helsinki</span> <span class="pre">VideoMEG</span> <span class="pre">Project/VideoRecStation.conf</span></code> to poit to your folder. For example, if you want to store the data in <code class="docutils literal notranslate"><span class="pre">/data/videomeg</span></code>, make sure that the configuration file contains the following:</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[misc]</span>
+<span class="na">data_storage_path</span><span class="o">=</span><span class="s">/data/videomeg</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Make sure that VideoRecStation is not running when you are editing the configuration file.</p>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Video Recording Station</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation Instructions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-3-rd-party-components">Install 3-rd party components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#increase-the-usbfs-buffer-size">Increase the USBFS buffer size</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-the-videorecstation-software">Install the VideoRecStation software</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="file-format-description.html">File Format Description</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Video Recording Station documentation</a></li>
+      <li>Next: <a href="file-format-description.html" title="next chapter">File Format Description</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Andrey Zhdanov.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/installation.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

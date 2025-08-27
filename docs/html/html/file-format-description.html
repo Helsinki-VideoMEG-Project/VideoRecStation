@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>File Format Description &#8212; Video Recording Station  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Installation Instructions" href="installation.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="file-format-description">
+<h1>File Format Description<a class="headerlink" href="#file-format-description" title="Link to this heading">¶</a></h1>
+<dl class="simple">
+<dt>Audio and video is stored in <code class="docutils literal notranslate"><span class="pre">*.aud</span></code> and <code class="docutils literal notranslate"><span class="pre">*.vid</span></code> files; if there are multiple video cameras, each camera’s video is stored in a separate <code class="docutils literal notranslate"><span class="pre">*.vid</span></code> file. The file content is described below in the order of it’s appearance in the file. The general structure of the file is:</dt><dd><ol class="arabic simple">
+<li><p>Magic string. The string is <code class="docutils literal notranslate"><span class="pre">HELSINKI_VIDEO_MEG_PROJECT_VIDEO_FILE</span></code> for video files and <code class="docutils literal notranslate"><span class="pre">HELSINKI_VIDEO_MEG_PROJECT_AUDIO_FILE</span></code> for audio files.</p></li>
+<li><p>Format version number. This is a 32 bit integer specifying the format version.</p></li>
+</ol>
+</dd>
+</dl>
+<p>Format of the rest of the file is version-dependent.</p>
+<section id="version-0">
+<h2>Version 0<a class="headerlink" href="#version-0" title="Link to this heading">¶</a></h2>
+<dl>
+<dt>The audio file additionally contains:</dt><dd><ol class="arabic simple">
+<li><p>A 32-bit integer describing the sampling rate in Hz.</p></li>
+<li><p>A 32-bit integer describing the number of channels.</p></li>
+<li><p>Two bytes specifying the data format for a single audio sample. The two bytes should be interpreted as an Python <a class="reference external" href="https://docs.python.org/3/library/struct.html#struct-format-strings">format string</a> in ascii encoding. For example, <code class="docutils literal notranslate"><span class="pre">&lt;i</span></code> means little-endian signed four-byte integer.</p></li>
+</ol>
+</dd>
+<dt>The rest of the both types of files is filled with data blocks. Each data block consists of:</dt><dd><ol class="arabic simple">
+<li><p>64-bit integer containing the block’s timestamp. The timestamp is the number of milliseconds since the UNIX epoch.</p></li>
+<li><p>32-bit integer containing the length of the payload in bytes.</p></li>
+<li><p>The payload:</p></li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><p>For audio files the payload is the raw sample data. The channels are interleaved. For audio, all the blocks are of the same length. The timestamp corresponds to the first sample in the block.</p></li>
+<li><p>For video the payload is a single frame compressed in jpeg format. If you save the payload as a separate file you will get a normal jpeg file that you can open in an image viewer, etc.</p></li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</section>
+<section id="other-versions">
+<h2>Other versions<a class="headerlink" href="#other-versions" title="Link to this heading">¶</a></h2>
+<p>Currently only version 0 is implemented.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Video Recording Station</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation Instructions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">File Format Description</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#version-0">Version 0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#other-versions">Other versions</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="installation.html" title="previous chapter">Installation Instructions</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Andrey Zhdanov.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/file-format-description.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
