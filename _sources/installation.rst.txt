@@ -117,6 +117,82 @@ should show 1000.
 
       sudo sh -c 'echo 1000 > /sys/module/usbcore/parameters/usbfs_memory_mb'
 
+
+
+Set up exclusive access by VideoRecStation to the audio device
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. note:: 
+
+   Currently the VideoRecStation is designed to work with a Focusrite Scarlett 18i20 [3rd Gen] audio interface. You might be able to make it work with somehing else by hacking the config file, but to add proper support for other audio interfaces you need to modify the source code (and obviously recompile it).
+
+In Ubuntu 24.04 LTS, the audio devices are managed by a system service called PipeWire. VideoRecStation needs exclusive access to the audio device, so to avoid conflicts with PipeWire, you need to configure PipeWire to ignore the Scarlett audio interface. To do this, first find the id of your Scarlett box. Make sure that the Scarlett box is connected to your computer and turned on, then run:
+
+.. code-block:: bash
+
+   pactl list short cards
+
+Look for a line that contains the id of your Scarlett box. The id should look something like ``alsa_card.usb-Focusrite_Scarlett_18i20_USB_12345678-00``. Write down the id.
+
+.. note:: 
+
+   You can also use ``wpctl status`` and ``wpctl inspect <ID>`` to get the same id. Look for the line like ``device.name = "alsa_card.usb-Focusrite_Scarlett_18i20_USB_12345678-00"``.
+
+Next we need to create a WirePlumber rule to disable the device. Create a new file ``~/.config/wireplumber/main.lua.d/99-disable-scarlett.lua`` with the following content (replace ``alsa_card.usb-Focusrite_Scarlett_18i20_USB_12345678-00`` with the id you found above):
+
+.. code-block:: lua
+
+   rule = {
+      matches = {
+         {
+            { "device.name", "equals", "alsa_card.usb-Focusrite_Scarlett_18i20_USB_12345678-00" },
+         },
+      },
+      apply_properties = {
+         ["device.disabled"] = true,
+      },
+   }
+
+   table.insert(alsa_monitor.rules, rule)
+
+Then restart WirePlumber by running:
+
+.. code-block:: bash
+
+   systemctl --user restart wireplumber
+
+You can check that the PipeWire is no longer managing the Scarlett box by running:
+
+.. code-block:: bash
+
+   pactl list short cards
+
+The Scarlett box should no longer be listed.
+
+.. note:: 
+
+   The above instructions work for WirePlumber versions 0.4.x (which was the default in Ubuntu 24.04 LTS as of Aug 2025) Between versions 0.4.x and 0.5.x the format of the configuration files for WirePlumber changed. If you are using WirePlumber 0.5.x or later, instead of ``~/.config/wireplumber/main.lua.d/99-disable-scarlett.lua`` you need to create the file ``~/.config/wireplumber/wireplumber.conf.d/99-disable-scarlett.conf`` with the following content (again, replace ``alsa_card.usb-Focusrite_Scarlett_18i20_USB_12345678-00`` with the id you found above):
+
+   .. code-block::
+
+      monitor.alsa.rules = [
+         {
+            matches = [
+               { device.name = "alsa_card.usb-Focusrite_Scarlett_18i20_USB_12345678-00" }
+            ]
+            actions = {
+               update-props = {
+                  device.disabled = true
+               }
+            }
+         }
+      ]
+
+   You can check the version of WirePlumber by running:
+
+   .. code-block:: bash
+
+      wireplumber --version
+
 Install the VideoRecStation software
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -157,7 +233,7 @@ When you run VideoRecStation for the first time, it will create a configuration 
 
 Configure audio settings
 """"""""""""""""""""""""
-We assume you want to use a Focusrite Scarlett 18i20 audio interface with the VideoRecStation. For that we need to find the ALSA device name through which Linux can access the Scarlett box. First, connect the Scarlett interface to your computer and turn it on. Next run:
+As mentioned above, we assume you want to use a Focusrite Scarlett 18i20 [3rd Gen] audio interface with the VideoRecStation. For that we need to find the ALSA device name through which Linux can access the Scarlett box. First, connect the Scarlett interface to your computer and turn it on. Next run:
 
 .. code-block:: bash
 
