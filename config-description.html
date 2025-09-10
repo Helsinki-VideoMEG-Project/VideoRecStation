@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="File Format Description" href="file-format-description.html" /><link rel="prev" title="Installation Instructions" href="installation.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="File Format Description" href="file-format-description.html" /><link rel="prev" title="Usage" href="usage.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
         <title>Configuration File Description - Video Recording Station documentation</title>
@@ -201,6 +201,7 @@
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Configuration File Description</a></li>
 <li class="toctree-l1"><a class="reference internal" href="file-format-description.html">File Format Description</a></li>
 </ul>
@@ -245,13 +246,50 @@
         <article role="main" id="furo-main-content">
           <section id="configuration-file-description">
 <h1>Configuration File Description<a class="headerlink" href="#configuration-file-description" title="Link to this heading">¶</a></h1>
-<p>VideoRecStation stores configuration in <code class="docutils literal notranslate"><span class="pre">~/.config/Helsinki</span> <span class="pre">VideoMEG</span> <span class="pre">Project/VideoRecStation.conf</span></code> in INI format. Below is a partial description of the configuration options.</p>
+<p>VideoRecStation stores configuration in <code class="docutils literal notranslate"><span class="pre">~/.config/Helsinki</span> <span class="pre">VideoMEG</span> <span class="pre">Project/VideoRecStation.conf</span></code> in INI format. Below is a partial description of the configuration options. The default configuration file is automatically created when you run VideoRecStation for the first time.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>VideoRecStation loads the configuration file on the startup and saves it back on exit. If you edit the configuration file manually while VideoRecStation is running, your changes will likely be overwritten when you exit VideoRecStation.</p>
+</div>
 <section id="audio-section">
 <h2>[audio] section<a class="headerlink" href="#audio-section" title="Link to this heading">¶</a></h2>
 <blockquote>
-<div><ol class="arabic simple">
-<li><p><strong>input_audio_device</strong> - The audio device to use for input (e.g., “hw:0,0”).</p></li>
-</ol>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">input_audio_device</span></code> - a string specifying ALSA audio device to use for input.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output_audio_device</span></code> - a string specifying ALSA audio device to use for output.</p></li>
+</ul>
+<p>Typically, <code class="docutils literal notranslate"><span class="pre">input_audio_device</span></code> and <code class="docutils literal notranslate"><span class="pre">output_audio_device</span></code> should be set to the same ALSA device name (e.g. <code class="docutils literal notranslate"><span class="pre">hw:USB,0</span></code>). Normally, this should be the name of your Focusrite Scarlett 18i20 [3rd Gen] audio interface, that you find with the command <code class="docutils literal notranslate"><span class="pre">arecord</span> <span class="pre">-l</span></code> (see <a class="reference internal" href="installation.html#configure-audio-settings-label"><span class="std std-ref">Configure audio settings</span></a> for details). If you need to run VideoRecStation without the Scarlett box, you can set these options to <code class="docutils literal notranslate"><span class="pre">default</span></code> (this is mostly useful for testing purposes).</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code> - an integer specifying the audio sampling rate in Hz.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">frames_per_period</span></code> - an integer specifying the number of audio frames (samples) per period (chunk of audio data that the sound card driver processes at once).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num_periods</span></code> - an integer specifying the number of periods in the audio buffer.</p></li>
+</ul>
+<p>You should set <code class="docutils literal notranslate"><span class="pre">sampling_rate</span></code>, <code class="docutils literal notranslate"><span class="pre">frames_per_period</span></code>, and <code class="docutils literal notranslate"><span class="pre">num_periods</span></code> to the values that your audio interface supports, otherwise VideoRecStation will not work. For the Focusrite Scarlett 18i20 [3rd Gen], the correct values are listed in <a class="reference internal" href="installation.html#configure-audio-settings-label"><span class="std std-ref">Configure audio settings</span></a>.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">use_speaker_feedback</span></code> - a boolean (<code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>) specifying whether VideoRecStation should play back the audio input through the audio output (<code class="docutils literal notranslate"><span class="pre">true</span></code>) or not (<code class="docutils literal notranslate"><span class="pre">false</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">speaker_buffer_size</span></code> - an integer specifying the size of the audio buffer used for playback through the audio output. Larger values will increase the delay of the audio playback. A reasonable value for this parameter is 4. This option is ignored if <code class="docutils literal notranslate"><span class="pre">use_speaker_feedback</span></code> is set to <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">use_speaker_feedback</span></code> and <code class="docutils literal notranslate"><span class="pre">speaker_buffer_size</span></code> are useful for introducing a controlled delay into the audio, for example to compensate for audio-video synchronization issues. Note that you can also set up the Scarlett box to achieve a similar effect (by using the Scarlett Control Panel, for instructions see <a class="reference internal" href="usage.html#scarlett-usage-label"><span class="std std-ref">ALSA Scarlett Control Panel Usage</span></a>), albeit without the delay.</p>
+</div></blockquote>
+</section>
+<section id="video-section">
+<h2>[video] section<a class="headerlink" href="#video-section" title="Link to this heading">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">color</span></code> - a boolean (<code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>) specifying whether to record color video (<code class="docutils literal notranslate"><span class="pre">true</span></code>) or grayscale video (<code class="docutils literal notranslate"><span class="pre">false</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">jpeg_quality</span></code> - an integer from 0 to 100 specifying the JPEG quality for video compression (100 means best quality and least compression, 0 means worst quality and most compression). 80 is probably a reasonable value.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">height</span></code>, <code class="docutils literal notranslate"><span class="pre">width</span></code>, <code class="docutils literal notranslate"><span class="pre">offset_x</span></code>, <code class="docutils literal notranslate"><span class="pre">offset_y</span></code> - integers specifying the resolution and cropping of the recorded video. The recorded video will have size <code class="docutils literal notranslate"><span class="pre">width</span></code> x <code class="docutils literal notranslate"><span class="pre">height</span></code> pixels, and will be cropped from the original camera image starting at pixel (<code class="docutils literal notranslate"><span class="pre">offset_x</span></code>, <code class="docutils literal notranslate"><span class="pre">offset_y</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">use_external_trigger</span></code> - a boolean (<code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>) specifying whether to use an external trigger for acquisition of each frame.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">external_trigger_source</span></code> - a string specifying the name of a trigger line (e.g. <code class="docutils literal notranslate"><span class="pre">Line0</span></code>) to use as the source of the external trigger. This option ignored if <code class="docutils literal notranslate"><span class="pre">use_external_trigger</span></code> is set to <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="misc-section">
+<span id="config-description-label"></span><h2>[misc] section<a class="headerlink" href="#misc-section" title="Link to this heading">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">data_storage_path</span></code> - a string specifying the path to the directory where recorded data (video and audio files) will be stored.</p></li>
+</ul>
 </div></blockquote>
 </section>
 </section>
@@ -270,14 +308,14 @@
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="installation.html">
+          <a class="prev-page" href="usage.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Installation Instructions</div>
+                <div class="title">Usage</div>
                 
               </div>
             </a>
@@ -313,6 +351,8 @@
             <ul>
 <li><a class="reference internal" href="#">Configuration File Description</a><ul>
 <li><a class="reference internal" href="#audio-section">[audio] section</a></li>
+<li><a class="reference internal" href="#video-section">[video] section</a></li>
+<li><a class="reference internal" href="#misc-section">[misc] section</a></li>
 </ul>
 </li>
 </ul>
