@@ -231,6 +231,8 @@ Configure VideoRecStation
 +++++++++++++++++++++++++
 When you run VideoRecStation for the first time, it will create a configuration file ``~/.config/Helsinki VideoMEG Project/VideoRecStation.conf`` with default settings. You should edit this file to set the parameters according to your setup. In particular, you should modify the sound card configuration and the storage path.
 
+.. _configure-audio-settings-label:
+
 Configure audio settings
 """"""""""""""""""""""""
 As mentioned above, we assume you want to use a Focusrite Scarlett 18i20 [3rd Gen] audio interface with the VideoRecStation. For that we need to find the ALSA device name through which Linux can access the Scarlett box. First, connect the Scarlett interface to your computer and turn it on. Next run:

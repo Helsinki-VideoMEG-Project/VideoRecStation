@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Configuration File Description" href="config-description.html" /><link rel="prev" title="Video Recording Station documentation" href="index.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Usage" href="usage.html" /><link rel="prev" title="Video Recording Station documentation" href="index.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
         <title>Installation Instructions - Video Recording Station documentation</title>
@@ -201,6 +201,7 @@
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Installation Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="config-description.html">Configuration File Description</a></li>
 <li class="toctree-l1"><a class="reference internal" href="file-format-description.html">File Format Description</a></li>
 </ul>
@@ -424,7 +425,7 @@ sudo<span class="w"> </span>cp<span class="w"> </span>VideoRecStation<span class
 <h3>Configure VideoRecStation<a class="headerlink" href="#configure-videorecstation" title="Link to this heading">¶</a></h3>
 <p>When you run VideoRecStation for the first time, it will create a configuration file <code class="docutils literal notranslate"><span class="pre">~/.config/Helsinki</span> <span class="pre">VideoMEG</span> <span class="pre">Project/VideoRecStation.conf</span></code> with default settings. You should edit this file to set the parameters according to your setup. In particular, you should modify the sound card configuration and the storage path.</p>
 <section id="configure-audio-settings">
-<h4>Configure audio settings<a class="headerlink" href="#configure-audio-settings" title="Link to this heading">¶</a></h4>
+<span id="configure-audio-settings-label"></span><h4>Configure audio settings<a class="headerlink" href="#configure-audio-settings" title="Link to this heading">¶</a></h4>
 <p>As mentioned above, we assume you want to use a Focusrite Scarlett 18i20 [3rd Gen] audio interface with the VideoRecStation. For that we need to find the ALSA device name through which Linux can access the Scarlett box. First, connect the Scarlett interface to your computer and turn it on. Next run:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>arecord<span class="w"> </span>-L<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A1<span class="w"> </span><span class="s2">&quot;^hw:&quot;</span>
 </pre></div>
@@ -477,12 +478,12 @@ hw:CARD<span class="o">=</span>USB,DEV<span class="o">=</span><span class="m">0<
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="config-description.html">
+          <a class="next-page" href="usage.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Configuration File Description</div>
+                <div class="title">Usage</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
