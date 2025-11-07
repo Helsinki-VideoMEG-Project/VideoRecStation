@@ -103,6 +103,16 @@ USBCamera::USBCamera(CameraPtr _camera, CycDataBuffer* _cycBuf, bool _color)
         abort();
     }
 
+    // Reset the ROI offset to 0/0 first, otherwise setting the width/height might fail
+    if ((camera->GetFeatureByName("OffsetX", feature) != VmbErrorSuccess) ||
+        (feature->SetValue(0) != VmbErrorSuccess) ||
+        (camera->GetFeatureByName("OffsetY", feature) != VmbErrorSuccess) ||
+        (feature->SetValue(0) != VmbErrorSuccess))
+    {
+        cerr << "Could not reset ROI offset to 0/0" << endl;
+        abort();
+    }
+
     if ((camera->GetFeatureByName("Width", feature) != VmbErrorSuccess) ||
         (feature->SetValue(settings.width) != VmbErrorSuccess) ||
         (camera->GetFeatureByName("Height", feature) != VmbErrorSuccess) ||
