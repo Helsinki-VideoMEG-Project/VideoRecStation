@@ -68,6 +68,11 @@ MainDialog::MainDialog(QWidget *parent)
     audioFileWriter = new AudioFileWriter(cycAudioBufCompressed, settings.storagePath.toLocal8Bit().data());
     QObject::connect(cycAudioBufRaw, SIGNAL(chunkReady(unsigned char*)), this, SLOT(onAudioUpdate(unsigned char*)));
 
+    // Set thread names to simplify profiling
+    audioCompressorThread->setObjectName("AudComp");
+    microphoneThread->setObjectName("Mic");
+    audioFileWriter->setObjectName("AudFileWrit");
+
     // Initialize volume indicator history
     memset(volMaxvals, 0, N_CHANS * N_BUF_4_VOL_IND * sizeof(AUDIO_DATA_TYPE));
     volIndNext = 0;
@@ -77,6 +82,9 @@ MainDialog::MainDialog(QWidget *parent)
     {
         speakerBuffer = new NonBlockingBuffer(settings.spkBufSz, settings.framesPerPeriod*N_CHANS*sizeof(AUDIO_DATA_TYPE));
         speakerThread = new SpeakerThread(speakerBuffer);
+
+        // Set thread name to simplify profiling
+        speakerThread->setObjectName("Speaker");
     }
     else
     {
