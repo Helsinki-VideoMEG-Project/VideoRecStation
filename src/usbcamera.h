@@ -27,7 +27,7 @@
 class FrameObserver : public VmbCPP::IFrameObserver
 {
 public:
-    FrameObserver(VmbCPP::CameraPtr _camera, CycDataBuffer* _cycBuf, unsigned int _chunkSize);
+    FrameObserver(VmbCPP::CameraPtr _camera, CycDataBuffer* _cycBuf, size_t _chunkSize);
     virtual ~FrameObserver();
 
     // Frame callback notifies about incoming frames
@@ -35,7 +35,7 @@ public:
 
 private:
     CycDataBuffer*  cycBuf;
-    unsigned int    chunkSize;
+    size_t          chunkSize;
 
 #ifdef QT_DEBUG
 private:

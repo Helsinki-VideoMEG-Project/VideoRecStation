@@ -27,7 +27,7 @@
 //! Attributes associated with each data chunk.
 typedef struct
 {
-    int         chunkSize;
+    size_t      chunkSize;
     uint64_t    timestamp;
     bool        isRec;
 } ChunkAttrib;
