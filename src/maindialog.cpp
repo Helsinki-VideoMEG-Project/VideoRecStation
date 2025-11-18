@@ -257,8 +257,7 @@ void MainDialog::onExit()
 {
     for (unsigned int i=0; i<numCameras; i++)
         if(camCheckBoxes[i]->isChecked())
-            delete videoDialogs[i];
-    settings.controllerRect = this->geometry();
+            camCheckBoxes[i]->setChecked(false);
 
     close();
 }
