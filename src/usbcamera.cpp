@@ -32,7 +32,7 @@ using namespace std;
 using namespace VmbCPP;
 
 
-FrameObserver::FrameObserver(CameraPtr _camera, CycDataBuffer* _cycBuf, unsigned int _chunkSize) : IFrameObserver(_camera)
+FrameObserver::FrameObserver(CameraPtr _camera, CycDataBuffer* _cycBuf, size_t _chunkSize) : IFrameObserver(_camera)
 {
     cycBuf = _cycBuf;
     chunkSize = _chunkSize;

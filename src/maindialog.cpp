@@ -169,12 +169,19 @@ MainDialog::~MainDialog()
     audioFileWriter->stop();
     audioCompressorThread->stop();
     microphoneThread->stop();
+    if (speakerThread) {
+        speakerThread->stop();
+    }
 
     delete cycAudioBufRaw;
     delete cycAudioBufCompressed;
     delete audioCompressorThread;
     delete audioFileWriter;
-    delete audioCompressorThread;
+    delete microphoneThread;
+    if (speakerThread) {
+        delete speakerThread;
+        delete speakerBuffer;
+    }
 
     VmbSystem& system = VmbSystem::GetInstance();
     system.Shutdown();

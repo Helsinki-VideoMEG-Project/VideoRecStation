@@ -18,7 +18,6 @@
  */
 
 #include <time.h>
-#include <sched.h>
 #include <iostream>
 
 #include "microphonethread.h"
@@ -123,18 +122,12 @@ void MicrophoneThread::stoppableRun()
     int                 rc;
     struct timespec     timestamp;
     uint64_t            msec;
-    struct sched_param  sch_param;
     ChunkAttrib         chunkAttrib;
 
-    // Set priority
-    sch_param.sched_priority = MIC_THREAD_PRIORITY;
-    if (sched_setscheduler(0, SCHED_FIFO, &sch_param))
-    {
-        cerr << "Cannot set microphone thread priority. Continuing nevertheless, but don't blame me if you experience any strange problems." << endl;
-    }
+    // TODO: Consider increasing the thread's priority
 
     // Start the acquisition loop
-    while(true)
+    while(!shouldStop)
     {
         rc = snd_pcm_readi(pcmHandle, periodBuffer, framesPerPeriod);
         clock_gettime(CLOCK_REALTIME, &timestamp);

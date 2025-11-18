@@ -141,7 +141,7 @@ void VideoDialog::onBalanceRedChanged(int _newVal)
     float       balanceVal;
 
     balanceVal = _newVal * BALANCE_SCALE;
-    usbcamera->setBalance(balanceVal, "Red");
+    usbcamera->setBalance(balanceVal, (char*)"Red");
 }
 
 
@@ -150,7 +150,7 @@ void VideoDialog::onBalanceBlueChanged(int _newVal)
     float       balanceVal;
 
     balanceVal = _newVal * BALANCE_SCALE;
-    usbcamera->setBalance(balanceVal, "Blue");
+    usbcamera->setBalance(balanceVal, (char*)"Blue");
 
 }
 

@@ -100,17 +100,11 @@ SpeakerThread::~SpeakerThread()
 void SpeakerThread::stoppableRun()
 {
     int                 rc;
-    struct sched_param  sch_param;
 
-    // Set priority
-    sch_param.sched_priority = SPK_THREAD_PRIORITY;
-    if (sched_setscheduler(0, SCHED_FIFO, &sch_param))
-    {
-        cerr << "Cannot set speaker thread priority. Continuing nevertheless, but don't blame me if you experience any strange problems." << endl;
-    }
+    // TODO: Consider increasing the thread's priority 
 
     // Start the playback loop
-    while(true)
+    while(!shouldStop)
     {
         rc = snd_pcm_writei(sndHandle, buffer->getChunk(), settings.framesPerPeriod);
         if (rc == -EPIPE)

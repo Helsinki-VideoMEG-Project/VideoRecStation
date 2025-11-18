@@ -42,12 +42,12 @@ void AudioCompressorThread::stoppableRun()
 {
     while(!shouldStop)
     {
-        unsigned char*              outChunk=NULL;
-        unsigned long               outChunkLen;
-        unsigned long               nSamples;
+        unsigned char*      outChunk=NULL;
+        size_t              outChunkLen;
+        size_t              nSamples;
 
-        unsigned char*              inpChunk;
-        ChunkAttrib                 chunkAttrib;
+        unsigned char*      inpChunk;
+        ChunkAttrib         chunkAttrib;
 
         // Get raw data from the input buffer
         inpChunk = inpBuf->getChunk(&chunkAttrib);
@@ -61,7 +61,7 @@ void AudioCompressorThread::stoppableRun()
 
         nSamples = chunkAttrib.chunkSize / (N_CHANS * sizeof(AUDIO_DATA_TYPE));
 
-        for (int i = 0; i < nSamples; i++)
+        for (size_t i = 0; i < nSamples; i++)
         {
             memcpy(outChunk + i * N_CHANS_2_RECORD * sizeof(AUDIO_DATA_TYPE),
                    inpChunk + i * N_CHANS * sizeof(AUDIO_DATA_TYPE),
