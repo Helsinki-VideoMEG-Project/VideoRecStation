@@ -51,7 +51,7 @@ VideoDialog::VideoDialog(VmbCPP::CameraPtr _camera, int _cameraIdx, QWidget *par
     videoFileWriter->setObjectName(QString("VidFileWrit_%1").arg(cameraIdx + 1));
     videoCompressorThread->setObjectName(QString("VidComp_%1").arg(cameraIdx + 1));
 
-    QObject::connect(cycVideoBufJpeg, SIGNAL(chunkReady(unsigned char*)), ui.videoWidget, SLOT(onDrawFrame(unsigned char*)));
+    QObject::connect(cycVideoBufRaw, SIGNAL(chunkReady(unsigned char*)), ui.videoWidget, SLOT(onDrawFrame(unsigned char*)));
     QObject::connect(cycVideoBufJpeg, SIGNAL(chunkReady(unsigned char*)), this, SLOT(onNewFrame(unsigned char*)));
 
     // Setup gain/shutter sliders
