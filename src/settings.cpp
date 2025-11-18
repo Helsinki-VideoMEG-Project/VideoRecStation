@@ -60,7 +60,6 @@ Settings::Settings()
     controlOnTop = settings.value("control/controller_on_top", false).toBool();
     lowDiskSpaceWarning = settings.value("control/low_disk_space_warning", 0).toDouble();
     confirmStop = settings.value("control/confirm_on_stop", false).toBool();
-    metersUseDB = settings.value("control/meters_use_db", true).toBool();
 
     //---------------------------------------------------------------------
     // Audio settings
@@ -114,7 +113,6 @@ Settings::~Settings()
     settings.setValue("control/controller_on_top", controlOnTop);
     settings.setValue("control/low_disk_space_warning", lowDiskSpaceWarning);
     settings.setValue("control/confirm_on_stop", confirmStop);
-    settings.setValue("control/meters_use_db", metersUseDB);
 
     settings.setValue("audio/sampling_rate", sampRate);
     settings.setValue("audio/frames_per_period", framesPerPeriod);

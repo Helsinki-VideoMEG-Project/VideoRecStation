@@ -189,7 +189,7 @@ USBCamera::USBCamera(CameraPtr _camera, CycDataBuffer* _cycBuf, bool _color)
         }
     }
 
-    frameObserver = new FrameObserver(camera, cycBuf, (unsigned int)payloadSize);
+    frameObserver = new FrameObserver(camera, cycBuf, (size_t)payloadSize);
 }
 
 
