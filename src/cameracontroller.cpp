@@ -1,5 +1,5 @@
 /*
- * usbcamera.cpp
+ * cameracontroller.cpp
  *
  * Author: Andrey Zhdanov
  * Copyright (C) 2014 BioMag Laboratory, Helsinki University Central Hospital
@@ -25,71 +25,19 @@
 #include <thread>
 #include <chrono>
 
-#include "usbcamera.h"
+#include "cameracontroller.h"
 #include "config.h"
 
 using namespace std;
 using namespace VmbCPP;
 
 
-FrameObserver::FrameObserver(CameraPtr _camera, CycDataBuffer* _cycBuf, size_t _chunkSize) : IFrameObserver(_camera)
-{
-    cycBuf = _cycBuf;
-    chunkSize = _chunkSize;
-
-    #ifdef QT_DEBUG
-        frameCnt = 0;
-    #endif
-}
-
-
-FrameObserver::~FrameObserver()
-{
-
-}
-
-
-void FrameObserver::FrameReceived(const FramePtr _frame)
-{
-    struct timespec timestamp;
-    ChunkAttrib     chunkAttrib;
-    VmbUchar_t*     image;
-
-    clock_gettime(CLOCK_REALTIME, &timestamp);
-    chunkAttrib.timestamp = timestamp.tv_nsec / 1000000 + timestamp.tv_sec * 1000;
-    chunkAttrib.chunkSize = chunkSize;
-
-    if (_frame->GetImage(image) != VmbErrorSuccess)
-    {
-        cerr << "Could not get the image data" << endl;
-        abort();
-    }
-
-    cycBuf->insertChunk(image, chunkAttrib);
-
-    // When the frame has been processed, requeue it
-    if (m_pCamera->QueueFrame(_frame) != VmbErrorSuccess)
-    {
-        clog << "Could not requeue frame. Possibly acquisition has been stopped." << endl;
-    }
-
-    #ifdef QT_DEBUG
-        frameCnt++;
-        clog << ".";
-        if (frameCnt % 100 == 0)
-        {
-            clog << " : " << frameCnt << " frames" << endl;
-        }
-    #endif
-}
-
-
-USBCamera::USBCamera(CameraPtr _camera, CycDataBuffer* _cycBuf, bool _color)
+CameraController::CameraController(CameraPtr _camera, FrameObserver* _frameObserver, bool _color)
 {
     FeaturePtr      feature;
     VmbUint32_t     payloadSize;
 
-    cycBuf = _cycBuf;
+    frameObserver = _frameObserver;
     color = _color;
 
     camera = _camera;
@@ -163,6 +111,12 @@ USBCamera::USBCamera(CameraPtr _camera, CycDataBuffer* _cycBuf, bool _color)
         cerr << "Could not get the camera payload size" << endl;
         abort();
     }
+    if (payloadSize != settings.width * settings.height * (color ? 3 : 1))
+    {
+        cerr << "Error: the actual payload size " << payloadSize << " does not match the expected size "
+             << (settings.width * settings.height * (color ? 3 : 1)) << endl;
+        abort();
+    }
 
     if (settings.useExternalTrigger)
     {
@@ -188,26 +142,18 @@ USBCamera::USBCamera(CameraPtr _camera, CycDataBuffer* _cycBuf, bool _color)
             abort();
         }
     }
-
-    frameObserver = new FrameObserver(camera, cycBuf, (size_t)payloadSize);
 }
 
 
-USBCamera::~USBCamera()
+CameraController::~CameraController()
 // This code will be either refactored or removed. Maybe.
 {   
-    //camera->EndCapture();
-    //camera->FlushQueue();
-    //camera->RevokeAllFrames();
+    // TODO: check whether more cleanup is needed here
     camera->Close();
-    // Sleep for some time to allow the last frame to be processed
-    //std::this_thread::sleep_for(std::chrono::milliseconds(10000));
-
-    //delete frameObserver;
 }
 
 
-void USBCamera::startAquisition()
+void CameraController::startAquisition()
 {
     if (camera->StartContinuousImageAcquisition(5, IFrameObserverPtr(frameObserver)) != VmbErrorSuccess)
     {
@@ -217,7 +163,7 @@ void USBCamera::startAquisition()
 }
 
 
-void USBCamera::stopAquisition()
+void CameraController::stopAquisition()
 {
     if (camera->StopContinuousImageAcquisition() != VmbErrorSuccess)
     {
@@ -226,7 +172,7 @@ void USBCamera::stopAquisition()
     }
 }
 
-void USBCamera::setExposureTime(float _exposureTime)
+void CameraController::setExposureTime(float _exposureTime)
 {
     FeaturePtr  feature;
 
@@ -238,7 +184,7 @@ void USBCamera::setExposureTime(float _exposureTime)
     }
 }
 
-void USBCamera::setGain(float _gain)
+void CameraController::setGain(float _gain)
 {
     FeaturePtr  feature;
 
@@ -250,7 +196,7 @@ void USBCamera::setGain(float _gain)
     }
 }
 
-void USBCamera::setBalance(float _balance, char* _color)
+void CameraController::setBalance(float _balance, char* _color)
 {
     FeaturePtr  feature;
 

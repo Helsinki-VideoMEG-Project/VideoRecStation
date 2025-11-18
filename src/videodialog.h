@@ -25,7 +25,8 @@
 #include <QCloseEvent>
 
 #include "ui_videodialog.h"
-#include "usbcamera.h"
+#include "cameracontroller.h"
+#include "frameobserver.h"
 #include "cycdatabuffer.h"
 #include "videofilewriter.h"
 #include "videocompressorthread.h"
@@ -53,7 +54,8 @@ private:
     Ui::VideoDialogClass ui;
 
     unsigned int            cameraIdx;
-    USBCamera*              usbcamera;
+    CameraController*       cameraController;
+    FrameObserver*          frameObserver;
     CycDataBuffer*          cycVideoBufRaw;
     CycDataBuffer*          cycVideoBufJpeg;
     VideoFileWriter*        videoFileWriter;

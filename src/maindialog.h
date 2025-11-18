@@ -29,7 +29,7 @@
 
 #include "config.h"
 #include "ui_maindialog.h"
-#include "usbcamera.h"
+#include "cameracontroller.h"
 #include "microphonethread.h"
 #include "cycdatabuffer.h"
 #include "videofilewriter.h"

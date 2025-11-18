@@ -31,7 +31,8 @@ HEADERS += settings.h \
     microphonethread.h \
     videofilewriter.h \
     config.h \
-    usbcamera.h \
+    cameracontroller.h \
+    frameobserver.h \
     videowidget.h \
     maindialog.h
 SOURCES += settings.cpp \
@@ -46,7 +47,8 @@ SOURCES += settings.cpp \
     cycdatabuffer.cpp \
     microphonethread.cpp \
     videofilewriter.cpp \
-    usbcamera.cpp \
+    cameracontroller.cpp \
+    frameobserver.cpp \
     videowidget.cpp \
     main.cpp \
     maindialog.cpp

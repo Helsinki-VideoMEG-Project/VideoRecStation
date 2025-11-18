@@ -42,7 +42,8 @@ VideoDialog::VideoDialog(VmbCPP::CameraPtr _camera, int _cameraIdx, QWidget *par
     // Set up video recording
     cycVideoBufRaw = new CycDataBuffer(CIRC_VIDEO_BUFF_SZ);
     cycVideoBufJpeg = new CycDataBuffer(CIRC_VIDEO_BUFF_SZ);
-    usbcamera = new USBCamera(_camera, cycVideoBufRaw, settings.color);
+    frameObserver = new FrameObserver(_camera, cycVideoBufRaw, settings.height, settings.width, settings.color);
+    cameraController = new CameraController(_camera, frameObserver, settings.color);
     videoFileWriter = new VideoFileWriter(cycVideoBufJpeg, settings.storagePath.toLocal8Bit().data(), cameraIdx + 1);
     videoCompressorThread = new VideoCompressorThread(cycVideoBufRaw, cycVideoBufJpeg, settings.color, settings.jpgQuality);
 
@@ -84,7 +85,7 @@ VideoDialog::VideoDialog(VmbCPP::CameraPtr _camera, int _cameraIdx, QWidget *par
     // Start video running
     videoFileWriter->start();
     videoCompressorThread->start();
-    usbcamera->startAquisition();
+    cameraController->startAquisition();
 }
 
 
@@ -102,13 +103,19 @@ VideoDialog::~VideoDialog()
     // order of stopping the threads is important.
     videoFileWriter->stop();
     videoCompressorThread->stop();
-    usbcamera->stopAquisition();
+    cameraController->stopAquisition();
 
     delete cycVideoBufRaw;
     delete cycVideoBufJpeg;
-    delete usbcamera;
+    delete cameraController;
     delete videoFileWriter;
     delete videoCompressorThread;
+
+    // TODO: Fix the segfault issue:
+    // Deleteing the frame observer causes segfault. No idea why. Not deleting it causes
+    // a memory leak, but it's better than a crash.
+    //delete frameObserver;
+
 }
 
 
@@ -123,7 +130,7 @@ void VideoDialog::onShutterChanged(int _newVal)
     float       shutterVal;
 
     shutterVal = _newVal * SHUTTER_SCALE;  // msec -> usec
-    usbcamera->setExposureTime(shutterVal);
+    cameraController->setExposureTime(shutterVal);
 }
 
 
@@ -132,7 +139,7 @@ void VideoDialog::onGainChanged(int _newVal)
     float       gainVal;
 
     gainVal = _newVal * GAIN_SCALE;
-    usbcamera->setGain(gainVal);
+    cameraController->setGain(gainVal);
 }
 
 
@@ -141,7 +148,7 @@ void VideoDialog::onBalanceRedChanged(int _newVal)
     float       balanceVal;
 
     balanceVal = _newVal * BALANCE_SCALE;
-    usbcamera->setBalance(balanceVal, (char*)"Red");
+    cameraController->setBalance(balanceVal, (char*)"Red");
 }
 
 
@@ -150,7 +157,7 @@ void VideoDialog::onBalanceBlueChanged(int _newVal)
     float       balanceVal;
 
     balanceVal = _newVal * BALANCE_SCALE;
-    usbcamera->setBalance(balanceVal, (char*)"Blue");
+    cameraController->setBalance(balanceVal, (char*)"Blue");
 
 }
 

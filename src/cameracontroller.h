@@ -1,5 +1,5 @@
 /*
- * usbcamera.h
+ * cameracontroller.h
  *
  * Author: Andrey Zhdanov
  * Copyright (C) 2014 BioMag Laboratory, Helsinki University Central Hospital
@@ -17,38 +17,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef USBCAMERA_H_
-#define USBCAMERA_H_
+#ifndef CAMERACONTROLLER_H_
+#define CAMERACONTROLLER_H_
 
 #include <VmbCPP/VmbCPP.h>
-#include "cycdatabuffer.h"
 #include "settings.h"
-
-class FrameObserver : public VmbCPP::IFrameObserver
-{
-public:
-    FrameObserver(VmbCPP::CameraPtr _camera, CycDataBuffer* _cycBuf, size_t _chunkSize);
-    virtual ~FrameObserver();
-
-    // Frame callback notifies about incoming frames
-    void FrameReceived(const VmbCPP::FramePtr _frame);
-
-private:
-    CycDataBuffer*  cycBuf;
-    size_t          chunkSize;
-
-#ifdef QT_DEBUG
-private:
-    long frameCnt;
-#endif
-};
+#include "frameobserver.h"
 
 //! A class for controlling a USB camera.
-class USBCamera
+class CameraController
 {
 public:
-    USBCamera(VmbCPP::CameraPtr _camera, CycDataBuffer* _cycBuf, bool _color);
-    virtual ~USBCamera();
+    CameraController(VmbCPP::CameraPtr _camera, FrameObserver* _frameObserver, bool _color);
+    virtual ~CameraController();
     void startAquisition();
     void stopAquisition();
     void setExposureTime(float _exposureTime);
@@ -57,10 +38,9 @@ public:
 
 private:
     VmbCPP::CameraPtr   camera;
-    CycDataBuffer*      cycBuf;
     bool                color;
-    FrameObserver*      frameObserver;
     Settings            settings;
+    FrameObserver*      frameObserver;
 };
 
-#endif /* USBCAMERA_H_ */
+#endif /* CAMERACONTROLLER_H_ */
