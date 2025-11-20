@@ -42,6 +42,9 @@ CycDataBuffer::CycDataBuffer(int _bufSize)
         cerr << "Cannot allocate memory for circular buffer" << endl;
         abort();
     }
+
+    // Initialize the buffer with some pattern to force the kernel to allocate physical memory
+    memset(dataBuf, 42, bufSize + 2 * (int(bufSize*MAX_CHUNK_SIZE) + sizeof(ChunkAttrib)));
 }
 
 

@@ -35,7 +35,6 @@
 #include "videofilewriter.h"
 #include "audiofilewriter.h"
 #include "speakerthread.h"
-#include "videocompressorthread.h"
 #include "audiocompressorthread.h"
 #include "videodialog.h"
 #include "settings.h"

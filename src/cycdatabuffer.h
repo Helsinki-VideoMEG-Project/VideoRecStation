@@ -23,6 +23,7 @@
 #include <stdint.h>
 #include <QObject>
 #include <QSemaphore>
+#include <QAtomicInteger>
 
 //! Attributes associated with each data chunk.
 typedef struct
@@ -84,7 +85,7 @@ signals:
     void chunkReady(unsigned char* _data);
 
 private:
-    volatile bool   isRec;
+    QAtomicInteger<bool> isRec;
 
     QSemaphore*     buffSemaphore;  // counts number of bytes available for reading
     unsigned char*  dataBuf;

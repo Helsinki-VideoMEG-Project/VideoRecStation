@@ -36,24 +36,14 @@ VideoWidget::VideoWidget(QWidget* parent)
 }
 
 
-void VideoWidget::onDrawFrame(unsigned char* _buf)
+void VideoWidget::onDrawFrame(uint8_t* _rawImage, int _width, int _height, bool _color)
 {
-    ChunkAttrib chunkAttrib;
     QTransform  transform;
     QTransform  trans = transform.rotate(rotate ? 180 : 0);
-    int width = this->width();
-    int height = this->height();
 
-    if (limitDisplaySize)
-    {
-        width = min(width, int(settings.width));
-        height = min(height, int(settings.height));
-    }
-    chunkAttrib = *((ChunkAttrib*)(_buf-sizeof(ChunkAttrib)));
-
-    QImage image(_buf, settings.width, settings.height, settings.color ? QImage::Format_RGB888 : QImage::Format_Grayscale8);
+    QImage image(_rawImage, _width, _height, _color ? QImage::Format_RGB888 : QImage::Format_Grayscale8);
     QPixmap pixMap = QPixmap::fromImage(image);
 
     // before displaying, scale the pixmap to preserve the aspect ratio
-    this->setPixmap(pixMap.scaled(width, height, Qt::KeepAspectRatio).transformed(trans));
+    this->setPixmap(pixMap.scaled(this->width(), this->height(), Qt::KeepAspectRatio).transformed(trans));
 }

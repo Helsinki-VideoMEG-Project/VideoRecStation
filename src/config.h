@@ -34,8 +34,8 @@
                                         // for the buffer to work properly.
 
 // Buffer sizes
-#define CIRC_VIDEO_BUFF_SZ  2000000000  // in bytes, must be smaller than the largest int (2147483647 ?)
-#define CIRC_AUDIO_BUFF_SZ  1000000000  // in bytes, must be smaller than the largest int (2147483647 ?)
+#define CIRC_VIDEO_BUFF_SZ  500000000   // in bytes, must be smaller than the largest int (2147483647 ?)
+#define CIRC_AUDIO_BUFF_SZ  200000000   // in bytes, must be smaller than the largest int (2147483647 ?)
 
 // Thread priorities
 #define CAM_THREAD_PRIORITY 10

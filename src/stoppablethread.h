@@ -21,6 +21,7 @@
 #define STOPPABLETHREAD_H_
 
 #include <QThread>
+#include <QAtomicInteger>
 
 //! Extension of QThread with added simple mechanism for stopping the thread.
 /*!
@@ -48,7 +49,7 @@ protected:
     virtual ~StoppableThread();
     virtual void run();
     virtual void stoppableRun() = 0;
-    volatile bool shouldStop;
+    QAtomicInteger<bool> shouldStop{false};
 
 private:
     static int nextId;

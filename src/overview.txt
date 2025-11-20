@@ -2,12 +2,6 @@
 
 \section dd_sec Project-wide Design Decisions
 
-In some cases "volatile bool" variable is used for interthread communication.
-In such cases the variable is not protected by mutex, semaphore or something
-similar. This is done to avoid priority inversion and, to a lesser degree, to
-make the code more readable. It is assumed that access to a "volatile bool" is
-"atomic enough".
-
 Circular buffers are used for "single producer/single or multiple consumer"
 interthread communication. We assume that if the buffer is large enough, any
 particular data chunk will be retained long enough before being overwritten.

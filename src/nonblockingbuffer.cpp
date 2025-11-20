@@ -44,6 +44,9 @@ NonBlockingBuffer::NonBlockingBuffer(int _bufSize, long _chunkSize)
         abort();
     }
 
+    // Initialize the buffer with some pattern to force the kernel to allocate physical memory
+    memset(dataBuf, 42, bufSize * chunkSize);
+
     zeroChunk = (char*)malloc(chunkSize);
     if (!zeroChunk)
     {

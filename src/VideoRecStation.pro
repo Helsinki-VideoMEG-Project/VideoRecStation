@@ -21,7 +21,6 @@ QT += core \
 HEADERS += settings.h \
     videodialog.h \
     filewriter.h \
-    videocompressorthread.h \
     audiocompressorthread.h \
     stoppablethread.h \
     speakerthread.h \
@@ -34,11 +33,12 @@ HEADERS += settings.h \
     cameracontroller.h \
     frameobserver.h \
     videowidget.h \
-    maindialog.h
+    maindialog.h \
+    gpujpegencoder.h \
+    videodecompressorthread.h
 SOURCES += settings.cpp \
     videodialog.cpp \
     filewriter.cpp \
-    videocompressorthread.cpp \
     audiocompressorthread.cpp \
     stoppablethread.cpp \
     speakerthread.cpp \
@@ -51,18 +51,22 @@ SOURCES += settings.cpp \
     frameobserver.cpp \
     videowidget.cpp \
     main.cpp \
-    maindialog.cpp
+    maindialog.cpp \
+    gpujpegencoder.cpp \
+    videodecompressorthread.cpp
 FORMS += videodialog.ui \
     maindialog.ui
 INCLUDEPATH += /usr/include/c++/4.4 \
     /usr/include \
-    /opt/VimbaX_2025-2/api/include
+    /opt/VimbaX_2025-2/api/include \
+    /opt/GPUJPEG.0.27.8/include
 LIBS += -L/usr/local/lib \
     -L/usr/lib \
     -lasound \
-    -ljpeg \
     -L/opt/VimbaX_2025-2/api/lib \
-    -lVmbCPP
+    -lVmbCPP \
+    -L/opt/GPUJPEG.0.27.8/lib \
+    -lgpujpeg
 RESOURCES += 
 DEFINES += __STDC_LIMIT_MACROS
 CONFIG += debug_and_release

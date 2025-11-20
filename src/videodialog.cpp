@@ -40,19 +40,20 @@ VideoDialog::VideoDialog(VmbCPP::CameraPtr _camera, int _cameraIdx, QWidget *par
     setWindowTitle(QString("Camera %1").arg(cameraIdx + 1));
 
     // Set up video recording
-    cycVideoBufRaw = new CycDataBuffer(CIRC_VIDEO_BUFF_SZ);
-    cycVideoBufJpeg = new CycDataBuffer(CIRC_VIDEO_BUFF_SZ);
-    frameObserver = new FrameObserver(_camera, cycVideoBufRaw, settings.height, settings.width, settings.color);
+    cycVideoBufDisp = new CycDataBuffer(CIRC_VIDEO_BUFF_SZ);
+    cycVideoBufWrite = new CycDataBuffer(CIRC_VIDEO_BUFF_SZ);
+    videoFileWriter = new VideoFileWriter(cycVideoBufWrite, settings.storagePath.toLocal8Bit().data(), cameraIdx + 1);
+    gpuJpegEncoder = new GPUJPEGEncoder(settings.width, settings.height, settings.color, settings.jpgQuality);
+    frameObserver = new FrameObserver(_camera, cycVideoBufDisp, gpuJpegEncoder, settings.width, settings.height, settings.color);
     cameraController = new CameraController(_camera, frameObserver, settings.color);
-    videoFileWriter = new VideoFileWriter(cycVideoBufJpeg, settings.storagePath.toLocal8Bit().data(), cameraIdx + 1);
-    videoCompressorThread = new VideoCompressorThread(cycVideoBufRaw, cycVideoBufJpeg, settings.color, settings.jpgQuality);
+    videoDecompressorThread = new VideoDecompressorThread(cycVideoBufDisp, cycVideoBufWrite, settings.width, settings.height, settings.color);
 
     // Set thread names to simplify profiling
     videoFileWriter->setObjectName(QString("VidFileWrit_%1").arg(cameraIdx + 1));
-    videoCompressorThread->setObjectName(QString("VidComp_%1").arg(cameraIdx + 1));
+    videoDecompressorThread->setObjectName(QString("VidDecompTh_%1").arg(cameraIdx + 1));
 
-    QObject::connect(cycVideoBufRaw, SIGNAL(chunkReady(unsigned char*)), ui.videoWidget, SLOT(onDrawFrame(unsigned char*)));
-    QObject::connect(cycVideoBufJpeg, SIGNAL(chunkReady(unsigned char*)), this, SLOT(onNewFrame(unsigned char*)));
+    QObject::connect(videoDecompressorThread, SIGNAL(frameDecoded(uint8_t*, int, int, bool)), ui.videoWidget, SLOT(onDrawFrame(uint8_t*, int, int, bool)));
+    QObject::connect(cycVideoBufWrite, SIGNAL(chunkReady(unsigned char*)), this, SLOT(onNewFrame(unsigned char*)));
 
     // Setup gain/shutter sliders
     ui.shutterSlider->setMinimum(SHUTTER_SLIDER_MIN);
@@ -84,7 +85,7 @@ VideoDialog::VideoDialog(VmbCPP::CameraPtr _camera, int _cameraIdx, QWidget *par
 
     // Start video running
     videoFileWriter->start();
-    videoCompressorThread->start();
+    videoDecompressorThread->start();
     cameraController->startAquisition();
 }
 
@@ -102,19 +103,22 @@ VideoDialog::~VideoDialog()
     // otherwise cycVideoBufRaw or cycVideoBufJpeg buffer might overflow. The
     // order of stopping the threads is important.
     videoFileWriter->stop();
-    videoCompressorThread->stop();
+    videoDecompressorThread->stop();
     cameraController->stopAquisition();
 
-    delete cycVideoBufRaw;
-    delete cycVideoBufJpeg;
+    delete cycVideoBufDisp;
+    delete cycVideoBufWrite;
     delete cameraController;
     delete videoFileWriter;
-    delete videoCompressorThread;
 
     // TODO: Fix the segfault issue:
     // Deleteing the frame observer causes segfault. No idea why. Not deleting it causes
     // a memory leak, but it's better than a crash.
     //delete frameObserver;
+
+    // Wait a bit to let the frameObserver finish processing any remaining frames
+    QThread::msleep(200);
+    delete gpuJpegEncoder;
 
 }
 
@@ -186,7 +190,7 @@ void VideoDialog::onNewFrame(unsigned char* _jpegBuf)
 
 void VideoDialog::setIsRec(bool _isRec)
 {
-    cycVideoBufJpeg->setIsRec(_isRec);
+    cycVideoBufWrite->setIsRec(_isRec);
 }
 
 void VideoDialog::onLdsBoxToggled(bool _checked)

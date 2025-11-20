@@ -1,8 +1,7 @@
 /*
- * videowidget.h
+ * gpujpegencoder.h
  *
  * Author: Andrey Zhdanov
- * Copyright (C) 2014 BioMag Laboratory, Helsinki University Central Hospital
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,29 +16,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VIDEOWIDGET_H_
-#define VIDEOWIDGET_H_
+#ifndef GPUJPEGENCODER_H_
+#define GPUJPEGENCODER_H_
 
-#include <QLabel>
 #include <QAtomicInteger>
-#include "settings.h"
+#include "libgpujpeg/gpujpeg_encoder.h"
 
-class VideoWidget : public QLabel
+class GPUJPEGEncoder
 {
-    Q_OBJECT
-
 public:
-    VideoWidget(QWidget* parent=0);
-    //int heightForWidth(int _w);
-    QAtomicInteger<bool> rotate{false};
-    QAtomicInteger<bool> limitDisplaySize{false};
-
-public slots:
-    void onDrawFrame(uint8_t* _rawImage, int _width, int _height, bool _color);
+    GPUJPEGEncoder(int _width, int _height, bool _color, int _quality);
+    virtual ~GPUJPEGEncoder();
+    uint8_t* encodeFrame(uint8_t* _frameData, size_t& _outSize);
+    void setJPEGQuality(int _quality);
 
 private:
-    char*       imBuf;
-    Settings    settings;
+    struct gpujpeg_encoder* encoder;
+    struct gpujpeg_parameters param;
+    struct gpujpeg_image_parameters param_image;
+    QAtomicInteger<int> quality;
 };
 
-#endif /* VIDEOWIDGET_H_ */
+#endif /* GPUJPEGENCODER_H_ */

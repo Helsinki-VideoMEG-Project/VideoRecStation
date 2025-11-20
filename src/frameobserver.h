@@ -23,11 +23,12 @@
 #include <VmbCPP/VmbCPP.h>
 #include "cycdatabuffer.h"
 #include "settings.h"
+#include "gpujpegencoder.h"
 
 class FrameObserver : public VmbCPP::IFrameObserver
 {
 public:
-    FrameObserver(VmbCPP::CameraPtr _camera, CycDataBuffer* _cycBuf, int _h, int _w, bool _color);
+    FrameObserver(VmbCPP::CameraPtr _camera, CycDataBuffer* _cycBuf, GPUJPEGEncoder* _encoder, int _width,  int _height, bool _color);
     virtual ~FrameObserver();
 
     // Frame callback notifies about incoming frames
@@ -35,7 +36,9 @@ public:
 
 private:
     CycDataBuffer*  cycBuf;
-    size_t          chunkSize;
+    size_t          rawImageSize;
+
+    GPUJPEGEncoder* encoder;
 
 #ifdef QT_DEBUG
 private:

@@ -29,7 +29,8 @@
 #include "frameobserver.h"
 #include "cycdatabuffer.h"
 #include "videofilewriter.h"
-#include "videocompressorthread.h"
+#include "gpujpegencoder.h"
+#include "videodecompressorthread.h"
 
 
 class VideoDialog : public QDialog
@@ -53,13 +54,14 @@ public slots:
 private:
     Ui::VideoDialogClass ui;
 
-    unsigned int            cameraIdx;
-    CameraController*       cameraController;
-    FrameObserver*          frameObserver;
-    CycDataBuffer*          cycVideoBufRaw;
-    CycDataBuffer*          cycVideoBufJpeg;
-    VideoFileWriter*        videoFileWriter;
-    VideoCompressorThread*  videoCompressorThread;
+    unsigned int                cameraIdx;
+    CameraController*           cameraController;
+    FrameObserver*              frameObserver;
+    CycDataBuffer*              cycVideoBufDisp;
+    CycDataBuffer*              cycVideoBufWrite;
+    VideoFileWriter*            videoFileWriter;
+    GPUJPEGEncoder*             gpuJpegEncoder;
+    VideoDecompressorThread*    videoDecompressorThread;
 
     // These variables are used for showing the FPS
     u_int64_t               prevFrameTstamp;

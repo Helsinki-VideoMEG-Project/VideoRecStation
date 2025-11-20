@@ -32,10 +32,12 @@ using namespace std;
 using namespace VmbCPP;
 
 
-FrameObserver::FrameObserver(CameraPtr _camera, CycDataBuffer* _cycBuf, int _h, int _w, bool _color) : IFrameObserver(_camera)
+FrameObserver::FrameObserver(CameraPtr _camera, CycDataBuffer* _cycBuf, GPUJPEGEncoder* _encoder, int _width, int _height, bool _color) : IFrameObserver(_camera)
 {
     cycBuf = _cycBuf;
-    chunkSize = (size_t)(_h) * _w * (_color ? 3 : 1);
+    rawImageSize = (size_t)(_width) * _height * (_color ? 3 : 1);
+
+    encoder = _encoder;
 
     #ifdef QT_DEBUG
         frameCnt = 0;
@@ -53,19 +55,24 @@ void FrameObserver::FrameReceived(const FramePtr _frame)
 {
     struct timespec timestamp;
     ChunkAttrib     chunkAttrib;
-    VmbUchar_t*     image;
+    VmbUchar_t*     rawImage;
+
+    uint8_t*        jpegImage;
+    size_t          jpegSize;
 
     clock_gettime(CLOCK_REALTIME, &timestamp);
     chunkAttrib.timestamp = timestamp.tv_nsec / 1000000 + timestamp.tv_sec * 1000;
-    chunkAttrib.chunkSize = chunkSize;
 
-    if (_frame->GetImage(image) != VmbErrorSuccess)
+    if (_frame->GetImage(rawImage) != VmbErrorSuccess)
     {
         cerr << "Could not get the image data" << endl;
         abort();
     }
 
-    cycBuf->insertChunk(image, chunkAttrib);
+    jpegImage = encoder->encodeFrame(rawImage, jpegSize);
+    chunkAttrib.chunkSize = jpegSize;
+
+    cycBuf->insertChunk(jpegImage, chunkAttrib);
 
     // When the frame has been processed, requeue it
     if (m_pCamera->QueueFrame(_frame) != VmbErrorSuccess)
