@@ -22,31 +22,63 @@
 
 #include "videodialog.h"
 #include "config.h"
-#include "settings.h"
 
 using namespace std;
 
-VideoDialog::VideoDialog(VmbCPP::CameraPtr _camera, int _cameraIdx, QWidget *parent)
+VideoDialog::VideoDialog(VmbCPP::CameraPtr _camera, int _cameraIdx, QString _cameraSN, QWidget *parent)
     : QDialog(parent)
 {
-    Settings    settings;
+    Settings  settings;
     cameraIdx = _cameraIdx;
-    prevFrameTstamp = 0;
-    frameCnt = 0;
+    cameraSN = _cameraSN;
 
     ui.setupUi(this);
     ui.videoWidget->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     setWindowFlags(Qt::Window | Qt::CustomizeWindowHint | Qt::WindowTitleHint| Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint);
     setWindowTitle(QString("Camera %1").arg(cameraIdx + 1));
 
+    // EXplicitly set gpuJpegEncoder and cameraController to nullptr
+    // to make sure that setting min/max values for sliders below
+    // does not affect camera settings
+    gpuJpegEncoder = nullptr;
+    cameraController = nullptr;
+
+    // Setup gain/shutter sliders
+    ui.shutterSlider->setMinimum(SHUTTER_SLIDER_MIN);
+    ui.shutterSlider->setMaximum(SHUTTER_SLIDER_MAX);
+    ui.shutterSpinBox->setMinimum(SHUTTER_SLIDER_MIN);
+    ui.shutterSpinBox->setMaximum(SHUTTER_SLIDER_MAX);
+
+    ui.gainSlider->setMinimum(GAIN_SLIDER_MIN);
+    ui.gainSlider->setMaximum(GAIN_SLIDER_MAX);
+    ui.gainSpinBox->setMinimum(GAIN_SLIDER_MIN);
+    ui.gainSpinBox->setMaximum(GAIN_SLIDER_MAX);
+
+    ui.balanceRedSlider->setMinimum(BALANCE_SLIDER_MIN);
+    ui.balanceRedSlider->setMaximum(BALANCE_SLIDER_MAX);
+    ui.balanceRedSpinBox->setMinimum(BALANCE_SLIDER_MIN);
+    ui.balanceRedSpinBox->setMaximum(BALANCE_SLIDER_MAX);
+
+    ui.balanceBlueSlider->setMinimum(BALANCE_SLIDER_MIN);
+    ui.balanceBlueSlider->setMaximum(BALANCE_SLIDER_MAX);
+    ui.balanceBlueSpinBox->setMinimum(BALANCE_SLIDER_MIN);
+    ui.balanceBlueSpinBox->setMaximum(BALANCE_SLIDER_MAX);
+
+    ui.jpegQualitySlider->setMinimum(JPEG_QUALITY_MIN);
+    ui.jpegQualitySlider->setMaximum(JPEG_QUALITY_MAX);
+    ui.jpegQualitySpinBox->setMinimum(JPEG_QUALITY_MIN);
+    ui.jpegQualitySpinBox->setMaximum(JPEG_QUALITY_MAX);
+
+    camSettings = settings.loadCameraSettings(cameraSN);
+
     // Set up video recording
     cycVideoBufDisp = new CycDataBuffer(CIRC_VIDEO_BUFF_SZ);
     cycVideoBufWrite = new CycDataBuffer(CIRC_VIDEO_BUFF_SZ);
     videoFileWriter = new VideoFileWriter(cycVideoBufWrite, settings.storagePath.toLocal8Bit().data(), cameraIdx + 1);
-    gpuJpegEncoder = new GPUJPEGEncoder(settings.width, settings.height, settings.color, settings.jpgQuality);
-    frameObserver = new FrameObserver(_camera, cycVideoBufDisp, gpuJpegEncoder, settings.width, settings.height, settings.color);
-    cameraController = new CameraController(_camera, frameObserver, settings.color);
-    videoDecompressorThread = new VideoDecompressorThread(cycVideoBufDisp, cycVideoBufWrite, settings.width, settings.height, settings.color);
+    gpuJpegEncoder = new GPUJPEGEncoder(camSettings);
+    frameObserver = new FrameObserver(_camera, cycVideoBufDisp, gpuJpegEncoder, camSettings);
+    cameraController = new CameraController(_camera, frameObserver, camSettings);
+    videoDecompressorThread = new VideoDecompressorThread(cycVideoBufDisp, cycVideoBufWrite, camSettings);
 
     // Set thread names to simplify profiling
     videoFileWriter->setObjectName(QString("VidFileWrit_%1").arg(cameraIdx + 1));
@@ -55,33 +87,30 @@ VideoDialog::VideoDialog(VmbCPP::CameraPtr _camera, int _cameraIdx, QWidget *par
     QObject::connect(videoDecompressorThread, SIGNAL(frameDecoded(uint8_t*, int, int, bool)), ui.videoWidget, SLOT(onDrawFrame(uint8_t*, int, int, bool)));
     QObject::connect(cycVideoBufWrite, SIGNAL(chunkReady(unsigned char*)), this, SLOT(onNewFrame(unsigned char*)));
 
-    // Setup gain/shutter sliders
-    ui.shutterSlider->setMinimum(SHUTTER_SLIDER_MIN);
-    ui.shutterSlider->setMaximum(SHUTTER_SLIDER_MAX);
+    // Make controls match the showControlsBox state
+    this->onShowControlsToggled(ui.showControlsBox->isChecked());
 
-    ui.gainSlider->setMinimum(GAIN_SLIDER_MIN);
-    ui.gainSlider->setMaximum(GAIN_SLIDER_MAX);
+    // Set the controls according to the values loaded from disk
+    ui.shutterSlider->setValue(camSettings.shutter);
+    ui.shutterSpinBox->setValue(camSettings.shutter);
+    ui.gainSlider->setValue(camSettings.gain);
+    ui.gainSpinBox->setValue(camSettings.gain);
+    ui.balanceRedSlider->setValue(camSettings.balance_red);
+    ui.balanceRedSpinBox->setValue(camSettings.balance_red);
+    ui.balanceBlueSlider->setValue(camSettings.balance_blue);
+    ui.balanceBlueSpinBox->setValue(camSettings.balance_blue);
+    
+    ui.jpegQualitySlider->setValue(camSettings.jpeg_quality);
+    ui.jpegQualitySpinBox->setValue(camSettings.jpeg_quality);
 
-    ui.balanceRedSlider->setMinimum(BALANCE_SLIDER_MIN);
-    ui.balanceRedSlider->setMaximum(BALANCE_SLIDER_MAX);
-
-    ui.balanceBlueSlider->setMinimum(BALANCE_SLIDER_MIN);
-    ui.balanceBlueSlider->setMaximum(BALANCE_SLIDER_MAX);
-
-
-    //if(settings.videoRects[idx].isValid())
-    //    videoDialogs[idx]->setGeometry(settings.videoRects[idx]);
-    //videoDialogs[idx]->findChild<QSlider*>("shutterSlider")->setValue(settings.videoShutters[idx]);
-    //videoDialogs[idx]->findChild<QSlider*>("gainSlider")->setValue(settings.videoGains[idx]);
-    //videoDialogs[idx]->findChild<QSlider*>("uvSlider")->setValue(settings.videoUVs[idx]);
-    //videoDialogs[idx]->findChild<QSlider*>("vrSlider")->setValue(settings.videoVRs[idx]);
-    //videoDialogs[idx]->findChild<QCheckBox*>("ldsBox")->setChecked(settings.videoLimits[idx]);
-
-    ui.balanceRedSlider->setEnabled(settings.color);
-    ui.balanceBlueSlider->setEnabled(settings.color);
-    ui.balanceRedLabel->setEnabled(settings.color);
-    ui.balanceBlueLabel->setEnabled(settings.color);
-    ui.wbLabel->setEnabled(settings.color);
+    // Enable/disable color controls
+    ui.balanceRedSlider->setEnabled(camSettings.color);
+    ui.balanceRedSpinBox->setEnabled(camSettings.color);
+    ui.balanceRedLabel->setEnabled(camSettings.color);
+    ui.balanceBlueSlider->setEnabled(camSettings.color);
+    ui.balanceBlueSpinBox->setEnabled(camSettings.color);
+    ui.balanceBlueLabel->setEnabled(camSettings.color);
+    ui.wbLabel->setEnabled(camSettings.color);
 
     // Start video running
     videoFileWriter->start();
@@ -92,12 +121,10 @@ VideoDialog::VideoDialog(VmbCPP::CameraPtr _camera, int _cameraIdx, QWidget *par
 
 VideoDialog::~VideoDialog()
 {
-    //settings.videoRects[idx] = videoDialogs[idx]->geometry();
-    //settings.videoShutters[idx] = videoDialogs[idx]->findChild<QSlider*>("shutterSlider")->value();
-    //settings.videoGains[idx] = videoDialogs[idx]->findChild<QSlider*>("gainSlider")->value();
-    //settings.videoUVs[idx] = videoDialogs[idx]->findChild<QSlider*>("uvSlider")->value();
-    //settings.videoVRs[idx] = videoDialogs[idx]->findChild<QSlider*>("vrSlider")->value();
-    //settings.videoLimits[idx] = videoDialogs[idx]->findChild<QCheckBox*>("ldsBox")->isChecked();
+    Settings  settings;
+
+    // Save camera-specific settings to disk
+    settings.saveCameraSettings(cameraSN, camSettings);
 
     // The piece of code stopping the threads should execute fast enough,
     // otherwise cycVideoBufRaw or cycVideoBufJpeg buffer might overflow. The
@@ -119,7 +146,6 @@ VideoDialog::~VideoDialog()
     // Wait a bit to let the frameObserver finish processing any remaining frames
     QThread::msleep(200);
     delete gpuJpegEncoder;
-
 }
 
 
@@ -133,58 +159,94 @@ void VideoDialog::onShutterChanged(int _newVal)
 {
     float       shutterVal;
 
-    shutterVal = _newVal * SHUTTER_SCALE;  // msec -> usec
-    cameraController->setExposureTime(shutterVal);
+    if (cameraController != nullptr)
+    {
+        shutterVal = _newVal * SHUTTER_SCALE;  // msec -> usec
+        cameraController->setExposureTime(shutterVal);
+        camSettings.shutter = _newVal;
+    }
 }
-
 
 void VideoDialog::onGainChanged(int _newVal)
 {
     float       gainVal;
 
-    gainVal = _newVal * GAIN_SCALE;
-    cameraController->setGain(gainVal);
+    if (cameraController != nullptr)
+    {
+        gainVal = _newVal * GAIN_SCALE;
+        cameraController->setGain(gainVal);
+        camSettings.gain = _newVal;
+    }
 }
-
 
 void VideoDialog::onBalanceRedChanged(int _newVal)
 {
     float       balanceVal;
 
-    balanceVal = _newVal * BALANCE_SCALE;
-    cameraController->setBalance(balanceVal, (char*)"Red");
+    if (cameraController != nullptr)
+    {
+        balanceVal = _newVal * BALANCE_SCALE;
+        cameraController->setBalance(balanceVal, (char*)"Red");
+        camSettings.balance_red = _newVal;
+    }
 }
-
 
 void VideoDialog::onBalanceBlueChanged(int _newVal)
 {
     float       balanceVal;
 
-    balanceVal = _newVal * BALANCE_SCALE;
-    cameraController->setBalance(balanceVal, (char*)"Blue");
-
+    if (cameraController != nullptr)
+    {
+        balanceVal = _newVal * BALANCE_SCALE;
+        cameraController->setBalance(balanceVal, (char*)"Blue");
+        camSettings.balance_blue = _newVal;
+    }
 }
 
+void VideoDialog::onJpegQualityChanged(int _newVal)
+{
+    if (gpuJpegEncoder != nullptr)
+    {
+        gpuJpegEncoder->setJPEGQuality(_newVal);
+        camSettings.jpeg_quality = _newVal;
+    }
+}
 
 void VideoDialog::onNewFrame(unsigned char* _jpegBuf)
 {
     ChunkAttrib chunkAttrib;
-    float       fps;
+    int         prevStatsIdx = statsIdx;
 
+    // Update the data for computing realtime stats
     chunkAttrib = *((ChunkAttrib*)(_jpegBuf-sizeof(ChunkAttrib)));
 
-    if (prevFrameTstamp)
-    {
-        if(frameCnt == 10)
-        {
-            fps = 1 / (float(chunkAttrib.timestamp - prevFrameTstamp) / 1000);
-            ui.fpsLabel->setText(QString("FPS: %1").arg(fps, 0, 'f', 2));
-            frameCnt = 0;
-        }
-    }
+    timeStamps[statsIdx] = chunkAttrib.timestamp;
+    frameSizes[statsIdx] = chunkAttrib.chunkSize + sizeof(ChunkAttrib);
+    statsIdx = (statsIdx + 1) % N_FRAMES_FOR_STATS;
+    runningFrameCnt++;
 
-    prevFrameTstamp = chunkAttrib.timestamp;
-    frameCnt++;
+    // Compute and display stats every 10 frames after we have enough frames to compute stats
+    if ((runningFrameCnt >= N_FRAMES_FOR_STATS) && (runningFrameCnt % 10 == 0))
+    {
+        // Compute average FPS and bitrate
+        uint64_t    timeDiff;
+        size_t      sizeSum = 0;
+        float       fps;
+        float       mbps; // megabytes per second
+
+        timeDiff = timeStamps[prevStatsIdx] - timeStamps[statsIdx]; // At this point statsIdx points to the oldest entry and prevStatsIdx to the newest
+
+        for (int i = 0; i < N_FRAMES_FOR_STATS; i++)
+        {
+            if (i != statsIdx) // Skip the oldest frame
+                sizeSum += frameSizes[i];
+        }
+
+        fps = double(N_FRAMES_FOR_STATS-1) / (double(timeDiff) / 1000);
+        mbps = double(sizeSum) / (double(timeDiff) / 1000) / 1e6; // in MB/s 
+
+        ui.fpsLabel->setText(QString("FPS: %1").arg(fps, 0, 'f', 2) + QString(", Data rate: %1 MB/s").arg(mbps, 0, 'f', 2));
+    }
 }
 
 
@@ -193,7 +255,17 @@ void VideoDialog::setIsRec(bool _isRec)
     cycVideoBufWrite->setIsRec(_isRec);
 }
 
-void VideoDialog::onLdsBoxToggled(bool _checked)
+
+void VideoDialog::onShowControlsToggled(bool _checked)
 {
-    ui.videoWidget->limitDisplaySize = _checked;
+    // Hide all widgets in the grid layout
+    for (int i = 0; i < ui.gridLayout->count(); ++i) {
+        QWidget *widget = ui.gridLayout->itemAt(i)->widget();
+        if (widget) {
+            if (_checked)
+                widget->show();
+            else
+                widget->hide();
+        }
+    }
 }

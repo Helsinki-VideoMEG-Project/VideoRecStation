@@ -2,7 +2,6 @@
  * settings.cpp
  *
  * Author: Andrey Zhdanov
- * Copyright (C) 2014 BioMag Laboratory, Helsinki University Central Hospital
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,47 +18,22 @@
 
 #include <stdio.h>
 #include <QSettings>
-#include <QRect>
 
 #include "settings.h"
 #include "config.h"
+
 
 Settings::Settings()
 {
     QSettings settings(ORG_NAME, APP_NAME);
 
-
     //---------------------------------------------------------------------
     // Video settings
     //
 
-    // JPEG quality
-    jpgQuality = settings.value("video/jpeg_quality", 80).toInt();
-
-    // Use color mode
-    color = settings.value("video/color", true).toBool();
-
-    // Video size
-    width = settings.value("video/width", 976).toInt();
-    height = settings.value("video/height", 736).toInt();
-    offsetx = settings.value("video/offset_x", 488).toInt();
-    offsety = settings.value("video/offset_y", 368).toInt();
-
     // Capture settings
     useExternalTrigger = settings.value("video/use_external_trigger", false).toBool();
     externalTriggerSource = settings.value("video/external_trigger_source", "Line0").toString();
-
-    for (unsigned int i=0; i<MAX_CAMERAS; i++)
-    {
-        videoRects[i] = settings.value(QString("control/viewer_%1_window").arg(i+1), QRect(-1, -1, -1, -1)).toRect();
-        videoLimits[i] = settings.value(QString("control/viewer_%1_limit_display_size").arg(i+1), false).toBool();
-    }
-
-    // Window pos and size
-    controllerRect = settings.value("control/controller_window", QRect(-1, -1, -1, -1)).toRect();
-    controlOnTop = settings.value("control/controller_on_top", false).toBool();
-    lowDiskSpaceWarning = settings.value("control/low_disk_space_warning", 0).toDouble();
-    confirmStop = settings.value("control/confirm_on_stop", false).toBool();
 
     //---------------------------------------------------------------------
     // Audio settings
@@ -75,7 +49,7 @@ Settings::Settings()
     nPeriods = settings.value("audio/num_periods", 10).toInt();
 
     // Enable/disable speaker feedback
-    useFeedback = settings.value("audio/use_speaker_feedback", true).toBool();
+    useFeedback = settings.value("audio/use_speaker_feedback", false).toBool();
 
     // Speaker buffer size (in frames)
     spkBufSz = settings.value("audio/speaker_buffer_size", 4).toInt();
@@ -90,29 +64,16 @@ Settings::Settings()
 
     // Data storage folder
     storagePath = settings.value("misc/data_storage_path", "/tmp").toString();
+    lowDiskSpaceThreshGB = settings.value("misc/low_disk_space_warning_threshold_gb", 5).toDouble();
+
 }
 
 Settings::~Settings()
 {
     QSettings settings(ORG_NAME, APP_NAME);
 
-    settings.setValue("video/jpeg_quality", jpgQuality);
-    settings.setValue("video/color", color);
-    settings.setValue("video/width", width);
-    settings.setValue("video/height", height);
-    settings.setValue("video/offset_x", offsetx);
-    settings.setValue("video/offset_y", offsety);
     settings.setValue("video/use_external_trigger", useExternalTrigger);
     settings.setValue("video/external_trigger_source", externalTriggerSource);
-    for (unsigned int i=0; i<MAX_CAMERAS; i++)
-    {
-        settings.setValue(QString("control/viewer_%1_window").arg(i+1), videoRects[i]);
-        settings.setValue(QString("control/viewer_%1_limit_display_size").arg(i+1), videoLimits[i]);
-    }
-    settings.setValue("control/controller_window", controllerRect);
-    settings.setValue("control/controller_on_top", controlOnTop);
-    settings.setValue("control/low_disk_space_warning", lowDiskSpaceWarning);
-    settings.setValue("control/confirm_on_stop", confirmStop);
 
     settings.setValue("audio/sampling_rate", sampRate);
     settings.setValue("audio/frames_per_period", framesPerPeriod);
@@ -124,6 +85,49 @@ Settings::~Settings()
     settings.setValue("audio/output_audio_device", outAudioDev);
 
     settings.setValue("misc/data_storage_path", storagePath);
+    settings.setValue("misc/low_disk_space_warning_threshold_gb", lowDiskSpaceThreshGB);
+
+    settings.sync();
+}
+
+
+struct camera_settings Settings::loadCameraSettings(QString _cameraSN)
+{
+    QSettings settings(ORG_NAME, APP_NAME);
+    struct camera_settings camSettings;
+
+    QString baseKey = QString("video/camera/") + _cameraSN + "/";
+
+    camSettings.shutter = settings.value(baseKey + "shutter", 20).toInt();
+    camSettings.gain = settings.value(baseKey + "gain", 10).toInt();
+    camSettings.balance_blue = settings.value(baseKey + "balance_blue", 15).toInt();
+    camSettings.balance_red = settings.value(baseKey + "balance_red", 15).toInt();
+    camSettings.jpeg_quality = settings.value(baseKey + "jpeg_quality", 80).toInt();
+    camSettings.width = settings.value(baseKey + "width", 976).toInt();
+    camSettings.height = settings.value(baseKey + "height", 736).toInt();
+    camSettings.offsetx = settings.value(baseKey + "offset_x", 488).toInt();
+    camSettings.offsety = settings.value(baseKey + "offset_y", 368).toInt();
+    camSettings.color = settings.value(baseKey + "color", true).toBool();
+
+    return camSettings;
+}
+
+void Settings::saveCameraSettings(QString _cameraSN, struct camera_settings _camSettings)
+{
+    QSettings settings(ORG_NAME, APP_NAME);
+
+    QString baseKey = QString("video/camera/") + _cameraSN + "/";
+
+    settings.setValue(baseKey + "shutter", _camSettings.shutter);
+    settings.setValue(baseKey + "gain", _camSettings.gain);
+    settings.setValue(baseKey + "balance_blue", _camSettings.balance_blue);
+    settings.setValue(baseKey + "balance_red", _camSettings.balance_red);
+    settings.setValue(baseKey + "jpeg_quality", _camSettings.jpeg_quality);
+    settings.setValue(baseKey + "width", _camSettings.width);
+    settings.setValue(baseKey + "height", _camSettings.height);
+    settings.setValue(baseKey + "offset_x", _camSettings.offsetx);
+    settings.setValue(baseKey + "offset_y", _camSettings.offsety);
+    settings.setValue(baseKey + "color", _camSettings.color);
 
     settings.sync();
 }

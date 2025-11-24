@@ -19,7 +19,7 @@
  #include <iostream>
 #include "gpujpegencoder.h"
 
-GPUJPEGEncoder::GPUJPEGEncoder(int _width, int _height, bool _color, int _quality)
+GPUJPEGEncoder::GPUJPEGEncoder(struct camera_settings _camSettings)
 {
     // Initialize GPUJPEG encoder
     if ((encoder = gpujpeg_encoder_create(0)) == NULL) {
@@ -27,14 +27,14 @@ GPUJPEGEncoder::GPUJPEGEncoder(int _width, int _height, bool _color, int _qualit
         exit(1);
     }
 
-    quality = _quality;
+    quality = _camSettings.jpeg_quality;
 
     // Set image parameters
     gpujpeg_image_set_default_parameters(&param_image);
-    param_image.width = _width;
-    param_image.height = _height;
-    param_image.color_space = _color ? GPUJPEG_RGB : GPUJPEG_NONE;
-    param_image.pixel_format = _color ? GPUJPEG_444_U8_P012 : GPUJPEG_U8;
+    param_image.width = _camSettings.width;
+    param_image.height = _camSettings.height;
+    param_image.color_space = _camSettings.color ? GPUJPEG_RGB : GPUJPEG_NONE;
+    param_image.pixel_format = _camSettings.color ? GPUJPEG_444_U8_P012 : GPUJPEG_U8;
 }
 
 

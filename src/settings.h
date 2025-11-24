@@ -2,7 +2,6 @@
  * settings.h
  *
  * Author: Andrey Zhdanov
- * Copyright (C) 2014 BioMag Laboratory, Helsinki University Central Hospital
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,21 +19,31 @@
 #ifndef SETTINGS_H_
 #define SETTINGS_H_
 
-#include <QRect>
+#include <QString>
 #include "config.h"
+
+struct camera_settings {
+    int shutter;
+    int gain;
+    int balance_blue;
+    int balance_red;
+    int jpeg_quality;
+
+    int width;
+    int height;
+    int offsetx;
+    int offsety;
+    bool color;
+};
+
 
 //! Application-wide settings preserved across multiple invocations.
 /*!
- * This class contains application-wide settings read from disc. To read the
- * settings simply create the instance of this class and read the values from
- * the corresponding public variables of the class. The settings are supposed
- * to be read only; they can be changed by manually editing the text file
- * between program invocations but they should stay constant for the whole
- * lifetime of a single program instance. The class should be completely
- * thread-safe (CURRENTLY IT IS NOT).
+ * This class contains application-wide settings that are persisted on disc.
+ * Create a single instance of this class when the program starts and 
+ * destroy it when the program ends to save the updated sttings to the disc.
  */
 class Settings {
-    // TODO: make member variables immutable as much as possible
     // TODO: make the class thread-safe
     // TODO: implement singleton pattern?
 public:
@@ -42,12 +51,6 @@ public:
     ~Settings();
 
     // video
-    unsigned int    jpgQuality;
-    bool            color;
-    unsigned int    width;
-    unsigned int    height;
-    unsigned int    offsetx;
-    unsigned int    offsety;
     bool            useExternalTrigger;
     QString         externalTriggerSource;
 
@@ -60,19 +63,21 @@ public:
     QString         outAudioDev;
     bool            useFeedback;
 
-    QRect           controllerRect;
-    QRect           videoRects[MAX_CAMERAS];
-    unsigned int    videoShutters[MAX_CAMERAS];
-    unsigned int    videoGains[MAX_CAMERAS];
-    unsigned int    videoUVs[MAX_CAMERAS];
-    unsigned int    videoVRs[MAX_CAMERAS];
-    bool            videoLimits[MAX_CAMERAS];
-
     // misc
     QString         storagePath;
-    bool            controlOnTop;
-    double          lowDiskSpaceWarning;
-    bool            confirmStop;
+    double          lowDiskSpaceThreshGB;
+
+    /*!
+     * Load camera-specific settings from disk. User camera serial number to
+     * identify the camera.
+     */
+    struct camera_settings loadCameraSettings(QString _cameraSN);
+
+    /*!
+     * Save camera-specific settings to disk. User camera serial number to
+     * identify the camera.
+     */
+    void saveCameraSettings(QString _cameraSN, struct camera_settings _camSettings);
 };
 
 #endif /* SETTINGS_H_ */

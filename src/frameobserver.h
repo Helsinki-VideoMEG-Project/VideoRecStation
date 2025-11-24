@@ -2,7 +2,6 @@
  * frameobserver.h
  *
  * Author: Andrey Zhdanov
- * Copyright (C) 2014 BioMag Laboratory, Helsinki University Central Hospital
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +23,12 @@
 #include "cycdatabuffer.h"
 #include "settings.h"
 #include "gpujpegencoder.h"
+#include "settings.h"
 
 class FrameObserver : public VmbCPP::IFrameObserver
 {
 public:
-    FrameObserver(VmbCPP::CameraPtr _camera, CycDataBuffer* _cycBuf, GPUJPEGEncoder* _encoder, int _width,  int _height, bool _color);
+    FrameObserver(VmbCPP::CameraPtr _camera, CycDataBuffer* _cycBuf, GPUJPEGEncoder* _encoder, struct camera_settings _camSettings);
     virtual ~FrameObserver();
 
     // Frame callback notifies about incoming frames

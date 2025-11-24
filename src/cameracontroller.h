@@ -28,7 +28,7 @@
 class CameraController
 {
 public:
-    CameraController(VmbCPP::CameraPtr _camera, FrameObserver* _frameObserver, bool _color);
+    CameraController(VmbCPP::CameraPtr _camera, FrameObserver* _frameObserver, struct camera_settings _camSettings);
     virtual ~CameraController();
     void startAquisition();
     void stopAquisition();
@@ -38,7 +38,6 @@ public:
 
 private:
     VmbCPP::CameraPtr   camera;
-    bool                color;
     Settings            settings;
     FrameObserver*      frameObserver;
 };

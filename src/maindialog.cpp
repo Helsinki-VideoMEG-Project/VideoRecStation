@@ -35,10 +35,6 @@ MainDialog::MainDialog(QWidget *parent)
 {
     Qt::WindowFlags flags = Qt::WindowTitleHint;
 
-    if (settings.controlOnTop)
-    {
-        flags = flags | Qt::WindowStaysOnTopHint;
-    }
     setWindowFlags(flags);
 
     ui.setupUi(this);
@@ -113,8 +109,6 @@ MainDialog::MainDialog(QWidget *parent)
     {
         speakerThread->start();
     }
-    if (settings.controllerRect.isValid())
-        this->setGeometry(settings.controllerRect);
 }
 
 
@@ -127,7 +121,7 @@ void MainDialog::closeEvent(QCloseEvent *event)
 double MainDialog::freeSpaceGB()
 {
     QStorageInfo storageInfo(settings.storagePath);
-    return double(storageInfo.bytesAvailable()) / 1073741824.0;
+    return double(storageInfo.bytesAvailable()) / 1e9;
 }
 
 
@@ -183,7 +177,7 @@ MainDialog::~MainDialog()
 void MainDialog::onStartRec()
 {
     double freeSpace = freeSpaceGB();
-    if (freeSpace < settings.lowDiskSpaceWarning)
+    if (freeSpace < settings.lowDiskSpaceThreshGB)
     {
         if (QMessageBox::warning(this, "Low disk space",
                                  QString("Disk space is low (%1 GB). Do you really want to start recording?").arg(freeSpace, 0, 'f', 1),
@@ -213,11 +207,6 @@ void MainDialog::onStartRec()
 
 void MainDialog::onStopRec()
 {
-    if (settings.confirmStop &&
-        QMessageBox::warning(this, "Confirm recording end",
-                             "Are you sure you want to stop recording?",
-                             QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel) != QMessageBox::Ok)
-        return;
     updateTimer->stop();
     ui.stopButton->setEnabled(false);
     ui.startButton->setEnabled(true);
@@ -336,6 +325,7 @@ void MainDialog::initVideo()
             cameraSN = "Unknown";
         }
 
+        cameraSNs[i] = QString::fromStdString(cameraSN);
         clog << "Using camera [" << cameraModel << "] with serial number [" << cameraSN << "]" << std::endl;
 
         // Construct and populate camera check boxes
@@ -376,7 +366,7 @@ void MainDialog::onCamToggled(bool _state)
 
     if(_state)
     {
-        videoDialogs[idx] = new VideoDialog(cameras[idx], idx);
+        videoDialogs[idx] = new VideoDialog(cameras[idx], idx, cameraSNs[idx]);
         videoDialogs[idx]->show();
     }
     else

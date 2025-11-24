@@ -2,7 +2,6 @@
  * frameobserver.cpp
  *
  * Author: Andrey Zhdanov
- * Copyright (C) 2014 BioMag Laboratory, Helsinki University Central Hospital
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,10 +31,10 @@ using namespace std;
 using namespace VmbCPP;
 
 
-FrameObserver::FrameObserver(CameraPtr _camera, CycDataBuffer* _cycBuf, GPUJPEGEncoder* _encoder, int _width, int _height, bool _color) : IFrameObserver(_camera)
+FrameObserver::FrameObserver(CameraPtr _camera, CycDataBuffer* _cycBuf, GPUJPEGEncoder* _encoder, struct camera_settings _camSettings) : IFrameObserver(_camera)
 {
     cycBuf = _cycBuf;
-    rawImageSize = (size_t)(_width) * _height * (_color ? 3 : 1);
+    rawImageSize = (size_t)(_camSettings.width) * _camSettings.height * (_camSettings.color ? 3 : 1);
 
     encoder = _encoder;
 

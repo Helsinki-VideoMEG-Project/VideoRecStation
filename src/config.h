@@ -37,12 +37,7 @@
 #define CIRC_VIDEO_BUFF_SZ  500000000   // in bytes, must be smaller than the largest int (2147483647 ?)
 #define CIRC_AUDIO_BUFF_SZ  200000000   // in bytes, must be smaller than the largest int (2147483647 ?)
 
-// Thread priorities
-#define CAM_THREAD_PRIORITY 10
-#define MIC_THREAD_PRIORITY 15
-#define SPK_THREAD_PRIORITY 5
-
-#define SHUTTER_SLIDER_MIN    7           // Milliseconds, need to be multiplied by 1000 before sending to the camera
+#define SHUTTER_SLIDER_MIN    1           // Milliseconds, need to be multiplied by 1000 before sending to the camera
 #define SHUTTER_SLIDER_MAX    200
 #define SHUTTER_SCALE         1000.0
 
@@ -50,9 +45,12 @@
 #define GAIN_SLIDER_MAX       48
 #define GAIN_SCALE            1.0
 
-#define BALANCE_SLIDER_MIN    0           // Need to be divided by 100 before sending to the camera
-#define BALANCE_SLIDER_MAX    800
-#define BALANCE_SCALE         0.01
+#define BALANCE_SLIDER_MIN    0           // Need to be divided by 10 before sending to the camera
+#define BALANCE_SLIDER_MAX    80
+#define BALANCE_SCALE         0.1
+
+#define JPEG_QUALITY_MIN      1
+#define JPEG_QUALITY_MAX      100
 
 // Used for storing application settings
 #define ORG_NAME "Helsinki VideoMEG Project"
@@ -60,6 +58,9 @@
 
 // Camera configuration
 #define MAX_CAMERAS         6
+
+// Number of frames to use for computing real-time stats
+#define N_FRAMES_FOR_STATS  100
 
 // Audio configuration
 #define N_CHANS             20          // number of channels provided by the sound card

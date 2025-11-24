@@ -32,7 +32,6 @@ VideoWidget::VideoWidget(QWidget* parent)
     : QLabel(parent)
 {
     rotate = false;
-    limitDisplaySize = false;
 }
 
 

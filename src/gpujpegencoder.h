@@ -21,11 +21,12 @@
 
 #include <QAtomicInteger>
 #include "libgpujpeg/gpujpeg_encoder.h"
+#include "settings.h"
 
 class GPUJPEGEncoder
 {
 public:
-    GPUJPEGEncoder(int _width, int _height, bool _color, int _quality);
+    GPUJPEGEncoder(struct camera_settings _camSettings);
     virtual ~GPUJPEGEncoder();
     uint8_t* encodeFrame(uint8_t* _frameData, size_t& _outSize);
     void setJPEGQuality(int _quality);

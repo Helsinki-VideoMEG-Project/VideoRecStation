@@ -30,9 +30,7 @@ class VideoWidget : public QLabel
 
 public:
     VideoWidget(QWidget* parent=0);
-    //int heightForWidth(int _w);
     QAtomicInteger<bool> rotate{false};
-    QAtomicInteger<bool> limitDisplaySize{false};
 
 public slots:
     void onDrawFrame(uint8_t* _rawImage, int _width, int _height, bool _color);

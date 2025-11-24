@@ -22,6 +22,7 @@
 #include "stoppablethread.h"
 #include "cycdatabuffer.h"
 #include "libgpujpeg/gpujpeg_decoder.h"
+#include "settings.h"
 
 //! A thread that decompresses video as they arrive in the input buffer.
 /*!
@@ -41,7 +42,7 @@ class VideoDecompressorThread : public StoppableThread
     Q_OBJECT
 
 public:
-    VideoDecompressorThread(CycDataBuffer* _inpBuf, CycDataBuffer* _outBuf, int _width, int _height, bool _color);
+    VideoDecompressorThread(CycDataBuffer* _inpBuf, CycDataBuffer* _outBuf, struct camera_settings _camSettings);
     virtual ~VideoDecompressorThread();
 
 signals:

@@ -32,13 +32,12 @@ using namespace std;
 using namespace VmbCPP;
 
 
-CameraController::CameraController(CameraPtr _camera, FrameObserver* _frameObserver, bool _color)
+CameraController::CameraController(CameraPtr _camera, FrameObserver* _frameObserver, struct camera_settings _camSettings)
 {
     FeaturePtr      feature;
     VmbUint32_t     payloadSize;
 
     frameObserver = _frameObserver;
-    color = _color;
 
     camera = _camera;
 
@@ -62,20 +61,20 @@ CameraController::CameraController(CameraPtr _camera, FrameObserver* _frameObser
     }
 
     if ((camera->GetFeatureByName("Width", feature) != VmbErrorSuccess) ||
-        (feature->SetValue(settings.width) != VmbErrorSuccess) ||
+        (feature->SetValue(_camSettings.width) != VmbErrorSuccess) ||
         (camera->GetFeatureByName("Height", feature) != VmbErrorSuccess) ||
-        (feature->SetValue(settings.height) != VmbErrorSuccess) ||
+        (feature->SetValue(_camSettings.height) != VmbErrorSuccess) ||
         (camera->GetFeatureByName("OffsetX", feature) != VmbErrorSuccess) ||
-        (feature->SetValue(settings.offsetx) != VmbErrorSuccess) ||
+        (feature->SetValue(_camSettings.offsetx) != VmbErrorSuccess) ||
         (camera->GetFeatureByName("OffsetY", feature) != VmbErrorSuccess) ||
-        (feature->SetValue(settings.offsety) != VmbErrorSuccess))
+        (feature->SetValue(_camSettings.offsety) != VmbErrorSuccess))
     {
         cerr << "Could not set up the ROI size/offset" << endl;
         abort();
     }
 
     if ((camera->GetFeatureByName("PixelFormat", feature) != VmbErrorSuccess) ||
-        (feature->SetValue(color ? "RGB8" : "Mono8") != VmbErrorSuccess))
+        (feature->SetValue(_camSettings.color ? "RGB8" : "Mono8") != VmbErrorSuccess))
     {
         cerr << "Could not set up the video format" << endl;
         abort();
@@ -105,16 +104,15 @@ CameraController::CameraController(CameraPtr _camera, FrameObserver* _frameObser
         abort();
     }
 
-
     if (camera->GetPayloadSize(payloadSize) != VmbErrorSuccess)
     {
         cerr << "Could not get the camera payload size" << endl;
         abort();
     }
-    if (payloadSize != settings.width * settings.height * (color ? 3 : 1))
+    if (payloadSize != _camSettings.width * _camSettings.height * (_camSettings.color ? 3 : 1))
     {
         cerr << "Error: the actual payload size " << payloadSize << " does not match the expected size "
-             << (settings.width * settings.height * (color ? 3 : 1)) << endl;
+             << (_camSettings.width * _camSettings.height * (_camSettings.color ? 3 : 1)) << endl;
         abort();
     }
 
@@ -124,11 +122,11 @@ CameraController::CameraController(CameraPtr _camera, FrameObserver* _frameObser
         if ((camera->GetFeatureByName("TriggerMode", feature) != VmbErrorSuccess) ||
             (feature->SetValue("On") != VmbErrorSuccess) ||
             (camera->GetFeatureByName("TriggerSource", feature) != VmbErrorSuccess) ||
-            (feature->SetValue(settings.externalTriggerSource.toUtf8().constData()) != VmbErrorSuccess) ||
-            (camera->GetFeatureByName("TriggerActivation", feature) != VmbErrorSuccess) ||
-            (feature->SetValue("RisingEdge") != VmbErrorSuccess))
-        {
-            cerr << "Could not set up external trigger mode" << endl;
+        (feature->SetValue(settings.externalTriggerSource.toUtf8().constData()) != VmbErrorSuccess) ||
+        (camera->GetFeatureByName("TriggerActivation", feature) != VmbErrorSuccess) ||
+        (feature->SetValue("RisingEdge") != VmbErrorSuccess))
+    {
+        cerr << "Could not set up external trigger mode" << endl;
             abort();
         }
     }
@@ -195,6 +193,7 @@ void CameraController::setGain(float _gain)
         abort();
     }
 }
+
 
 void CameraController::setBalance(float _balance, char* _color)
 {

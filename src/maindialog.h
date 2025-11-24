@@ -68,6 +68,7 @@ private:
     VmbCPP::CameraPtr   cameras[MAX_CAMERAS];
     VideoDialog*        videoDialogs[MAX_CAMERAS];
     QCheckBox*          camCheckBoxes[MAX_CAMERAS];
+    QString             cameraSNs[MAX_CAMERAS];
     unsigned int        numCameras;
     QSpacerItem*        vertSpacer;
 

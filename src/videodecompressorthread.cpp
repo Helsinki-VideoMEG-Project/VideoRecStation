@@ -24,13 +24,13 @@
 #include "config.h"
 #include "videodecompressorthread.h"
 
-VideoDecompressorThread::VideoDecompressorThread(CycDataBuffer* _inpBuf, CycDataBuffer* _outBuf, int _width, int _height, bool _color)
+VideoDecompressorThread::VideoDecompressorThread(CycDataBuffer* _inpBuf, CycDataBuffer* _outBuf, struct camera_settings _camSettings)
 {
     inpBuf = _inpBuf;
     outBuf = _outBuf;
-    width = _width;
-    height = _height;
-    color = _color;
+    width = _camSettings.width;
+    height = _camSettings.height;
+    color = _camSettings.color;
 
     decoder = gpujpeg_decoder_create(0);
 }

@@ -52,91 +52,130 @@
     </widget>
    </item>
    <item>
+    <widget class="QCheckBox" name="showControlsBox">
+     <property name="text">
+      <string>Show controls</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="2">
-      <widget class="QLabel" name="shutterLabel">
-       <property name="text">
-        <string>Shutter:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="3">
-      <widget class="QSlider" name="gainSlider">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="7">
-      <widget class="QSlider" name="balanceBlueSlider">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="5">
-      <widget class="QLabel" name="wbLabel">
-       <property name="text">
-        <string>White balance =&gt; </string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="3">
       <widget class="QSlider" name="shutterSlider">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-      </widget>
-     </item>
-     <item row="0" column="7">
-      <widget class="QSlider" name="balanceRedSlider">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+       <property name="tickPosition">
+        <enum>QSlider::TicksBelow</enum>
        </property>
       </widget>
      </item>
-     <item row="0" column="6">
-      <widget class="QLabel" name="balanceRedLabel">
-       <property name="text">
-        <string>Red:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
-      <widget class="QLabel" name="gainLabel">
-       <property name="text">
-        <string>Gain:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="6">
-      <widget class="QLabel" name="balanceBlueLabel">
-       <property name="text">
-        <string>Blue:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="4">
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="1" column="0">
+     <item row="3" column="1">
       <widget class="QLabel" name="fpsLabel">
        <property name="text">
         <string>FPS:</string>
        </property>
       </widget>
      </item>
+     <item row="1" column="9">
+      <widget class="QSpinBox" name="balanceBlueSpinBox"/>
+     </item>
+     <item row="2" column="2">
+      <widget class="QSlider" name="jpegQualitySlider">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="tickPosition">
+        <enum>QSlider::TicksBelow</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="3">
+      <widget class="QSpinBox" name="jpegQualitySpinBox"/>
+     </item>
+     <item row="0" column="9">
+      <widget class="QSpinBox" name="balanceRedSpinBox"/>
+     </item>
+     <item row="1" column="4">
+      <widget class="QLabel" name="labelDb">
+       <property name="text">
+        <string>dB</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="3">
+      <widget class="QSpinBox" name="gainSpinBox"/>
+     </item>
+     <item row="1" column="8">
+      <widget class="QSlider" name="balanceBlueSlider">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="tickPosition">
+        <enum>QSlider::TicksBelow</enum>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="1">
+      <widget class="QLabel" name="shutterLabel">
+       <property name="text">
+        <string>Shutter:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="4">
+      <widget class="QLabel" name="labelMs">
+       <property name="text">
+        <string>ms</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLabel" name="gainLabel">
+       <property name="text">
+        <string>Gain:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="6">
+      <widget class="QLabel" name="wbLabel">
+       <property name="text">
+        <string>White balance =&gt; </string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="7">
+      <widget class="QLabel" name="balanceRedLabel">
+       <property name="text">
+        <string>Red:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="8">
+      <widget class="QSlider" name="balanceRedSlider">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="tickPosition">
+        <enum>QSlider::TicksBelow</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="7">
+      <widget class="QLabel" name="balanceBlueLabel">
+       <property name="text">
+        <string>Blue:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLabel" name="jpegQualityLabel">
+       <property name="text">
+        <string>JPEG quality:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="5">
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -149,10 +188,16 @@
        </property>
       </spacer>
      </item>
-     <item row="0" column="0">
-      <widget class="QCheckBox" name="ldsBox">
-       <property name="text">
-        <string>Limit display size</string>
+     <item row="0" column="3">
+      <widget class="QSpinBox" name="shutterSpinBox"/>
+     </item>
+     <item row="1" column="2">
+      <widget class="QSlider" name="gainSlider">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="tickPosition">
+        <enum>QSlider::TicksBelow</enum>
        </property>
       </widget>
      </item>
@@ -172,14 +217,8 @@
  <resources/>
  <connections>
   <connection>
-   <sender>ldsBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>VideoDialogClass</receiver>
-   <slot>onLdsBoxToggled(bool)</slot>
-  </connection>
-  <connection>
    <sender>shutterSlider</sender>
-   <signal>sliderMoved(int)</signal>
+   <signal>valueChanged(int)</signal>
    <receiver>VideoDialogClass</receiver>
    <slot>onShutterChanged(int)</slot>
    <hints>
@@ -195,7 +234,7 @@
   </connection>
   <connection>
    <sender>gainSlider</sender>
-   <signal>sliderMoved(int)</signal>
+   <signal>valueChanged(int)</signal>
    <receiver>VideoDialogClass</receiver>
    <slot>onGainChanged(int)</slot>
    <hints>
@@ -211,7 +250,7 @@
   </connection>
   <connection>
    <sender>balanceRedSlider</sender>
-   <signal>sliderMoved(int)</signal>
+   <signal>valueChanged(int)</signal>
    <receiver>VideoDialogClass</receiver>
    <slot>onBalanceRedChanged(int)</slot>
    <hints>
@@ -227,7 +266,7 @@
   </connection>
   <connection>
    <sender>balanceBlueSlider</sender>
-   <signal>sliderMoved(int)</signal>
+   <signal>valueChanged(int)</signal>
    <receiver>VideoDialogClass</receiver>
    <slot>onBalanceBlueChanged(int)</slot>
    <hints>
@@ -241,12 +280,286 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>showControlsBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>VideoDialogClass</receiver>
+   <slot>onShowControlsToggled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>489</x>
+     <y>702</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>489</x>
+     <y>389</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>shutterSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>shutterSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>205</x>
+     <y>678</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>335</x>
+     <y>678</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>shutterSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>shutterSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>335</x>
+     <y>678</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>205</x>
+     <y>678</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>shutterSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>VideoDialogClass</receiver>
+   <slot>onShutterChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>335</x>
+     <y>678</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>489</x>
+     <y>389</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>jpegQualitySlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>jpegQualitySpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>197</x>
+     <y>725</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>318</x>
+     <y>726</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>jpegQualitySpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>jpegQualitySlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>318</x>
+     <y>726</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>197</x>
+     <y>725</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>jpegQualitySlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>VideoDialogClass</receiver>
+   <slot>onJpegQualityChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>197</x>
+     <y>725</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>489</x>
+     <y>389</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>jpegQualitySpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>VideoDialogClass</receiver>
+   <slot>onJpegQualityChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>318</x>
+     <y>726</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>489</x>
+     <y>389</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>gainSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>gainSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>197</x>
+     <y>698</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>318</x>
+     <y>699</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>gainSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>gainSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>318</x>
+     <y>699</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>197</x>
+     <y>698</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>gainSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>VideoDialogClass</receiver>
+   <slot>onGainChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>318</x>
+     <y>699</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>489</x>
+     <y>389</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>balanceRedSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>balanceRedSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>825</x>
+     <y>665</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>946</x>
+     <y>666</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>balanceRedSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>balanceRedSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>946</x>
+     <y>666</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>825</x>
+     <y>665</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>balanceRedSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>VideoDialogClass</receiver>
+   <slot>onBalanceRedChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>946</x>
+     <y>666</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>489</x>
+     <y>389</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>balanceBlueSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>balanceBlueSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>825</x>
+     <y>698</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>946</x>
+     <y>699</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>balanceBlueSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>balanceBlueSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>946</x>
+     <y>699</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>825</x>
+     <y>698</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>balanceBlueSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>VideoDialogClass</receiver>
+   <slot>onBalanceBlueChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>946</x>
+     <y>699</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>489</x>
+     <y>389</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
-  <slot>onLdsBoxToggled(bool)</slot>
+  <slot>onTriggerLockToggled(bool)</slot>
   <slot>onShutterChanged(int)</slot>
   <slot>onGainChanged(int)</slot>
   <slot>onBalanceRedChanged(int)</slot>
   <slot>onBalanceBlueChanged(int)</slot>
+  <slot>onShowControlsToggled(bool)</slot>
+  <slot>onJpegQualityChanged(int)</slot>
  </slots>
 </ui>

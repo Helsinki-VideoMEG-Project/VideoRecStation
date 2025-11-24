@@ -31,6 +31,7 @@
 #include "videofilewriter.h"
 #include "gpujpegencoder.h"
 #include "videodecompressorthread.h"
+#include "settings.h"
 
 
 class VideoDialog : public QDialog
@@ -38,7 +39,7 @@ class VideoDialog : public QDialog
     Q_OBJECT
 
 public:
-    VideoDialog(VmbCPP::CameraPtr _camera, int _cameraId, QWidget *parent = 0);
+    VideoDialog(VmbCPP::CameraPtr _camera, int _cameraId, QString _cameraSN, QWidget *parent = 0);
     virtual ~VideoDialog();
     void setIsRec(bool _isRec);
 
@@ -47,14 +48,17 @@ public slots:
     void onGainChanged(int _newVal);
     void onBalanceRedChanged(int _newVal);
     void onBalanceBlueChanged(int _newVal);
+    void onJpegQualityChanged(int _newVal);
     void onNewFrame(unsigned char* _jpegBuf);
-    void onLdsBoxToggled(bool _checked);
+    void onShowControlsToggled(bool _checked);
     void closeEvent(QCloseEvent* _event);
 
 private:
     Ui::VideoDialogClass ui;
 
     unsigned int                cameraIdx;
+    QString                     cameraSN;
+    struct camera_settings      camSettings;
     CameraController*           cameraController;
     FrameObserver*              frameObserver;
     CycDataBuffer*              cycVideoBufDisp;
@@ -63,9 +67,11 @@ private:
     GPUJPEGEncoder*             gpuJpegEncoder;
     VideoDecompressorThread*    videoDecompressorThread;
 
-    // These variables are used for showing the FPS
-    u_int64_t               prevFrameTstamp;
-    int                     frameCnt;
+    // These variables are used for computing realtime stats
+    u_int64_t   timeStamps[N_FRAMES_FOR_STATS] = {0};
+    size_t      frameSizes[N_FRAMES_FOR_STATS] = {0};
+    uint64_t    runningFrameCnt = 0;
+    int         statsIdx = 0;
 };
 
 #endif // VIDEODIALOG_H
