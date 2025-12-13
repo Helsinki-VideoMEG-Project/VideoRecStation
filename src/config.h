@@ -37,6 +37,9 @@
 #define CIRC_VIDEO_BUFF_SZ  500000000   // in bytes, must be smaller than the largest int (2147483647 ?)
 #define CIRC_AUDIO_BUFF_SZ  200000000   // in bytes, must be smaller than the largest int (2147483647 ?)
 
+// Buffer semaphore timeout. When getting a chunk from the buffer, don't block forever to allow the client process to check for termination condition.
+#define BUFF_SEM_TIMEOUT_MS   50          // in milliseconds
+
 #define SHUTTER_SLIDER_MIN    1           // Milliseconds, need to be multiplied by 1000 before sending to the camera
 #define SHUTTER_SLIDER_MAX    200
 #define SHUTTER_SCALE         1000.0

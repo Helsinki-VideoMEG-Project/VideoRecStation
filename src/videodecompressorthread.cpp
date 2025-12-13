@@ -51,7 +51,9 @@ void VideoDecompressorThread::stoppableRun()
         struct gpujpeg_decoder_output dec_output;
 
         // Get the next jpeg image from the input buffer
-        jpegImage = inpBuf->getChunk(&chunkAttrib);
+        if ((jpegImage = inpBuf->getChunk(&chunkAttrib, BUFF_SEM_TIMEOUT_MS)) == nullptr) {
+            continue;
+        }
 
         // Decompress the jpeg image
         gpujpeg_decoder_output_set_default(&dec_output);

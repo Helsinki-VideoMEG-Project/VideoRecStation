@@ -71,9 +71,12 @@ public:
 
     /*!
      * Acquire a chunk and return a pointer to it. The chunk is implicitly
-     * released next time getChunk is called.
+     * released next time getChunk is called. If _timeout is non-negative,
+     * the call will block up to _timeout milliseconds until a chunk becomes
+     * available. If _timeout is negative, the call will block indefinitely.
+     * If the timeout expires, nullptr is returned.
      */
-    unsigned char* getChunk(ChunkAttrib* _attrib);
+    unsigned char* getChunk(ChunkAttrib* _attrib, int _timeout = -1);
     void setIsRec(bool _isRec);
 
 signals:

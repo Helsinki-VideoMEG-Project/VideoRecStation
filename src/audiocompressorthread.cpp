@@ -50,7 +50,9 @@ void AudioCompressorThread::stoppableRun()
         ChunkAttrib         chunkAttrib;
 
         // Get raw data from the input buffer
-        inpChunk = inpBuf->getChunk(&chunkAttrib);
+        if ((inpChunk = inpBuf->getChunk(&chunkAttrib, BUFF_SEM_TIMEOUT_MS)) == nullptr) {
+            continue; // timeout
+        }
 
         // Check that the chunk size makes sense
         assert(chunkAttrib.chunkSize % (N_CHANS * sizeof(AUDIO_DATA_TYPE)) == 0);

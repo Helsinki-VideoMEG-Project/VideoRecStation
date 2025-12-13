@@ -95,11 +95,21 @@ void CycDataBuffer::insertChunk(unsigned char* _data, ChunkAttrib _attrib)
 }
 
 
-unsigned char* CycDataBuffer::getChunk(ChunkAttrib* _attrib)
+unsigned char* CycDataBuffer::getChunk(ChunkAttrib* _attrib, int _timeout)
 {
     unsigned char* res;
 
-    buffSemaphore->acquire(sizeof(ChunkAttrib));
+    // Note: First we try to get the ChunkAttrib structure, then the actual data.
+    // For ChuncAttrib we use timeout, so if there is no chunk attribute available
+    // the client will not block indefinitely (if timeout is not negative).
+    // However, if the chunk attribute is available and data is not, we can block
+    // indefinitely. Generally this should not happen if the producer is working
+    // correctly.
+    if (!buffSemaphore->tryAcquire(sizeof(ChunkAttrib), _timeout))
+    {
+        return nullptr;
+    }
+
     memcpy((unsigned char*)_attrib, dataBuf + getPtr, sizeof(ChunkAttrib));
     getPtr += sizeof(ChunkAttrib);
 

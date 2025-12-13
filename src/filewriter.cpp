@@ -25,6 +25,7 @@
 #include <QFileInfo>
 
 #include "filewriter.h"
+#include "config.h"
 
 using namespace std;
 
@@ -84,7 +85,25 @@ void FileWriter::stoppableRun()
 
     while (true)
     {
-        databuf = cycBuf->getChunk(&chunkAttrib);
+        if(shouldStop)
+        {
+            if(prevIsRec)
+            {
+                outData.close();
+                if (chmod(nameBuf, S_IRUSR | S_IRGRP | S_IROTH))
+                {
+                    cerr << "Could net set file read-only";
+                }
+            }
+            return;
+        }
+
+        databuf = cycBuf->getChunk(&chunkAttrib, BUFF_SEM_TIMEOUT_MS);
+        if(!databuf)
+        {
+            continue;
+        }
+
         if (chunkAttrib.isRec)
         {
             if (!prevIsRec)
@@ -133,18 +152,5 @@ void FileWriter::stoppableRun()
         }
 
         prevIsRec = chunkAttrib.isRec;
-
-        if(shouldStop)
-        {
-            if(prevIsRec)
-            {
-                outData.close();
-                if (chmod(nameBuf, S_IRUSR | S_IRGRP | S_IROTH))
-                {
-                    cerr << "Could net set file read-only";
-                }
-            }
-            return;
-        }
     }
 }
