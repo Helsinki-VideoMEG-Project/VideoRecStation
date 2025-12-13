@@ -58,14 +58,14 @@ FORMS += videodialog.ui \
     maindialog.ui
 INCLUDEPATH += /usr/include/c++/4.4 \
     /usr/include \
-    /opt/VimbaX_2025-2/api/include \
-    /opt/GPUJPEG.0.27.8/include
+    /opt/VimbaX_2025-3/api/include \
+    /opt/GPUJPEG/include
 LIBS += -L/usr/local/lib \
     -L/usr/lib \
     -lasound \
-    -L/opt/VimbaX_2025-2/api/lib \
+    -L/opt/VimbaX_2025-3/api/lib \
     -lVmbCPP \
-    -L/opt/GPUJPEG.0.27.8/lib \
+    -L/opt/GPUJPEG/lib \
     -lgpujpeg
 RESOURCES += 
 DEFINES += __STDC_LIMIT_MACROS
