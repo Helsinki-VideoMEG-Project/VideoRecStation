@@ -252,31 +252,51 @@
 </section>
 <section id="install-3-rd-party-components">
 <h2>Install 3-rd party components<a class="headerlink" href="#install-3-rd-party-components" title="Link to this heading">¶</a></h2>
-<p>Before you can use VideoRecStation, you need to install VimbaX and ALSA Scarlett Control Panel (alsa-scarlett-gui). The latter is, strictly speaking, optional, but it provides a convenient GUI for controlling the audio settings of your Scarlett interface.</p>
+<p>Before you can use VideoRecStation, you need to install VimbaX, GPUJPEG and ALSA Scarlett Control Panel (alsa-scarlett-gui). The latter is, strictly speaking, optional, but it provides a convenient GUI for controlling the audio settings of your Scarlett interface.</p>
 <section id="install-vimbax">
 <h3>Install VimbaX<a class="headerlink" href="#install-vimbax" title="Link to this heading">¶</a></h3>
-<p>VimbaX is a software package for controlling USB cameras made by Allied Vision Technologies. You can download it from the <a class="reference external" href="https://www.alliedvision.com/en/products/software/vimba-x-sdk/">Allied Vision website</a>. Assume you have downloaded it to <code class="docutils literal notranslate"><span class="pre">~/Downloads/VimbaX_Setup-2025-2-Linux64.tar.gz</span></code>, and want to install it to <code class="docutils literal notranslate"><span class="pre">/opt/VimbaX_2025-2</span></code>. You can do this by running the following commands:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>mkdir<span class="w"> </span>/opt/VimbaX_2025-2
-sudo<span class="w"> </span>tar<span class="w"> </span>-xvzf<span class="w"> </span>~/Downloads/VimbaX_Setup-2025-2-Linux64.tar.gz<span class="w"> </span>-C<span class="w"> </span>/opt/VimbaX_2025-2<span class="w"> </span>--strip-components<span class="o">=</span><span class="m">1</span>
+<p>VimbaX is a software package for controlling USB cameras made by Allied Vision Technologies. You can download it from the <a class="reference external" href="https://www.alliedvision.com/en/products/software/vimba-x-sdk/">Allied Vision website</a>. Assume you have downloaded it to <code class="docutils literal notranslate"><span class="pre">~/Downloads/VimbaX_Setup-2025-3-Linux64.tar.gz</span></code>, and want to install it to <code class="docutils literal notranslate"><span class="pre">/opt/VimbaX_2025-3</span></code>. You can do this by running the following commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>mkdir<span class="w"> </span>/opt/VimbaX_2025-3
+sudo<span class="w"> </span>tar<span class="w"> </span>-xvzf<span class="w"> </span>~/Downloads/VimbaX_Setup-2025-3-Linux64.tar.gz<span class="w"> </span>-C<span class="w"> </span>/opt/VimbaX_2025-3<span class="w"> </span>--strip-components<span class="o">=</span><span class="m">1</span>
+</pre></div>
+</div>
+<p>Remove the camera simulators that come with VimbaX, so that they don’t clutter the list of available cameras:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>/opt/VimbaX_2025-3/cti/*Camera_Simulator*
 </pre></div>
 </div>
 <p>Now you need to install VimbaX transport layers. Run the following commands:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>/opt/VimbaX_2025-2/cti
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>/opt/VimbaX_2025-3/cti
 sudo<span class="w"> </span>./Install_GenTL_Path.sh
 </pre></div>
 </div>
 <p>and reboot your system. You can now test the VimbaX by connecting an Alvium USB camera to your computer and running:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>/opt/VimbaX_2025-2/bin/VimbaXViewer
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>/opt/VimbaX_2025-3/bin/VimbaXViewer
 </pre></div>
 </div>
 <p>The Vimba X Viewer window should appear and you should see the camera in the list of detected cameras.</p>
 <p>Finally, add the VimbaX library path to your system’s library path. You can do this by creating a new file in the <code class="docutils literal notranslate"><span class="pre">/etc/ld.so.conf.d/</span></code> directory:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;/opt/VimbaX_2025-2/api/lib&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/ld.so.conf.d/vimbax.conf
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;/opt/VimbaX_2025-3/api/lib&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/ld.so.conf.d/vimbax.conf
 </pre></div>
 </div>
 <p>Then, update the linker cache:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>ldconfig
 </pre></div>
+</div>
+</section>
+<section id="install-gpujpeg-library">
+<h3>Install GPUJPEG library<a class="headerlink" href="#install-gpujpeg-library" title="Link to this heading">¶</a></h3>
+<p><a class="reference external" href="https://github.com/CESNET/GPUJPEG">GPUJPEG</a> is a library for JPEG encoding and decoding using NVIDIA (and, possibly, other) GPUs. To install it, download the latest release from the <a class="reference external" href="https://github.com/CESNET/GPUJPEG/releases">GPUJPEG releases page</a>. Assume you have downloaded the file <code class="docutils literal notranslate"><span class="pre">GPUJPEG.CI.Linux.build.all.CUDA.architetures.zip</span></code> to <code class="docutils literal notranslate"><span class="pre">~/Downloads</span></code>. Install it by running the following commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>unzip<span class="w"> </span>~/Downloads/GPUJPEG.CI.Linux.build.all.CUDA.architetures.zip<span class="w"> </span>-d<span class="w"> </span>/opt/GPUJPEG
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;/opt/GPUJPEG/lib&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/ld.so.conf.d/gpujpeg.conf
+sudo<span class="w"> </span>ldconfig
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ol class="arabic simple">
+<li><p>Make sure that you have the NVIDIA drivers and CUDA toolkit installed on your system.</p></li>
+<li><p>The above instructions were tested with GPUJPEG version 0.27.8 in Dec 2025.</p></li>
+</ol>
 </div>
 </section>
 <section id="install-alsa-scarlett-control-panel">
@@ -401,14 +421,14 @@ sudo<span class="w"> </span>make<span class="w"> </span>install
 <section id="build-and-install-videorecstation-binary">
 <h3>Build and install VideoRecStation binary<a class="headerlink" href="#build-and-install-videorecstation-binary" title="Link to this heading">¶</a></h3>
 <p>Install the packages needed to build VideoRecStation:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>-y<span class="w"> </span>install<span class="w"> </span>qt6-base-dev<span class="w"> </span>designer-qt6<span class="w"> </span>libjpeg-turbo8<span class="w"> </span>libjpeg8-dev<span class="w"> </span>libasound2-dev<span class="w"> </span>g++
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>-y<span class="w"> </span>install<span class="w"> </span>qt6-base-dev<span class="w"> </span>designer-qt6<span class="w"> </span>libasound2-dev<span class="w"> </span>g++
 </pre></div>
 </div>
 <p>Clone the repository:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Helsinki-VideoMEG-Project/VideoRecStation.git
 </pre></div>
 </div>
-<p>Modify the <code class="docutils literal notranslate"><span class="pre">INCLUDEPATH</span></code> and <code class="docutils literal notranslate"><span class="pre">LIBS</span></code> sections of the file <code class="docutils literal notranslate"><span class="pre">src/VideoRecStation.pro</span></code> to reflect the location where you have installed VimbaX (e.g., <code class="docutils literal notranslate"><span class="pre">/opt/VimbaX_2025-2/api/include</span></code> and <code class="docutils literal notranslate"><span class="pre">/opt/VimbaX_2025-2/api/lib</span></code> if you installed VimbaX in <code class="docutils literal notranslate"><span class="pre">/opt/VimbaX_2025-2</span></code>).</p>
+<p>Modify the <code class="docutils literal notranslate"><span class="pre">INCLUDEPATH</span></code> and <code class="docutils literal notranslate"><span class="pre">LIBS</span></code> sections of the file <code class="docutils literal notranslate"><span class="pre">src/VideoRecStation.pro</span></code> to reflect the location where you have installed VimbaX (e.g., <code class="docutils literal notranslate"><span class="pre">/opt/VimbaX_2025-3/api/include</span></code> and <code class="docutils literal notranslate"><span class="pre">/opt/VimbaX_2025-3/api/lib</span></code> if you installed VimbaX in <code class="docutils literal notranslate"><span class="pre">/opt/VimbaX_2025-3</span></code>) and GPUJPEG (e.g., <code class="docutils literal notranslate"><span class="pre">/opt/GPUJPEG/include</span></code> and <code class="docutils literal notranslate"><span class="pre">/opt/GPUJPEG/lib</span></code> if you installed GPUJPEG in <code class="docutils literal notranslate"><span class="pre">/opt/GPUJPEG</span></code>).</p>
 <p>Build and install the software:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>VideoRecStation
 qmake6<span class="w"> </span>src/VideoRecStation.pro
@@ -532,6 +552,7 @@ hw:CARD<span class="o">=</span>USB,DEV<span class="o">=</span><span class="m">0<
 <li><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
 <li><a class="reference internal" href="#install-3-rd-party-components">Install 3-rd party components</a><ul>
 <li><a class="reference internal" href="#install-vimbax">Install VimbaX</a></li>
+<li><a class="reference internal" href="#install-gpujpeg-library">Install GPUJPEG library</a></li>
 <li><a class="reference internal" href="#install-alsa-scarlett-control-panel">Install ALSA Scarlett Control Panel</a></li>
 </ul>
 </li>

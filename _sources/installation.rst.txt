@@ -7,29 +7,35 @@ VideoRecStation runs on Ubuntu 24.04 LTS (Jammy Jellyfish) on amd64 architecture
 
 Install 3-rd party components
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Before you can use VideoRecStation, you need to install VimbaX and ALSA Scarlett Control Panel (alsa-scarlett-gui). The latter is, strictly speaking, optional, but it provides a convenient GUI for controlling the audio settings of your Scarlett interface.
+Before you can use VideoRecStation, you need to install VimbaX, GPUJPEG and ALSA Scarlett Control Panel (alsa-scarlett-gui). The latter is, strictly speaking, optional, but it provides a convenient GUI for controlling the audio settings of your Scarlett interface.
 
 Install VimbaX
 ++++++++++++++
-VimbaX is a software package for controlling USB cameras made by Allied Vision Technologies. You can download it from the `Allied Vision website <https://www.alliedvision.com/en/products/software/vimba-x-sdk/>`_. Assume you have downloaded it to ``~/Downloads/VimbaX_Setup-2025-2-Linux64.tar.gz``, and want to install it to ``/opt/VimbaX_2025-2``. You can do this by running the following commands:
+VimbaX is a software package for controlling USB cameras made by Allied Vision Technologies. You can download it from the `Allied Vision website <https://www.alliedvision.com/en/products/software/vimba-x-sdk/>`_. Assume you have downloaded it to ``~/Downloads/VimbaX_Setup-2025-3-Linux64.tar.gz``, and want to install it to ``/opt/VimbaX_2025-3``. You can do this by running the following commands:
 
 .. code-block:: bash
 
-   sudo mkdir /opt/VimbaX_2025-2
-   sudo tar -xvzf ~/Downloads/VimbaX_Setup-2025-2-Linux64.tar.gz -C /opt/VimbaX_2025-2 --strip-components=1
+   sudo mkdir /opt/VimbaX_2025-3
+   sudo tar -xvzf ~/Downloads/VimbaX_Setup-2025-3-Linux64.tar.gz -C /opt/VimbaX_2025-3 --strip-components=1
+
+Remove the camera simulators that come with VimbaX, so that they don't clutter the list of available cameras:
+
+.. code-block:: bash
+
+   sudo rm -f /opt/VimbaX_2025-3/cti/*Camera_Simulator*
 
 Now you need to install VimbaX transport layers. Run the following commands:
 
 .. code-block:: bash
 
-   cd /opt/VimbaX_2025-2/cti
+   cd /opt/VimbaX_2025-3/cti
    sudo ./Install_GenTL_Path.sh
 
 and reboot your system. You can now test the VimbaX by connecting an Alvium USB camera to your computer and running:
 
 .. code-block:: bash
 
-   /opt/VimbaX_2025-2/bin/VimbaXViewer
+   /opt/VimbaX_2025-3/bin/VimbaXViewer
 
 The Vimba X Viewer window should appear and you should see the camera in the list of detected cameras.
 
@@ -37,13 +43,29 @@ Finally, add the VimbaX library path to your system's library path. You can do t
 
 .. code-block:: bash
 
-   echo "/opt/VimbaX_2025-2/api/lib" | sudo tee /etc/ld.so.conf.d/vimbax.conf
+   echo "/opt/VimbaX_2025-3/api/lib" | sudo tee /etc/ld.so.conf.d/vimbax.conf
 
 Then, update the linker cache:
 
 .. code-block:: bash
 
    sudo ldconfig
+
+Install GPUJPEG library
++++++++++++++++++++++++
+
+`GPUJPEG <https://github.com/CESNET/GPUJPEG>`_ is a library for JPEG encoding and decoding using NVIDIA (and, possibly, other) GPUs. To install it, download the latest release from the `GPUJPEG releases page <https://github.com/CESNET/GPUJPEG/releases>`_. Assume you have downloaded the file ``GPUJPEG.CI.Linux.build.all.CUDA.architetures.zip`` to ``~/Downloads``. Install it by running the following commands:
+
+.. code-block:: bash
+
+   sudo unzip ~/Downloads/GPUJPEG.CI.Linux.build.all.CUDA.architetures.zip -d /opt/GPUJPEG
+   echo "/opt/GPUJPEG/lib" | sudo tee /etc/ld.so.conf.d/gpujpeg.conf
+   sudo ldconfig
+
+.. note::
+
+   1. Make sure that you have the NVIDIA drivers and CUDA toolkit installed on your system.
+   2. The above instructions were tested with GPUJPEG version 0.27.8 in Dec 2025.
 
 Install ALSA Scarlett Control Panel
 +++++++++++++++++++++++++++++++++++
@@ -202,7 +224,7 @@ Install the packages needed to build VideoRecStation:
 
 .. code-block:: bash
 
-   sudo apt -y install qt6-base-dev designer-qt6 libjpeg-turbo8 libjpeg8-dev libasound2-dev g++
+   sudo apt -y install qt6-base-dev designer-qt6 libasound2-dev g++
 
 Clone the repository:
 
@@ -210,7 +232,7 @@ Clone the repository:
 
    git clone https://github.com/Helsinki-VideoMEG-Project/VideoRecStation.git
 
-Modify the ``INCLUDEPATH`` and ``LIBS`` sections of the file ``src/VideoRecStation.pro`` to reflect the location where you have installed VimbaX (e.g., ``/opt/VimbaX_2025-2/api/include`` and ``/opt/VimbaX_2025-2/api/lib`` if you installed VimbaX in ``/opt/VimbaX_2025-2``).
+Modify the ``INCLUDEPATH`` and ``LIBS`` sections of the file ``src/VideoRecStation.pro`` to reflect the location where you have installed VimbaX (e.g., ``/opt/VimbaX_2025-3/api/include`` and ``/opt/VimbaX_2025-3/api/lib`` if you installed VimbaX in ``/opt/VimbaX_2025-3``) and GPUJPEG (e.g., ``/opt/GPUJPEG/include`` and ``/opt/GPUJPEG/lib`` if you installed GPUJPEG in ``/opt/GPUJPEG``).
 
 Build and install the software:
 
