@@ -97,15 +97,27 @@ You now should be able to run ALSA Scarlett Control Panel from the Ubuntu applic
 
    The installation instructions for VimbaX and ALSA Scarlett Control Panel were tested in Aug 2025. As these are provided by third parties, there are no guarantees that the instructions will work in the future (or that these components will be available at all for that matter). If you have problems with installing VimbaX and/or ALSA Scarlett Control Panel, try checking their respective web pages.
 
-Increase the USBFS buffer size
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-To avoid potential problems when using VideoRecStation you need to configure something called the Full Speed USB (USBFS) buffer size. By default, the USBFS buffer size is set to 16MB, which might not be enough, especially when using multiple cameras. You can check the current buffer size by running:
+Configure USB-related kernel parameters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+To avoid potential problems when using VideoRecStation you need to correctly set a few Linux kernel parameters related to USB:
+    1. Full Speed USB (USBFS) buffer size.
+    2. USB autosuspend settings.
+    
+By default, the USBFS buffer size is set to 16MB, which might not be enough, especially when using multiple cameras. You can check the current buffer size by running:
 
 .. code-block:: bash
 
    cat /sys/module/usbcore/parameters/usbfs_memory_mb
 
-To increase the buffer size permanently to 1000MB (which is probably sufficient for most use cases), add the kernel parameter ``usbcore.usbfs_memory_mb=1000`` to the bootloader configuration. To do this you have to edit the GRUB configuration file ``/etc/default/grub``. Find the line that looks like this:
+Similarly, USB autosuspend is enabled by default, which might cause problems with VideoRecStation setup. You can check the current autosuspend setting by running:
+
+.. code-block:: bash
+
+   cat /sys/module/usbcore/parameters/autosuspend
+
+If the output of the above command is not ``-1``, USB autosuspend is enabled.
+
+To increase the buffer size permanently to 1000MB (which is probably sufficient for most use cases) and enable USB autosuspend, add the kernel parameter ``usbcore.usbfs_memory_mb=1000 usbcore.autosuspend=-1`` to the bootloader configuration. To do this you have to edit the GRUB configuration file ``/etc/default/grub``. Find the line that looks like this:
 
 .. code-block:: bash
 
@@ -115,7 +127,7 @@ and add ``usbcore.usbfs_memory_mb=1000`` to it, so that it looks like this:
 
 .. code-block:: bash
 
-   GRUB_CMDLINE_LINUX_DEFAULT="quiet splash usbcore.usbfs_memory_mb=1000"
+   GRUB_CMDLINE_LINUX_DEFAULT="quiet splash usbcore.usbfs_memory_mb=1000 usbcore.autosuspend=-1"
 
 After that, update the GRUB configuration by running:
 
@@ -129,15 +141,22 @@ And reboot your system. After rebooting, running
 
    cat /sys/module/usbcore/parameters/usbfs_memory_mb
 
-should show 1000.
+should show 1000, and running
+
+.. code-block:: bash
+
+   cat /sys/module/usbcore/parameters/autosuspend
+
+should show -1.
 
 .. note::
 
-   You can temporarily (until next reboot) change the USBFS buffer size by running:
+   You can temporarily (until next reboot) change the USBFS buffer size by running and autosuspend setting by running the following commands:
 
    .. code-block:: bash
 
       sudo sh -c 'echo 1000 > /sys/module/usbcore/parameters/usbfs_memory_mb'
+      sudo sh -c 'echo -1 > /sys/module/usbcore/parameters/autosuspend'
 
 
 

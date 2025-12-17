@@ -323,18 +323,30 @@ sudo<span class="w"> </span>make<span class="w"> </span>install
 </div>
 </section>
 </section>
-<section id="increase-the-usbfs-buffer-size">
-<h2>Increase the USBFS buffer size<a class="headerlink" href="#increase-the-usbfs-buffer-size" title="Link to this heading">¶</a></h2>
-<p>To avoid potential problems when using VideoRecStation you need to configure something called the Full Speed USB (USBFS) buffer size. By default, the USBFS buffer size is set to 16MB, which might not be enough, especially when using multiple cameras. You can check the current buffer size by running:</p>
+<section id="configure-usb-related-kernel-parameters">
+<h2>Configure USB-related kernel parameters<a class="headerlink" href="#configure-usb-related-kernel-parameters" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>To avoid potential problems when using VideoRecStation you need to correctly set a few Linux kernel parameters related to USB:</dt><dd><ol class="arabic simple">
+<li><p>Full Speed USB (USBFS) buffer size.</p></li>
+<li><p>USB autosuspend settings.</p></li>
+</ol>
+</dd>
+</dl>
+<p>By default, the USBFS buffer size is set to 16MB, which might not be enough, especially when using multiple cameras. You can check the current buffer size by running:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat<span class="w"> </span>/sys/module/usbcore/parameters/usbfs_memory_mb
 </pre></div>
 </div>
-<p>To increase the buffer size permanently to 1000MB (which is probably sufficient for most use cases), add the kernel parameter <code class="docutils literal notranslate"><span class="pre">usbcore.usbfs_memory_mb=1000</span></code> to the bootloader configuration. To do this you have to edit the GRUB configuration file <code class="docutils literal notranslate"><span class="pre">/etc/default/grub</span></code>. Find the line that looks like this:</p>
+<p>Similarly, USB autosuspend is enabled by default, which might cause problems with VideoRecStation setup. You can check the current autosuspend setting by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat<span class="w"> </span>/sys/module/usbcore/parameters/autosuspend
+</pre></div>
+</div>
+<p>If the output of the above command is not <code class="docutils literal notranslate"><span class="pre">-1</span></code>, USB autosuspend is enabled.</p>
+<p>To increase the buffer size permanently to 1000MB (which is probably sufficient for most use cases) and enable USB autosuspend, add the kernel parameter <code class="docutils literal notranslate"><span class="pre">usbcore.usbfs_memory_mb=1000</span> <span class="pre">usbcore.autosuspend=-1</span></code> to the bootloader configuration. To do this you have to edit the GRUB configuration file <code class="docutils literal notranslate"><span class="pre">/etc/default/grub</span></code>. Find the line that looks like this:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">GRUB_CMDLINE_LINUX_DEFAULT</span><span class="o">=</span><span class="s2">&quot;quiet splash&quot;</span>
 </pre></div>
 </div>
 <p>and add <code class="docutils literal notranslate"><span class="pre">usbcore.usbfs_memory_mb=1000</span></code> to it, so that it looks like this:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">GRUB_CMDLINE_LINUX_DEFAULT</span><span class="o">=</span><span class="s2">&quot;quiet splash usbcore.usbfs_memory_mb=1000&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">GRUB_CMDLINE_LINUX_DEFAULT</span><span class="o">=</span><span class="s2">&quot;quiet splash usbcore.usbfs_memory_mb=1000 usbcore.autosuspend=-1&quot;</span>
 </pre></div>
 </div>
 <p>After that, update the GRUB configuration by running:</p>
@@ -345,11 +357,16 @@ sudo<span class="w"> </span>make<span class="w"> </span>install
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat<span class="w"> </span>/sys/module/usbcore/parameters/usbfs_memory_mb
 </pre></div>
 </div>
-<p>should show 1000.</p>
+<p>should show 1000, and running</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat<span class="w"> </span>/sys/module/usbcore/parameters/autosuspend
+</pre></div>
+</div>
+<p>should show -1.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>You can temporarily (until next reboot) change the USBFS buffer size by running:</p>
+<p>You can temporarily (until next reboot) change the USBFS buffer size by running and autosuspend setting by running the following commands:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;echo 1000 &gt; /sys/module/usbcore/parameters/usbfs_memory_mb&#39;</span>
+sudo<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;echo -1 &gt; /sys/module/usbcore/parameters/autosuspend&#39;</span>
 </pre></div>
 </div>
 </div>
@@ -556,7 +573,7 @@ hw:CARD<span class="o">=</span>USB,DEV<span class="o">=</span><span class="m">0<
 <li><a class="reference internal" href="#install-alsa-scarlett-control-panel">Install ALSA Scarlett Control Panel</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#increase-the-usbfs-buffer-size">Increase the USBFS buffer size</a></li>
+<li><a class="reference internal" href="#configure-usb-related-kernel-parameters">Configure USB-related kernel parameters</a></li>
 <li><a class="reference internal" href="#set-up-exclusive-access-by-videorecstation-to-the-audio-device">Set up exclusive access by VideoRecStation to the audio device</a></li>
 <li><a class="reference internal" href="#install-the-videorecstation-software">Install the VideoRecStation software</a><ul>
 <li><a class="reference internal" href="#build-and-install-videorecstation-binary">Build and install VideoRecStation binary</a></li>
