@@ -66,7 +66,7 @@
         <enum>Qt::Horizontal</enum>
        </property>
        <property name="tickPosition">
-        <enum>QSlider::TicksBelow</enum>
+        <enum>QSlider::NoTicks</enum>
        </property>
       </widget>
      </item>
@@ -86,7 +86,7 @@
         <enum>Qt::Horizontal</enum>
        </property>
        <property name="tickPosition">
-        <enum>QSlider::TicksBelow</enum>
+        <enum>QSlider::NoTicks</enum>
        </property>
       </widget>
      </item>
@@ -112,7 +112,7 @@
         <enum>Qt::Horizontal</enum>
        </property>
        <property name="tickPosition">
-        <enum>QSlider::TicksBelow</enum>
+        <enum>QSlider::NoTicks</enum>
        </property>
       </widget>
      </item>
@@ -157,7 +157,7 @@
         <enum>Qt::Horizontal</enum>
        </property>
        <property name="tickPosition">
-        <enum>QSlider::TicksBelow</enum>
+        <enum>QSlider::NoTicks</enum>
        </property>
       </widget>
      </item>
@@ -197,14 +197,14 @@
         <enum>Qt::Horizontal</enum>
        </property>
        <property name="tickPosition">
-        <enum>QSlider::TicksBelow</enum>
+        <enum>QSlider::NoTicks</enum>
        </property>
       </widget>
      </item>
      <item row="3" column="2">
       <widget class="QLabel" name="dataRateLabel">
        <property name="text">
-        <string>Data Rate:</string>
+        <string>N/A</string>
        </property>
       </widget>
      </item>
@@ -219,6 +219,13 @@
       <widget class="QLabel" name="imageOffsetLabel">
        <property name="text">
         <string>Offset: (x=N/A, y=N/A)</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="5">
+      <widget class="QLabel" name="triggerLabel">
+       <property name="text">
+        <string>Trigger lock:</string>
        </property>
       </widget>
      </item>

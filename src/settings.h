@@ -34,6 +34,7 @@ struct camera_settings {
     int offsetx;
     int offsety;
     bool color;
+    bool use_trigger;
 };
 
 
@@ -51,7 +52,6 @@ public:
     ~Settings();
 
     // video
-    bool            useExternalTrigger;
     QString         externalTriggerSource;
 
     // audio

@@ -114,6 +114,7 @@ VideoDialog::VideoDialog(VmbCPP::CameraPtr _camera, int _cameraIdx, QString _cam
 
     ui.imageSizeLabel->setText(QString("W: %1, H: %2").arg(camSettings.width).arg(camSettings.height));
     ui.imageOffsetLabel->setText(QString("Offset: (x=%1, y=%2)").arg(camSettings.offsetx).arg(camSettings.offsety));
+    ui.triggerLabel->setText(QString(camSettings.use_trigger? "Trigger lock: ON" : "Trigger lock: OFF"));
 
     // Start video running
     videoFileWriter->start();
@@ -250,7 +251,7 @@ void VideoDialog::onNewFrame(unsigned char* _jpegBuf)
         mbps = double(sizeSum) / (double(timeDiff) / 1000) / 1e6; // in MB/s 
 
         ui.fpsLabel->setText(QString("FPS: %1").arg(fps, 0, 'f', 2));
-        ui.dataRateLabel->setText(QString("Data rate: %1 MB/s").arg(mbps, 0, 'f', 2));
+        ui.dataRateLabel->setText(QString("%1 MB/sec (%2 GB/hour)").arg(mbps, 0, 'f', 2).arg(mbps*3.6, 0, 'f', 2));
     }
 }
 

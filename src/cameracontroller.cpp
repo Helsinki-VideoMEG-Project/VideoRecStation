@@ -116,7 +116,7 @@ CameraController::CameraController(CameraPtr _camera, FrameObserver* _frameObser
         abort();
     }
 
-    if (settings.useExternalTrigger)
+    if (_camSettings.use_trigger)
     {
         // Set the camera to external trigger mode
         if ((camera->GetFeatureByName("TriggerMode", feature) != VmbErrorSuccess) ||
