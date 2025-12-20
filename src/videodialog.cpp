@@ -133,11 +133,6 @@ VideoDialog::~VideoDialog()
     videoDecompressorThread->stop();
     cameraController->stopAquisition();
 
-    delete cycVideoBufDisp;
-    delete cycVideoBufWrite;
-    delete cameraController;
-    delete videoFileWriter;
-
     // TODO: Fix the segfault issue:
     // Deleteing the frame observer causes segfault. No idea why. Not deleting it causes
     // a memory leak, but it's better than a crash.
@@ -146,6 +141,12 @@ VideoDialog::~VideoDialog()
     // Wait a bit to let the frameObserver finish processing any remaining frames
     QThread::msleep(200);
     delete gpuJpegEncoder;
+
+    delete cycVideoBufDisp;
+    delete cycVideoBufWrite;
+    delete cameraController;
+    delete videoFileWriter;
+    delete videoDecompressorThread;
 }
 
 
