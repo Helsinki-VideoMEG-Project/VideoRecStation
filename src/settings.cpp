@@ -112,6 +112,7 @@ struct camera_settings Settings::loadCameraSettings(QString _cameraSN)
     camSettings.offsetx = settings.value(baseKey + "offset_x", 488).toInt();
     camSettings.offsety = settings.value(baseKey + "offset_y", 368).toInt();
     camSettings.color = settings.value(baseKey + "color", true).toBool();
+    camSettings.use_trigger = settings.value(baseKey + "use_trigger", false).toBool();
 
     return camSettings;
 }
@@ -132,6 +133,7 @@ void Settings::saveCameraSettings(QString _cameraSN, struct camera_settings _cam
     settings.setValue(baseKey + "offset_x", _camSettings.offsetx);
     settings.setValue(baseKey + "offset_y", _camSettings.offsety);
     settings.setValue(baseKey + "color", _camSettings.color);
+    settings.setValue(baseKey + "use_trigger", _camSettings.use_trigger);
 
     settings.sync();
 }

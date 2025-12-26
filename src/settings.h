@@ -34,6 +34,7 @@ struct camera_settings {
     int offsetx;
     int offsety;
     bool color;
+    bool use_trigger;
 };
 
 
