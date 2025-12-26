@@ -23,6 +23,9 @@
 #include <math.h>
 
 #include <QStorageInfo>
+#include <QProcess>
+#include <QProcessEnvironment>
+#include <QMessageBox>
 
 #include "config.h"
 #include "maindialog.h"
@@ -235,6 +238,50 @@ void MainDialog::onExit()
             camCheckBoxes[i]->setChecked(false);
 
     close();
+}
+
+
+void MainDialog::onFramelockToggled(bool enabled)
+{
+    int framelockValue = enabled ? 1 : 0;
+    QString action = enabled ? "enabled" : "disabled";
+    
+    QProcess process;
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    env.insert("DISPLAY", settings.framelockDisplay);
+    process.setProcessEnvironment(env);
+    
+    // Call nvidia-settings directly
+    QStringList arguments;
+    arguments << "-a" << QString("[gpu:0]/FrameLockEnable=%1").arg(framelockValue);
+    process.start("nvidia-settings", arguments);
+    
+    if (!process.waitForFinished(10000)) // Wait up to 10 seconds
+    {
+        ui.framelockCheckBox->blockSignals(true);
+        ui.framelockCheckBox->setChecked(!enabled); // Revert checkbox state
+        ui.framelockCheckBox->blockSignals(false);
+        QMessageBox::warning(this, "Framelock Timeout",
+                             QString("The framelock command did not complete within 10 seconds."));
+        return;
+    }
+    
+    int exitCode = process.exitCode();
+    if (exitCode != 0)
+    {
+        ui.framelockCheckBox->blockSignals(true);
+        ui.framelockCheckBox->setChecked(!enabled); // Revert checkbox state
+        ui.framelockCheckBox->blockSignals(false);
+        QString errorOutput = process.readAllStandardError();
+        QMessageBox::warning(this, "Framelock Error",
+                             QString("Failed to %1 framelock (exit code %2).\n\nError output:\n%3")
+                             .arg(action).arg(exitCode).arg(errorOutput));
+        return;
+    }
+    
+    // Success - checkbox state is already set
+    // Optionally show a brief status message in the status bar
+    statusLeft->setText(QString("Framelock %1").arg(action));
 }
 
 

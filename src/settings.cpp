@@ -32,6 +32,7 @@ Settings::Settings()
     //
 
     // Capture settings
+    useExternalTrigger = settings.value("video/use_external_trigger", false).toBool();
     externalTriggerSource = settings.value("video/external_trigger_source", "Line0").toString();
 
     //---------------------------------------------------------------------
@@ -64,6 +65,9 @@ Settings::Settings()
     // Data storage folder
     storagePath = settings.value("misc/data_storage_path", "/tmp").toString();
     lowDiskSpaceThreshGB = settings.value("misc/low_disk_space_warning_threshold_gb", 5).toDouble();
+    
+    // Framelock display setting
+    framelockDisplay = settings.value("misc/framelock_display", ":2").toString();
 
 }
 
@@ -71,6 +75,7 @@ Settings::~Settings()
 {
     QSettings settings(ORG_NAME, APP_NAME);
 
+    settings.setValue("video/use_external_trigger", useExternalTrigger);
     settings.setValue("video/external_trigger_source", externalTriggerSource);
 
     settings.setValue("audio/sampling_rate", sampRate);
@@ -84,6 +89,7 @@ Settings::~Settings()
 
     settings.setValue("misc/data_storage_path", storagePath);
     settings.setValue("misc/low_disk_space_warning_threshold_gb", lowDiskSpaceThreshGB);
+    settings.setValue("misc/framelock_display", framelockDisplay);
 
     settings.sync();
 }
@@ -106,7 +112,6 @@ struct camera_settings Settings::loadCameraSettings(QString _cameraSN)
     camSettings.offsetx = settings.value(baseKey + "offset_x", 488).toInt();
     camSettings.offsety = settings.value(baseKey + "offset_y", 368).toInt();
     camSettings.color = settings.value(baseKey + "color", true).toBool();
-    camSettings.use_trigger = settings.value(baseKey + "use_external_trigger", false).toBool();
 
     return camSettings;
 }
@@ -127,7 +132,6 @@ void Settings::saveCameraSettings(QString _cameraSN, struct camera_settings _cam
     settings.setValue(baseKey + "offset_x", _camSettings.offsetx);
     settings.setValue(baseKey + "offset_y", _camSettings.offsety);
     settings.setValue(baseKey + "color", _camSettings.color);
-    settings.setValue(baseKey + "use_external_trigger", _camSettings.use_trigger);
 
     settings.sync();
 }

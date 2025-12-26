@@ -287,6 +287,19 @@
      <string>Cameras</string>
     </property>
    </widget>
+   <widget class="QCheckBox" name="framelockCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>130</y>
+      <width>131</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Enable Framelock</string>
+    </property>
+   </widget>
    <widget class="QPushButton" name="exitButton">
     <property name="geometry">
      <rect>
@@ -353,6 +366,22 @@
    </hints>
   </connection>
   <connection>
+   <sender>framelockCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainDialogClass</receiver>
+   <slot>onFramelockToggled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>235</x>
+     <y>993</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>649</x>
+     <y>509</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>exitButton</sender>
    <signal>clicked()</signal>
    <receiver>MainDialogClass</receiver>
@@ -374,6 +403,7 @@
   <slot>onStopRec()</slot>
   <slot>onShutterChanged(int)</slot>
   <slot>onGainChanged(int)</slot>
+  <slot>onFramelockToggled(bool)</slot>
   <slot>onExit()</slot>
  </slots>
 </ui>
