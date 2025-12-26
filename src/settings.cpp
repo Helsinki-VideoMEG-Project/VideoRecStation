@@ -112,7 +112,8 @@ struct camera_settings Settings::loadCameraSettings(QString _cameraSN)
     camSettings.offsetx = settings.value(baseKey + "offset_x", 488).toInt();
     camSettings.offsety = settings.value(baseKey + "offset_y", 368).toInt();
     camSettings.color = settings.value(baseKey + "color", true).toBool();
-    camSettings.use_trigger = settings.value(baseKey + "use_trigger", false).toBool();
+    // Use global useExternalTrigger as default if per-camera setting doesn't exist
+    camSettings.use_trigger = settings.value(baseKey + "use_trigger", useExternalTrigger).toBool();
 
     return camSettings;
 }
