@@ -25,17 +25,19 @@
 
 using namespace std;
 
+
 VideoDialog::VideoDialog(VmbCPP::CameraPtr _camera, int _cameraIdx, QString _cameraSN, QWidget *parent)
     : QDialog(parent)
 {
-    Settings  settings;
-    cameraIdx = _cameraIdx;
-    cameraSN = _cameraSN;
-
     ui.setupUi(this);
     ui.videoWidget->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     setWindowFlags(Qt::Window | Qt::CustomizeWindowHint | Qt::WindowTitleHint| Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint);
-    setWindowTitle(QString("Camera %1").arg(cameraIdx + 1));
+    setWindowTitle(QString("Camera %1").arg(_cameraIdx + 1));
+
+    MiscSettings miscSettings = Settings::getInstance().getMiscSettings();
+    cameraIdx = _cameraIdx;
+    cameraSN = _cameraSN;
+    camSettings = Settings::getInstance().getCameraSettings(_cameraSN);
 
     // EXplicitly set gpuJpegEncoder and cameraController to nullptr
     // to make sure that setting min/max values for sliders below
@@ -69,12 +71,10 @@ VideoDialog::VideoDialog(VmbCPP::CameraPtr _camera, int _cameraIdx, QString _cam
     ui.jpegQualitySpinBox->setMinimum(JPEG_QUALITY_MIN);
     ui.jpegQualitySpinBox->setMaximum(JPEG_QUALITY_MAX);
 
-    camSettings = settings.loadCameraSettings(cameraSN);
-
     // Set up video recording
     cycVideoBufDisp = new CycDataBuffer(CIRC_VIDEO_BUFF_SZ);
     cycVideoBufWrite = new CycDataBuffer(CIRC_VIDEO_BUFF_SZ);
-    videoFileWriter = new VideoFileWriter(cycVideoBufWrite, settings.storagePath.toLocal8Bit().data(), cameraIdx + 1);
+    videoFileWriter = new VideoFileWriter(cycVideoBufWrite, miscSettings.storagePath.toLocal8Bit().data(), cameraIdx + 1);
     gpuJpegEncoder = new GPUJPEGEncoder(camSettings);
     frameObserver = new FrameObserver(_camera, cycVideoBufDisp, gpuJpegEncoder, camSettings);
     cameraController = new CameraController(_camera, frameObserver, camSettings);
@@ -95,13 +95,13 @@ VideoDialog::VideoDialog(VmbCPP::CameraPtr _camera, int _cameraIdx, QString _cam
     ui.shutterSpinBox->setValue(camSettings.shutter);
     ui.gainSlider->setValue(camSettings.gain);
     ui.gainSpinBox->setValue(camSettings.gain);
-    ui.balanceRedSlider->setValue(camSettings.balance_red);
-    ui.balanceRedSpinBox->setValue(camSettings.balance_red);
-    ui.balanceBlueSlider->setValue(camSettings.balance_blue);
-    ui.balanceBlueSpinBox->setValue(camSettings.balance_blue);
+    ui.balanceRedSlider->setValue(camSettings.balanceRed);
+    ui.balanceRedSpinBox->setValue(camSettings.balanceRed);
+    ui.balanceBlueSlider->setValue(camSettings.balanceBlue);
+    ui.balanceBlueSpinBox->setValue(camSettings.balanceBlue);
     
-    ui.jpegQualitySlider->setValue(camSettings.jpeg_quality);
-    ui.jpegQualitySpinBox->setValue(camSettings.jpeg_quality);
+    ui.jpegQualitySlider->setValue(camSettings.jpegQuality);
+    ui.jpegQualitySpinBox->setValue(camSettings.jpegQuality);
 
     // Enable/disable color controls
     ui.balanceRedSlider->setEnabled(camSettings.color);
@@ -113,8 +113,8 @@ VideoDialog::VideoDialog(VmbCPP::CameraPtr _camera, int _cameraIdx, QString _cam
     ui.wbLabel->setEnabled(camSettings.color);
 
     ui.imageSizeLabel->setText(QString("W: %1, H: %2").arg(camSettings.width).arg(camSettings.height));
-    ui.imageOffsetLabel->setText(QString("Offset: (x=%1, y=%2)").arg(camSettings.offsetx).arg(camSettings.offsety));
-    ui.triggerLabel->setText(QString(camSettings.use_trigger? "Trigger lock: ON" : "Trigger lock: OFF"));
+    ui.imageOffsetLabel->setText(QString("Offset: (x=%1, y=%2)").arg(camSettings.offsetX).arg(camSettings.offsetY));
+    ui.triggerLabel->setText(QString(camSettings.useTrigger? "Trigger lock: ON" : "Trigger lock: OFF"));
 
     // Start video running
     videoFileWriter->start();
@@ -125,10 +125,8 @@ VideoDialog::VideoDialog(VmbCPP::CameraPtr _camera, int _cameraIdx, QString _cam
 
 VideoDialog::~VideoDialog()
 {
-    Settings  settings;
-
     // Save camera-specific settings to disk
-    settings.saveCameraSettings(cameraSN, camSettings);
+    Settings::getInstance().setCameraSettings(cameraSN, camSettings);
 
     // The piece of code stopping the threads should execute fast enough,
     // otherwise cycVideoBufRaw or cycVideoBufJpeg buffer might overflow. The
@@ -192,7 +190,7 @@ void VideoDialog::onBalanceRedChanged(int _newVal)
     {
         balanceVal = _newVal * BALANCE_SCALE;
         cameraController->setBalance(balanceVal, (char*)"Red");
-        camSettings.balance_red = _newVal;
+        camSettings.balanceRed = _newVal;
     }
 }
 
@@ -204,7 +202,7 @@ void VideoDialog::onBalanceBlueChanged(int _newVal)
     {
         balanceVal = _newVal * BALANCE_SCALE;
         cameraController->setBalance(balanceVal, (char*)"Blue");
-        camSettings.balance_blue = _newVal;
+        camSettings.balanceBlue = _newVal;
     }
 }
 
@@ -213,7 +211,7 @@ void VideoDialog::onJpegQualityChanged(int _newVal)
     if (gpuJpegEncoder != nullptr)
     {
         gpuJpegEncoder->setJPEGQuality(_newVal);
-        camSettings.jpeg_quality = _newVal;
+        camSettings.jpegQuality = _newVal;
     }
 }
 

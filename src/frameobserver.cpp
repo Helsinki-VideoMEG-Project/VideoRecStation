@@ -31,7 +31,7 @@ using namespace std;
 using namespace VmbCPP;
 
 
-FrameObserver::FrameObserver(CameraPtr _camera, CycDataBuffer* _cycBuf, GPUJPEGEncoder* _encoder, struct camera_settings _camSettings) : IFrameObserver(_camera)
+FrameObserver::FrameObserver(CameraPtr _camera, CycDataBuffer* _cycBuf, GPUJPEGEncoder* _encoder, CameraSettings _camSettings) : IFrameObserver(_camera)
 {
     cycBuf = _cycBuf;
     rawImageSize = (size_t)(_camSettings.width) * _camSettings.height * (_camSettings.color ? 3 : 1);

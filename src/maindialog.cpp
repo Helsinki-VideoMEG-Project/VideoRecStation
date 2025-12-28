@@ -26,18 +26,21 @@
 
 #include "config.h"
 #include "maindialog.h"
+#include "settings.h"
 
 using namespace std;
 using namespace VmbCPP;
+
 
 MainDialog::MainDialog(QWidget *parent)
     : QMainWindow(parent)
 {
     Qt::WindowFlags flags = Qt::WindowTitleHint;
-
     setWindowFlags(flags);
-
     ui.setupUi(this);
+
+    AudioSettings audioSettings = Settings::getInstance().getAudioSettings();
+    MiscSettings miscSettings = Settings::getInstance().getMiscSettings();    
 
     // Set up status bar
     ui.statusBar->setSizeGripEnabled(false);
@@ -61,7 +64,7 @@ MainDialog::MainDialog(QWidget *parent)
     cycAudioBufCompressed = new CycDataBuffer(CIRC_AUDIO_BUFF_SZ);
     audioCompressorThread = new AudioCompressorThread(cycAudioBufRaw, cycAudioBufCompressed, N_CHANS, N_CHANS_2_RECORD);
     microphoneThread = new MicrophoneThread(cycAudioBufRaw);
-    audioFileWriter = new AudioFileWriter(cycAudioBufCompressed, settings.storagePath.toLocal8Bit().data());
+    audioFileWriter = new AudioFileWriter(cycAudioBufCompressed, miscSettings.storagePath.toLocal8Bit().data());
     QObject::connect(cycAudioBufRaw, SIGNAL(chunkReady(unsigned char*)), this, SLOT(onAudioUpdate(unsigned char*)));
 
     // Set thread names to simplify profiling
@@ -74,9 +77,9 @@ MainDialog::MainDialog(QWidget *parent)
     volIndNext = 0;
 
     // Initialize speaker
-    if(settings.useFeedback)
+    if(audioSettings.useFeedback)
     {
-        speakerBuffer = new NonBlockingBuffer(settings.spkBufSz, settings.framesPerPeriod*N_CHANS*sizeof(AUDIO_DATA_TYPE));
+        speakerBuffer = new NonBlockingBuffer(audioSettings.spkBufSize, audioSettings.framesPerPeriod*N_CHANS*sizeof(AUDIO_DATA_TYPE));
         speakerThread = new SpeakerThread(speakerBuffer);
 
         // Set thread name to simplify profiling
@@ -120,7 +123,9 @@ void MainDialog::closeEvent(QCloseEvent *event)
 
 double MainDialog::freeSpaceGB()
 {
-    QStorageInfo storageInfo(settings.storagePath);
+    MiscSettings miscSettings = Settings::getInstance().getMiscSettings();    
+
+    QStorageInfo storageInfo(miscSettings.storagePath);
     return double(storageInfo.bytesAvailable()) / 1e9;
 }
 
@@ -176,8 +181,10 @@ MainDialog::~MainDialog()
 
 void MainDialog::onStartRec()
 {
+    MiscSettings miscSettings = Settings::getInstance().getMiscSettings();    
     double freeSpace = freeSpaceGB();
-    if (freeSpace < settings.lowDiskSpaceThreshGB)
+
+    if (freeSpace < miscSettings.lowDiskSpaceThreshGB)
     {
         if (QMessageBox::warning(this, "Low disk space",
                                  QString("Disk space is low (%1 GB). Do you really want to start recording?").arg(freeSpace, 0, 'f', 1),
@@ -244,10 +251,11 @@ void MainDialog::onAudioUpdate(unsigned char* _data)
     unsigned int    j;
     AUDIO_DATA_TYPE maxvals[N_CHANS]={0};
     AUDIO_DATA_TYPE curval;
+    AudioSettings audioSettings = Settings::getInstance().getAudioSettings();    
 
     // Update the history
     memset(&(volMaxvals[volIndNext]), 0, N_CHANS * sizeof(AUDIO_DATA_TYPE));
-    while(i < settings.framesPerPeriod * N_CHANS)
+    while(i < audioSettings.framesPerPeriod * N_CHANS)
     {
         for(j=0; j<N_CHANS; j++)
         {

@@ -19,7 +19,7 @@
  #include <iostream>
 #include "gpujpegencoder.h"
 
-GPUJPEGEncoder::GPUJPEGEncoder(struct camera_settings _camSettings)
+GPUJPEGEncoder::GPUJPEGEncoder(CameraSettings _camSettings)
 {
     // Initialize GPUJPEG encoder
     if ((encoder = gpujpeg_encoder_create(0)) == NULL) {
@@ -27,7 +27,7 @@ GPUJPEGEncoder::GPUJPEGEncoder(struct camera_settings _camSettings)
         exit(1);
     }
 
-    quality = _camSettings.jpeg_quality;
+    quality = _camSettings.jpegQuality;
 
     // Set image parameters
     gpujpeg_image_set_default_parameters(&param_image);

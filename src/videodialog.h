@@ -32,6 +32,7 @@
 #include "gpujpegencoder.h"
 #include "videodecompressorthread.h"
 #include "settings.h"
+#include "config.h"
 
 
 class VideoDialog : public QDialog
@@ -58,7 +59,7 @@ private:
 
     unsigned int                cameraIdx;
     QString                     cameraSN;
-    struct camera_settings      camSettings;
+    CameraSettings              camSettings;
     CameraController*           cameraController;
     FrameObserver*              frameObserver;
     CycDataBuffer*              cycVideoBufDisp;

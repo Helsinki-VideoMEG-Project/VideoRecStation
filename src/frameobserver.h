@@ -28,7 +28,7 @@
 class FrameObserver : public VmbCPP::IFrameObserver
 {
 public:
-    FrameObserver(VmbCPP::CameraPtr _camera, CycDataBuffer* _cycBuf, GPUJPEGEncoder* _encoder, struct camera_settings _camSettings);
+    FrameObserver(VmbCPP::CameraPtr _camera, CycDataBuffer* _cycBuf, GPUJPEGEncoder* _encoder, CameraSettings _camSettings);
     virtual ~FrameObserver();
 
     // Frame callback notifies about incoming frames

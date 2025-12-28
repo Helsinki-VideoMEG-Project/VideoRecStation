@@ -37,7 +37,6 @@
 #include "speakerthread.h"
 #include "audiocompressorthread.h"
 #include "videodialog.h"
-#include "settings.h"
 
 
 class MainDialog : public QMainWindow
@@ -47,7 +46,6 @@ class MainDialog : public QMainWindow
 public:
     MainDialog(QWidget *parent = 0);
     ~MainDialog();
-    Settings            settings;
 
 public slots:
     void onStartRec();

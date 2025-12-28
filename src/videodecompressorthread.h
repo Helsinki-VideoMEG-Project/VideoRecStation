@@ -42,7 +42,7 @@ class VideoDecompressorThread : public StoppableThread
     Q_OBJECT
 
 public:
-    VideoDecompressorThread(CycDataBuffer* _inpBuf, CycDataBuffer* _outBuf, struct camera_settings _camSettings);
+    VideoDecompressorThread(CycDataBuffer* _inpBuf, CycDataBuffer* _outBuf, CameraSettings _camSettings);
     virtual ~VideoDecompressorThread();
 
 signals:

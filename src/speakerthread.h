@@ -27,7 +27,6 @@
 
 #include "stoppablethread.h"
 #include "nonblockingbuffer.h"
-#include "settings.h"
 
 class SpeakerThread : public StoppableThread
 {
@@ -41,7 +40,6 @@ protected:
 private:
     snd_pcm_t*          sndHandle;
     NonBlockingBuffer*  buffer;
-    Settings            settings;
 };
 
 #endif /* SPEAKERTHREAD_H_ */

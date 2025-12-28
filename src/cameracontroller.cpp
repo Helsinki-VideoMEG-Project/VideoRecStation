@@ -27,15 +27,17 @@
 
 #include "cameracontroller.h"
 #include "config.h"
+#include "settings.h"
 
 using namespace std;
 using namespace VmbCPP;
 
 
-CameraController::CameraController(CameraPtr _camera, FrameObserver* _frameObserver, struct camera_settings _camSettings)
+CameraController::CameraController(CameraPtr _camera, FrameObserver* _frameObserver, CameraSettings _camSettings)
 {
     FeaturePtr      feature;
     VmbUint32_t     payloadSize;
+    MiscSettings    miscSettings = Settings::getInstance().getMiscSettings();
 
     frameObserver = _frameObserver;
 
@@ -65,9 +67,9 @@ CameraController::CameraController(CameraPtr _camera, FrameObserver* _frameObser
         (camera->GetFeatureByName("Height", feature) != VmbErrorSuccess) ||
         (feature->SetValue(_camSettings.height) != VmbErrorSuccess) ||
         (camera->GetFeatureByName("OffsetX", feature) != VmbErrorSuccess) ||
-        (feature->SetValue(_camSettings.offsetx) != VmbErrorSuccess) ||
+        (feature->SetValue(_camSettings.offsetX) != VmbErrorSuccess) ||
         (camera->GetFeatureByName("OffsetY", feature) != VmbErrorSuccess) ||
-        (feature->SetValue(_camSettings.offsety) != VmbErrorSuccess))
+        (feature->SetValue(_camSettings.offsetY) != VmbErrorSuccess))
     {
         cerr << "Could not set up the ROI size/offset" << endl;
         abort();
@@ -116,13 +118,13 @@ CameraController::CameraController(CameraPtr _camera, FrameObserver* _frameObser
         abort();
     }
 
-    if (_camSettings.use_trigger)
+    if (_camSettings.useTrigger)
     {
         // Set the camera to external trigger mode
         if ((camera->GetFeatureByName("TriggerMode", feature) != VmbErrorSuccess) ||
             (feature->SetValue("On") != VmbErrorSuccess) ||
             (camera->GetFeatureByName("TriggerSource", feature) != VmbErrorSuccess) ||
-        (feature->SetValue(settings.externalTriggerSource.toUtf8().constData()) != VmbErrorSuccess) ||
+        (feature->SetValue(miscSettings.externalTriggerSource.toUtf8().constData()) != VmbErrorSuccess) ||
         (camera->GetFeatureByName("TriggerActivation", feature) != VmbErrorSuccess) ||
         (feature->SetValue("RisingEdge") != VmbErrorSuccess))
     {

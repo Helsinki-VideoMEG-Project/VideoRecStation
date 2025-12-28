@@ -26,7 +26,6 @@
 #include <alsa/asoundlib.h>
 #include "stoppablethread.h"
 #include "cycdatabuffer.h"
-#include "settings.h"
 
 class MicrophoneThread : public StoppableThread
 {
@@ -42,7 +41,6 @@ private:
     snd_pcm_t*          pcmHandle;
     snd_pcm_uframes_t   framesPerPeriod;
     unsigned char*      periodBuffer;
-    Settings            settings;
 };
 
 #endif /* MICROPHONETHREAD_H_ */

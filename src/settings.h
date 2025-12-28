@@ -20,64 +20,93 @@
 #define SETTINGS_H_
 
 #include <QString>
-#include "config.h"
+#include <QSettings>
+#include <QReadWriteLock>
 
-struct camera_settings {
-    int shutter;
-    int gain;
-    int balance_blue;
-    int balance_red;
-    int jpeg_quality;
+struct CameraSettings
+{
+    unsigned int shutter;
+    unsigned int gain;
+    unsigned int balanceBlue;
+    unsigned int balanceRed;
+    unsigned int jpegQuality;
 
-    int width;
-    int height;
-    int offsetx;
-    int offsety;
+    unsigned int width;
+    unsigned int height;
+    unsigned int offsetX;
+    unsigned int offsetY;
     bool color;
-    bool use_trigger;
+    bool useTrigger;
+};
+
+
+struct AudioSettings
+{
+    unsigned int    sampRate;
+    unsigned int    framesPerPeriod;
+    unsigned int    nPeriods;
+    unsigned int    spkBufSize;
+    QString         inpDev;
+    QString         outDev;
+    bool            useFeedback;
+};
+
+
+struct MiscSettings
+{
+    QString         externalTriggerSource;
+    QString         storagePath;
+    double          lowDiskSpaceThreshGB;
 };
 
 
 //! Application-wide settings preserved across multiple invocations.
 /*!
  * This class contains application-wide settings that are persisted on disc.
- * Create a single instance of this class when the program starts and 
- * destroy it when the program ends to save the updated sttings to the disc.
+ * Uses a singleton pattern, and should be thread-safe for typical usage
+ * scenarios.
+ * 
+ * NOTE: The class uses QSettings under the hood. QSettings might cause
+ * problems when constucted/destroyed outside of lifescope of
+ * QCoreApplication/QApplication. To solve the problem we pass 
+ * organization name and application name to QSettings explicitly,
+ * so that it should not rely on QCoreApplication/QApplication.
+ * This seems to work, but watch out for problems nevertheless.
  */
 class Settings {
-    // TODO: make the class thread-safe
-    // TODO: implement singleton pattern?
+
 public:
-    Settings();
-    ~Settings();
+    // Delete copy constructor and assignment operator
+    Settings(const Settings&) = delete;
+    Settings& operator=(const Settings&) = delete;
 
-    // video
-    QString         externalTriggerSource;
-
-    // audio
-    unsigned int    sampRate;
-    unsigned int    framesPerPeriod;
-    unsigned int    nPeriods;
-    unsigned int    spkBufSz;
-    QString         inpAudioDev;
-    QString         outAudioDev;
-    bool            useFeedback;
-
-    // misc
-    QString         storagePath;
-    double          lowDiskSpaceThreshGB;
+    // Get singleton instance
+    static Settings& getInstance();
 
     /*!
      * Load camera-specific settings from disk. User camera serial number to
      * identify the camera.
      */
-    struct camera_settings loadCameraSettings(QString _cameraSN);
+    CameraSettings getCameraSettings(QString _cameraSN);
 
     /*!
      * Save camera-specific settings to disk. User camera serial number to
      * identify the camera.
      */
-    void saveCameraSettings(QString _cameraSN, struct camera_settings _camSettings);
+    void setCameraSettings(QString _cameraSN, CameraSettings _camSettings);
+
+    AudioSettings getAudioSettings();
+    MiscSettings getMiscSettings();
+    void setMiscSettings(MiscSettings _miscSettings);
+
+private:
+    explicit Settings();
+    ~Settings();
+
+    QReadWriteLock rwLock;  // Read-write lock for thread safety
+    QSettings* settings;
+    AudioSettings audioSettings;
+    MiscSettings miscSettings;
 };
 
 #endif /* SETTINGS_H_ */

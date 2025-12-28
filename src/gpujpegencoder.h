@@ -26,7 +26,7 @@
 class GPUJPEGEncoder
 {
 public:
-    GPUJPEGEncoder(struct camera_settings _camSettings);
+    GPUJPEGEncoder(CameraSettings _camSettings);
     virtual ~GPUJPEGEncoder();
     uint8_t* encodeFrame(uint8_t* _frameData, size_t& _outSize);
     void setJPEGQuality(int _quality);

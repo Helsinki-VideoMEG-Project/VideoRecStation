@@ -24,7 +24,7 @@
 #include "config.h"
 #include "videodecompressorthread.h"
 
-VideoDecompressorThread::VideoDecompressorThread(CycDataBuffer* _inpBuf, CycDataBuffer* _outBuf, struct camera_settings _camSettings)
+VideoDecompressorThread::VideoDecompressorThread(CycDataBuffer* _inpBuf, CycDataBuffer* _outBuf, CameraSettings _camSettings)
 {
     inpBuf = _inpBuf;
     outBuf = _outBuf;

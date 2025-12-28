@@ -21,14 +21,13 @@
 #define CAMERACONTROLLER_H_
 
 #include <VmbCPP/VmbCPP.h>
-#include "settings.h"
 #include "frameobserver.h"
 
 //! A class for controlling a USB camera.
 class CameraController
 {
 public:
-    CameraController(VmbCPP::CameraPtr _camera, FrameObserver* _frameObserver, struct camera_settings _camSettings);
+    CameraController(VmbCPP::CameraPtr _camera, FrameObserver* _frameObserver, CameraSettings _camSettings);
     virtual ~CameraController();
     void startAquisition();
     void stopAquisition();
@@ -38,7 +37,6 @@ public:
 
 private:
     VmbCPP::CameraPtr   camera;
-    Settings            settings;
     FrameObserver*      frameObserver;
 };
 

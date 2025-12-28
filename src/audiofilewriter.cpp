@@ -31,9 +31,9 @@ using namespace std;
 AudioFileWriter::AudioFileWriter(CycDataBuffer* _cycBuf, const char* _path)
     :   FileWriter(_cycBuf, _path, "_audio", "aud", 0)
 {
-    Settings    settings;
+    AudioSettings audioSettings = Settings::getInstance().getAudioSettings();
     uint32_t    nchans = N_CHANS_2_RECORD;
-    uint32_t    srate = settings.sampRate;
+    uint32_t    srate = audioSettings.sampRate;
     uint32_t    ver = AUDIO_FILE_VERSION;
 
     // Create header
