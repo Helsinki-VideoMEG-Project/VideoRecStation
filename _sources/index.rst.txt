@@ -17,3 +17,4 @@ This is a software for recording video and audio during MEG experiments.
    usage
    config-description
    file-format-description
+   contributing
