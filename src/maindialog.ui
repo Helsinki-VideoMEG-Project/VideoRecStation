@@ -315,6 +315,19 @@
      </property>
     </layout>
    </widget>
+   <widget class="QPushButton" name="settingsButton">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>130</y>
+      <width>71</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Settings...</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
@@ -368,12 +381,27 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>settingsButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainDialogClass</receiver>
+   <slot>onSettings()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>485</x>
+     <y>143</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>324</x>
+     <y>89</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onStartRec()</slot>
   <slot>onStopRec()</slot>
-  <slot>onShutterChanged(int)</slot>
-  <slot>onGainChanged(int)</slot>
   <slot>onExit()</slot>
+  <slot>onSettings()</slot>
  </slots>
 </ui>

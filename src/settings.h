@@ -60,6 +60,13 @@ struct MiscSettings
 };
 
 
+struct CameraSettingConstraints
+{
+    unsigned int maxWidth;
+    unsigned int maxHeight;
+};
+
+
 //! Application-wide settings preserved across multiple invocations.
 /*!
  * This class contains application-wide settings that are persisted on disc.

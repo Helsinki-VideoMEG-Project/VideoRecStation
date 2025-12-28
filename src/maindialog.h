@@ -37,6 +37,7 @@
 #include "speakerthread.h"
 #include "audiocompressorthread.h"
 #include "videodialog.h"
+#include "settings.h"
 
 
 class MainDialog : public QMainWindow
@@ -51,6 +52,7 @@ public slots:
     void onStartRec();
     void onStopRec();
     void onExit();
+    void onSettings();
     void onAudioUpdate(unsigned char* _data);
     void onCamToggled(bool _state);
     void updateDiskSpace();
@@ -63,12 +65,13 @@ private:
     Ui::MainDialogClass ui;
 
     // TODO: Replace arrays with std::vectors
-    VmbCPP::CameraPtr   cameras[MAX_CAMERAS];
-    VideoDialog*        videoDialogs[MAX_CAMERAS];
-    QCheckBox*          camCheckBoxes[MAX_CAMERAS];
-    QString             cameraSNs[MAX_CAMERAS];
-    unsigned int        numCameras;
-    QSpacerItem*        vertSpacer;
+    VmbCPP::CameraPtr           cameras[MAX_CAMERAS];
+    VideoDialog*                videoDialogs[MAX_CAMERAS];
+    QCheckBox*                  camCheckBoxes[MAX_CAMERAS];
+    QString                     cameraSNs[MAX_CAMERAS];
+    CameraSettingConstraints    cameraSettingConstraints[MAX_CAMERAS];
+    unsigned int                numCameras;
+    QSpacerItem*                vertSpacer;
 
     MicrophoneThread*       microphoneThread;
     CycDataBuffer*          cycAudioBufRaw;

@@ -19,6 +19,7 @@ QT += core \
     gui \
     widgets
 HEADERS += settings.h \
+    settingsdialog.h \
     videodialog.h \
     filewriter.h \
     audiocompressorthread.h \
@@ -35,8 +36,10 @@ HEADERS += settings.h \
     videowidget.h \
     maindialog.h \
     gpujpegencoder.h \
-    videodecompressorthread.h
+    videodecompressorthread.h \
+    multipleofeightspinbox.h
 SOURCES += settings.cpp \
+    settingsdialog.cpp \
     videodialog.cpp \
     filewriter.cpp \
     audiocompressorthread.cpp \
@@ -55,7 +58,8 @@ SOURCES += settings.cpp \
     gpujpegencoder.cpp \
     videodecompressorthread.cpp
 FORMS += videodialog.ui \
-    maindialog.ui
+    maindialog.ui \
+    settingsdialog.ui
 INCLUDEPATH += /usr/include/c++/4.4 \
     /usr/include \
     /opt/VimbaX_2025-3/api/include \

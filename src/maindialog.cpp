@@ -26,7 +26,7 @@
 
 #include "config.h"
 #include "maindialog.h"
-#include "settings.h"
+#include "settingsdialog.h"
 
 using namespace std;
 using namespace VmbCPP;
@@ -197,6 +197,7 @@ void MainDialog::onStartRec()
     ui.stopButton->setEnabled(true);
     ui.startButton->setEnabled(false);
     ui.exitButton->setEnabled(false);
+    ui.settingsButton->setEnabled(false);
 
     for (unsigned int i=0; i<numCameras; i++)
     {
@@ -214,6 +215,8 @@ void MainDialog::onStartRec()
 
 void MainDialog::onStopRec()
 {
+    bool allCamsClosed = true;
+
     updateTimer->stop();
     ui.stopButton->setEnabled(false);
     ui.startButton->setEnabled(true);
@@ -225,8 +228,11 @@ void MainDialog::onStopRec()
         if(camCheckBoxes[i]->checkState() == Qt::Checked)
         {
             videoDialogs[i]->setIsRec(false);
+            allCamsClosed = false;
         }
     }
+
+    ui.settingsButton->setEnabled(allCamsClosed);
 
     cycAudioBufCompressed->setIsRec(false);
     QString fileName = QString(audioFileWriter->readableFileName);
@@ -325,16 +331,51 @@ void MainDialog::initVideo()
         std::string cameraModel, cameraSN;
         cameras[i] = camerasVec.at(i);
         QString name;
+        FeaturePtr feature;
+        VmbInt64_t maxWidth = 0;
+        VmbInt64_t maxHeight = 0;
                
-        if ((cameras[i]->GetModel(cameraModel) != VmbErrorSuccess) || (cameras[i]->GetSerialNumber(cameraSN) != VmbErrorSuccess))
-        {
-            clog << "Could not get camera model or serial number. Proceeding nonetheless." << endl;
-            cameraModel = "Unknown";
-            cameraSN = "Unknown";
+        if ((cameras[i]->GetModel(cameraModel) != VmbErrorSuccess) || (cameras[i]->GetSerialNumber(cameraSN) != VmbErrorSuccess)) {
+            cerr << "Could not get camera model or serial number." << endl;
+            abort();
         }
 
         cameraSNs[i] = QString::fromStdString(cameraSN);
         clog << "Using camera [" << cameraModel << "] with serial number [" << cameraSN << "]" << std::endl;
+
+        // Check that the serial number is unique
+        for (unsigned int j=0; j<i; j++) {
+            if (cameraSNs[i] == cameraSNs[j]) {
+                cerr << "Multiple cameras with serial number [" << cameraSN << "] detected, aborting." << std::endl;
+                abort();
+            }
+        }
+
+        // Get the maximum image size
+        if (cameras[i]->Open(VmbAccessModeFull) != VmbErrorSuccess) {
+            cerr << "Could not open camera" << endl;
+            abort();
+        }
+
+        if ((cameras[i]->GetFeatureByName("WidthMax", feature) != VmbErrorSuccess) ||
+            (feature->GetValue(maxWidth) != VmbErrorSuccess)) {
+            cerr << "Could not get the maximum image width." << endl;
+            abort();
+        }
+
+        if ((cameras[i]->GetFeatureByName("HeightMax", feature) != VmbErrorSuccess) ||
+            (feature->GetValue(maxHeight) != VmbErrorSuccess)) {
+            cerr << "Could not get the maximum image height." << endl;
+            abort();
+        }
+
+        if (cameras[i]->Close() != VmbErrorSuccess) {
+            cerr << "Could not close camera after reading the maximum image height and width." << endl;
+            abort();
+        }
+
+        cameraSettingConstraints[i].maxWidth = (unsigned int)maxWidth;
+        cameraSettingConstraints[i].maxHeight = (unsigned int)maxHeight;
 
         // Construct and populate camera check boxes
         name = QString::fromStdString(cameraModel + " [S/N: " + cameraSN + "]");
@@ -381,4 +422,22 @@ void MainDialog::onCamToggled(bool _state)
     {
         delete videoDialogs[idx];
     }
+
+    // If all checknoxes are unchecked, enable the settings button
+    bool allUnchecked = true;
+    
+    for (unsigned int i=0; i<numCameras; i++) {
+        if(camCheckBoxes[i]->checkState() == Qt::Checked) {
+            allUnchecked = false;
+        }
+    }
+
+    ui.settingsButton->setEnabled(allUnchecked);
+}
+
+void MainDialog::onSettings()
+{
+    SettingsDialog* settingsDialog = new SettingsDialog(cameraSNs, cameraSettingConstraints, numCameras, this);
+    settingsDialog->setAttribute(Qt::WA_DeleteOnClose);
+    settingsDialog->exec();
 }
