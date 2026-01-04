@@ -25,7 +25,6 @@
 Settings::Settings()
 {
     settings = new QSettings(ORG_NAME, APP_NAME);
-
     audioSettings.sampRate = settings->value("audio/sampling_rate", 44100).toInt();
     audioSettings.framesPerPeriod = settings->value("audio/frames_per_period", 940).toInt();
     audioSettings.nPeriods = settings->value("audio/num_periods", 10).toInt();
@@ -37,6 +36,7 @@ Settings::Settings()
     miscSettings.externalTriggerSource = settings->value("video/external_trigger_source", "Line0").toString();
     miscSettings.storagePath = settings->value("misc/data_storage_path", "/tmp").toString();
     miscSettings.lowDiskSpaceThreshGB = settings->value("misc/low_disk_space_warning_threshold_gb", 5).toDouble();
+    miscSettings.framelockDisplay = settings->value("misc/framelock_display", ":2").toString();
 }
 
 Settings::~Settings()
@@ -48,10 +48,10 @@ Settings::~Settings()
     settings->setValue("audio/input_audio_device", audioSettings.inpDev);
     settings->setValue("audio/output_audio_device", audioSettings.outDev);
     settings->setValue("audio/use_speaker_feedback", audioSettings.useFeedback);
-
     settings->setValue("video/external_trigger_source", miscSettings.externalTriggerSource);
     settings->setValue("misc/data_storage_path", miscSettings.storagePath);
     settings->setValue("misc/low_disk_space_warning_threshold_gb", miscSettings.lowDiskSpaceThreshGB);
+    settings->setValue("misc/framelock_display", miscSettings.framelockDisplay);
 
     settings->sync();
 }
@@ -68,7 +68,6 @@ CameraSettings Settings::getCameraSettings(QString _cameraSN)
 
     CameraSettings camSettings;
     QString baseKey = QString("video/camera/") + _cameraSN + "/";
-
     camSettings.shutter = settings->value(baseKey + "shutter", 20).toInt();
     camSettings.gain = settings->value(baseKey + "gain", 10).toInt();
     camSettings.balanceBlue = settings->value(baseKey + "balance_blue", 15).toInt();
@@ -89,7 +88,6 @@ void Settings::setCameraSettings(QString _cameraSN, CameraSettings _camSettings)
     QWriteLocker locker(&rwLock);
 
     QString baseKey = QString("video/camera/") + _cameraSN + "/";
-
     settings->setValue(baseKey + "shutter", _camSettings.shutter);
     settings->setValue(baseKey + "gain", _camSettings.gain);
     settings->setValue(baseKey + "balance_blue", _camSettings.balanceBlue);
@@ -101,6 +99,7 @@ void Settings::setCameraSettings(QString _cameraSN, CameraSettings _camSettings)
     settings->setValue(baseKey + "offset_y", _camSettings.offsetY);
     settings->setValue(baseKey + "color", _camSettings.color);
     settings->setValue(baseKey + "use_external_trigger", _camSettings.useTrigger);
+
 
     settings->sync();
 }

@@ -53,6 +53,7 @@ public slots:
     void onStopRec();
     void onExit();
     void onSettings();
+    void onFramelockToggled(bool enabled);
     void onAudioUpdate(unsigned char* _data);
     void onCamToggled(bool _state);
     void updateDiskSpace();
