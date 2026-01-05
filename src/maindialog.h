@@ -63,6 +63,7 @@ public slots:
 
 private:
     void initVideo();
+    void disableFramelockOnStartup();
     Ui::MainDialogClass ui;
 
     // TODO: Replace arrays with std::vectors

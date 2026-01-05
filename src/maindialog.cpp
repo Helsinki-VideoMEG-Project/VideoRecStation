@@ -62,6 +62,9 @@ MainDialog::MainDialog(QWidget *parent)
     // Set up video recording
     initVideo();
 
+    // Disable framelock on startup to ensure checkbox state matches actual state
+    disableFramelockOnStartup();
+
     // Set up audio recording
     cycAudioBufRaw = new CycDataBuffer(CIRC_AUDIO_BUFF_SZ);
     cycAudioBufCompressed = new CycDataBuffer(CIRC_AUDIO_BUFF_SZ);
@@ -253,6 +256,27 @@ void MainDialog::onExit()
     close();
 }
 
+
+void MainDialog::disableFramelockOnStartup()
+{
+    MiscSettings miscSettings = Settings::getInstance().getMiscSettings();
+    
+    QProcess process;
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    env.insert("DISPLAY", miscSettings.framelockDisplay);
+    process.setProcessEnvironment(env);
+    
+    // Disable framelock silently on startup
+    QStringList arguments;
+    arguments << "-a" << "[gpu:0]/FrameLockEnable=0";
+    process.start("nvidia-settings", arguments);
+    process.waitForFinished(5000); // Wait up to 5 seconds, but don't show errors
+    
+    // Ensure checkbox is unchecked to match the disabled state
+    ui.framelockCheckBox->blockSignals(true);
+    ui.framelockCheckBox->setChecked(false);
+    ui.framelockCheckBox->blockSignals(false);
+}
 
 void MainDialog::onFramelockToggled(bool enabled)
 {
