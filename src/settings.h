@@ -87,6 +87,8 @@ public:
     // Delete copy constructor and assignment operator
     Settings(const Settings&) = delete;
     Settings& operator=(const Settings&) = delete;
+
+    // Get singleton instance
     static Settings& getInstance();
 
     /*!
