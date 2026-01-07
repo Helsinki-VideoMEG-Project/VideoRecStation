@@ -57,6 +57,7 @@ struct MiscSettings
     QString         externalTriggerSource;
     QString         storagePath;
     double          lowDiskSpaceThreshGB;
+    QString         framelockDisplay;
 };
 
 

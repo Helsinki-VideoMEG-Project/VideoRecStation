@@ -53,6 +53,7 @@ public slots:
     void onStopRec();
     void onExit();
     void onSettings();
+    void onFramelockToggled(bool enabled);
     void onAudioUpdate(unsigned char* _data);
     void onCamToggled(bool _state);
     void updateDiskSpace();
@@ -62,6 +63,7 @@ public slots:
 
 private:
     void initVideo();
+    void disableFramelockOnStartup();
     Ui::MainDialogClass ui;
 
     // TODO: Replace arrays with std::vectors

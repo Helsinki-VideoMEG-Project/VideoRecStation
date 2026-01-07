@@ -37,6 +37,7 @@ Settings::Settings()
     miscSettings.externalTriggerSource = settings->value("video/external_trigger_source", "Line0").toString();
     miscSettings.storagePath = settings->value("misc/data_storage_path", "/tmp").toString();
     miscSettings.lowDiskSpaceThreshGB = settings->value("misc/low_disk_space_warning_threshold_gb", 5).toDouble();
+    miscSettings.framelockDisplay = settings->value("misc/framelock_display", ":2").toString();
 }
 
 Settings::~Settings()
@@ -48,10 +49,11 @@ Settings::~Settings()
     settings->setValue("audio/input_audio_device", audioSettings.inpDev);
     settings->setValue("audio/output_audio_device", audioSettings.outDev);
     settings->setValue("audio/use_speaker_feedback", audioSettings.useFeedback);
-
+    
     settings->setValue("video/external_trigger_source", miscSettings.externalTriggerSource);
     settings->setValue("misc/data_storage_path", miscSettings.storagePath);
     settings->setValue("misc/low_disk_space_warning_threshold_gb", miscSettings.lowDiskSpaceThreshGB);
+    settings->setValue("misc/framelock_display", miscSettings.framelockDisplay);
 
     settings->sync();
 }
