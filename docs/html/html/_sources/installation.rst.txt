@@ -7,7 +7,7 @@ VideoRecStation runs on Ubuntu 24.04 LTS (Jammy Jellyfish) on amd64 architecture
 
 Install 3-rd party components
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Before you can use VideoRecStation, you need to install VimbaX, GPUJPEG and ALSA Scarlett Control Panel (alsa-scarlett-gui). The latter is, strictly speaking, optional, but it provides a convenient GUI for controlling the audio settings of your Scarlett interface.
+Before you can use VideoRecStation, you need to install VimbaX, GPUJPEG, OpenCV, and ALSA Scarlett Control Panel (alsa-scarlett-gui). The latter is, strictly speaking, optional, but it provides a convenient GUI for controlling the audio settings of your Scarlett interface.
 
 Install VimbaX
 ++++++++++++++
@@ -66,6 +66,32 @@ Install GPUJPEG library
 
    1. Make sure that you have the NVIDIA drivers and CUDA toolkit installed on your system.
    2. The above instructions were tested with GPUJPEG version 0.27.8 in Dec 2025.
+
+Install OpenCV library
+++++++++++++++++++++++
+
+We use `OpenCV <https://opencv.org/>`_ library for debayering images coming from the camera.
+
+.. note::
+
+   Here we describe how to set up OpenCV from source tarball downloaded from GitHub. To avoid any conflicts, make sure you do not have it installed through your package manager:
+
+   .. code-block:: bash
+
+      sudo apt remove libopencv-core* libopencv-imgproc*
+
+Download the latest release of OpenCV from the `OpenCV releases page <https://github.com/opencv/opencv/releases>`_. Assume you have downloaded the file ``opencv-4.13.0.zip`` to ``~/Downloads``. Install it by running the following commands:
+
+.. code-block:: bash
+
+   unzip ~/Downloads/opencv-4.13.0.zip -d ~/Downloads
+   mkdir /tmp/opencv-4.13.0-build
+   cd /tmp/opencv-4.13.0-build
+   cmake ~/Downloads/opencv-4.13.0
+   make  # This might take a long time
+   sudo make install
+   echo "/usr/local/lib" | sudo tee /etc/ld.so.conf.d/local_lib.conf
+   sudo ldconfig
 
 Install ALSA Scarlett Control Panel
 +++++++++++++++++++++++++++++++++++

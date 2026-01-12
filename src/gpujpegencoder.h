@@ -35,7 +35,10 @@ private:
     struct gpujpeg_encoder* encoder;
     struct gpujpeg_parameters param;
     struct gpujpeg_image_parameters param_image;
+    unsigned char* debayeredData;
     QAtomicInteger<int> quality;
+    int debayeredMatType;
+    int colorConv;
 };
 
 #endif /* GPUJPEGENCODER_H_ */

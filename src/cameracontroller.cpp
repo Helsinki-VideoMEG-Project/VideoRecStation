@@ -75,7 +75,7 @@ CameraController::CameraController(CameraPtr _camera, FrameObserver* _frameObser
     }
 
     if ((camera->GetFeatureByName("PixelFormat", feature) != VmbErrorSuccess) ||
-        (feature->SetValue(_camSettings.color ? "RGB8" : "Mono8") != VmbErrorSuccess))
+        (feature->SetValue("BayerRG8") != VmbErrorSuccess))
     {
         cerr << "Could not set up the video format" << endl;
         abort();
@@ -110,7 +110,7 @@ CameraController::CameraController(CameraPtr _camera, FrameObserver* _frameObser
         cerr << "Could not get the camera payload size" << endl;
         abort();
     }
-    if (payloadSize != _camSettings.width * _camSettings.height * (_camSettings.color ? 3 : 1))
+    if (payloadSize != _camSettings.width * _camSettings.height)
     {
         cerr << "Error: the actual payload size " << payloadSize << " does not match the expected size "
              << (_camSettings.width * _camSettings.height * (_camSettings.color ? 3 : 1)) << endl;

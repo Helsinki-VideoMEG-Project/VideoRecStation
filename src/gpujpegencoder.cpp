@@ -16,7 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
- #include <iostream>
+#include <iostream>
+#include <opencv2/opencv.hpp>
 #include "gpujpegencoder.h"
 
 GPUJPEGEncoder::GPUJPEGEncoder(CameraSettings _camSettings)
@@ -35,12 +36,18 @@ GPUJPEGEncoder::GPUJPEGEncoder(CameraSettings _camSettings)
     param_image.height = _camSettings.height;
     param_image.color_space = _camSettings.color ? GPUJPEG_RGB : GPUJPEG_NONE;
     param_image.pixel_format = _camSettings.color ? GPUJPEG_444_U8_P012 : GPUJPEG_U8;
+
+    debayeredData = (unsigned char*)malloc(_camSettings.width*_camSettings.height*3);   // 3 bytes per pixel should be enough for any pixel format, either color or monochrome
+    memset(debayeredData, 42, _camSettings.width*_camSettings.height*3);
+    debayeredMatType = _camSettings.color ? CV_8UC3 : CV_8UC1;
+    colorConv = _camSettings.color ? cv::COLOR_BayerBG2RGB : cv::COLOR_BayerBG2GRAY;
 }
 
 
 GPUJPEGEncoder::~GPUJPEGEncoder()
 {
     gpujpeg_encoder_destroy(encoder);
+    free(debayeredData);
 }
 
 
@@ -50,12 +57,17 @@ uint8_t* GPUJPEGEncoder::encodeFrame(uint8_t* _frameData, size_t& _outSize)
         uint8_t* image_compressed = NULL;
         size_t image_compressed_size = 0;
 
+        // Debayer
+        cv::Mat bayerMat(param_image.height, param_image.width, CV_8UC1, _frameData);
+        cv::Mat debayerMat(param_image.height, param_image.width, debayeredMatType, debayeredData);
+        cv::cvtColor(bayerMat, debayerMat, colorConv);
+
         // Set encode parameters
         gpujpeg_set_default_parameters(&param);
         param.quality = quality;
 
         // Set the raw data for the image to be compressed
-        gpujpeg_encoder_input_set_image(&encoder_input, _frameData);
+        gpujpeg_encoder_input_set_image(&encoder_input, debayeredData);
 
         // compress the image
         if (gpujpeg_encoder_encode(encoder, &param, &param_image, &encoder_input, &image_compressed, &image_compressed_size) != 0) {

@@ -63,14 +63,19 @@ FORMS += videodialog.ui \
 INCLUDEPATH += /usr/include/c++/4.4 \
     /usr/include \
     /opt/VimbaX_2025-3/api/include \
-    /opt/GPUJPEG/include
+    /opt/GPUJPEG/include \
+    /usr/local/include/opencv4
 LIBS += -L/usr/local/lib \
     -L/usr/lib \
     -lasound \
     -L/opt/VimbaX_2025-3/api/lib \
     -lVmbCPP \
     -L/opt/GPUJPEG/lib \
-    -lgpujpeg
+    -lgpujpeg \
+    -L/usr/local/lib \
+    -lopencv_core \
+    -lopencv_imgproc \
+    -lstdc++
 RESOURCES += 
 DEFINES += __STDC_LIMIT_MACROS
 CONFIG += debug_and_release
