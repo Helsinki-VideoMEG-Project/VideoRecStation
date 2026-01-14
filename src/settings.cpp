@@ -38,6 +38,7 @@ Settings::Settings()
     miscSettings.storagePath = settings->value("misc/data_storage_path", "/tmp").toString();
     miscSettings.lowDiskSpaceThreshGB = settings->value("misc/low_disk_space_warning_threshold_gb", 5).toDouble();
     miscSettings.framelockDisplay = settings->value("misc/framelock_display", ":2").toString();
+    miscSettings.framelockGpuTarget = settings->value("misc/framelock_gpu_target", "[gpu:0]").toString();
 }
 
 Settings::~Settings()
@@ -54,6 +55,7 @@ Settings::~Settings()
     settings->setValue("misc/data_storage_path", miscSettings.storagePath);
     settings->setValue("misc/low_disk_space_warning_threshold_gb", miscSettings.lowDiskSpaceThreshGB);
     settings->setValue("misc/framelock_display", miscSettings.framelockDisplay);
+    settings->setValue("misc/framelock_gpu_target", miscSettings.framelockGpuTarget);
 
     settings->sync();
 }

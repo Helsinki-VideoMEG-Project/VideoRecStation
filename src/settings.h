@@ -58,6 +58,7 @@ struct MiscSettings
     QString         storagePath;
     double          lowDiskSpaceThreshGB;
     QString         framelockDisplay;
+    QString         framelockGpuTarget;
 };
 
 

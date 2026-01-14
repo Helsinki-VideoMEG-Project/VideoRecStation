@@ -268,7 +268,7 @@ void MainDialog::disableFramelockOnStartup()
     
     // Disable framelock silently on startup
     QStringList arguments;
-    arguments << "-a" << "[gpu:0]/FrameLockEnable=0";
+    arguments << "-a" << QString("%1/FrameLockEnable=0").arg(miscSettings.framelockGpuTarget);
     process.start("nvidia-settings", arguments);
     process.waitForFinished(5000); // Wait up to 5 seconds, but don't show errors
     
@@ -292,7 +292,7 @@ void MainDialog::onFramelockToggled(bool enabled)
     
     // Call nvidia-settings directly
     QStringList arguments;
-    arguments << "-a" << QString("[gpu:0]/FrameLockEnable=%1").arg(framelockValue);
+    arguments << "-a" << QString("%1/FrameLockEnable=%2").arg(miscSettings.framelockGpuTarget).arg(framelockValue);
     process.start("nvidia-settings", arguments);
     
     if (!process.waitForFinished(10000)) // Wait up to 10 seconds
