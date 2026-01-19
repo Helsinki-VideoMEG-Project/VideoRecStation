@@ -2,7 +2,6 @@
  * config.h
  *
  * Author: Andrey Zhdanov
- * Copyright (C) 2014 BioMag Laboratory, Helsinki University Central Hospital
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +57,9 @@
 // Used for storing application settings
 #define ORG_NAME "Helsinki VideoMEG Project"
 #define APP_NAME "VideoRecStation"
+
+// Unique server name for preventing multiple app instances
+#define LOCAL_SERVER_NAME "helsinki-videomeg-project.github.io"
 
 // Camera configuration
 #define MAX_CAMERAS         6

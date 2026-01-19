@@ -17,7 +17,8 @@ TEMPLATE = app
 TARGET = VideoRecStation
 QT += core \
     gui \
-    widgets
+    widgets \
+    network
 HEADERS += settings.h \
     settingsdialog.h \
     videodialog.h \
