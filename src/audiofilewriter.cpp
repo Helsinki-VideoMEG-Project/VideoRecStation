@@ -2,7 +2,6 @@
  * audiofilewriter.cpp
  *
  * Author: Andrey Zhdanov
- * Copyright (C) 2014 BioMag Laboratory, Helsinki University Central Hospital
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +17,15 @@
  */
 
 
-#include <iostream>
 #include <stdlib.h>
 #include <assert.h>
+#include <QMessageBox>
+#include <cstdlib>
 
 #include "config.h"
 #include "audiofilewriter.h"
 #include "settings.h"
 
-using namespace std;
 
 AudioFileWriter::AudioFileWriter(CycDataBuffer* _cycBuf, const char* _path)
     :   FileWriter(_cycBuf, _path, "_audio", "aud", 0)
@@ -43,8 +42,8 @@ AudioFileWriter::AudioFileWriter(CycDataBuffer* _cycBuf, const char* _path)
 
     if(!buf)
     {
-        cerr << "Error allocating memory!" << endl;
-        abort();
+        QMessageBox::critical(nullptr, "AudioFileWriter Error", QString("Error allocating memory!"));
+        std::exit(EXIT_FAILURE);
     }
 
     memcpy(buf, MAGIC_AUDIO_STR, strlen(MAGIC_AUDIO_STR));                                  // string identifying the file type

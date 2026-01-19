@@ -2,7 +2,6 @@
  * cycdatabuffer.cpp
  *
  * Author: Andrey Zhdanov
- * Copyright (C) 2014 BioMag Laboratory, Helsinki University Central Hospital
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +17,11 @@
  */
 
 #include <stdlib.h>
-#include <iostream>
+#include <QMessageBox>
+#include <cstdlib>
 
 #include "config.h"
 #include "cycdatabuffer.h"
-
-using namespace std;
 
 
 CycDataBuffer::CycDataBuffer(int _bufSize)
@@ -39,8 +37,8 @@ CycDataBuffer::CycDataBuffer(int _bufSize)
     dataBuf = (unsigned char*)malloc(bufSize + 2 * (int(bufSize*MAX_CHUNK_SIZE) + sizeof(ChunkAttrib)));
     if (!dataBuf)
     {
-        cerr << "Cannot allocate memory for circular buffer" << endl;
-        abort();
+        QMessageBox::critical(nullptr, "CycDataBuffer Error", QString("Cannot allocate memory for circular buffer"));
+        std::exit(EXIT_FAILURE);
     }
 
     // Initialize the buffer with some pattern to force the kernel to allocate physical memory
@@ -62,8 +60,8 @@ void CycDataBuffer::insertChunk(unsigned char* _data, ChunkAttrib _attrib)
     // is close to full.
     if (buffSemaphore->available() >=  bufSize * (1-CIRC_BUF_MARG))
     {
-        cerr << "Circular buffer overflow!" << endl;
-        abort();
+        QMessageBox::critical(nullptr, "CycDataBuffer Error", QString("Circular buffer overflow!"));
+        std::exit(EXIT_FAILURE);
     }
 
     // Make sure that the safety margin is at least several (four) times the
@@ -71,8 +69,8 @@ void CycDataBuffer::insertChunk(unsigned char* _data, ChunkAttrib _attrib)
     // consumer and producer threads when the buffer is close to full.
     if(_attrib.chunkSize+sizeof(ChunkAttrib) > bufSize*MAX_CHUNK_SIZE)
     {
-        cerr << "The chunk size is too large!" << endl;
-        abort();
+        QMessageBox::critical(nullptr, "CycDataBuffer Error", QString("The chunk size is too large!"));
+        std::exit(EXIT_FAILURE);
     }
 
     // insert the data into the circular buffer

@@ -2,7 +2,6 @@
  * nonblockingbuffer.cpp
  *
  * Author: Andrey Zhdanov
- * Copyright (C) 2014 BioMag Laboratory, Helsinki University Central Hospital
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,10 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
 #include <stdlib.h>
 #include <string.h>
 #include <QMutexLocker>
+#include <QMessageBox>
+#include <cstdlib>
 
 #include "nonblockingbuffer.h"
 
@@ -38,20 +38,18 @@ NonBlockingBuffer::NonBlockingBuffer(int _bufSize, long _chunkSize)
 
     // Allocate buffers
     dataBuf = (char*)malloc(bufSize * chunkSize);
-    if (!dataBuf)
-    {
-        cerr << "Cannot allocate memory for non-blocking buffer" << endl;
-        abort();
+    if (!dataBuf) {
+        QMessageBox::critical(nullptr, "NonBlockingBuffer Error", QString("Cannot allocate memory for non-blocking buffer"));
+        std::exit(EXIT_FAILURE);
     }
 
     // Initialize the buffer with some pattern to force the kernel to allocate physical memory
     memset(dataBuf, 42, bufSize * chunkSize);
 
     zeroChunk = (char*)malloc(chunkSize);
-    if (!zeroChunk)
-    {
-        cerr << "Cannot allocate memory for the chunk of zeros" << endl;
-        abort();
+    if (!zeroChunk) {
+        QMessageBox::critical(nullptr, "NonBlockingBuffer Error", QString("Cannot allocate memory for the chunk of zeros"));
+        std::exit(EXIT_FAILURE);
     }
 
     memset(zeroChunk, 0, chunkSize);

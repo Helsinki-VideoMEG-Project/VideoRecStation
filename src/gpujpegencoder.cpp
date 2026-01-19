@@ -16,7 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
+
+
+#include <cstdlib>
+#include <QMessageBox>
+
 #include <opencv2/opencv.hpp>
 #include "gpujpegencoder.h"
 
@@ -24,8 +28,8 @@ GPUJPEGEncoder::GPUJPEGEncoder(CameraSettings _camSettings)
 {
     // Initialize GPUJPEG encoder
     if ((encoder = gpujpeg_encoder_create(0)) == NULL) {
-        std::cerr << "Error creating GPUJPEG encoder" << std::endl;
-        exit(1);
+        QMessageBox::critical(nullptr, "GPUJPEGEncoder Error", QString("Error creating GPUJPEG encoder"));
+        std::exit(EXIT_FAILURE);
     }
 
     quality = _camSettings.jpegQuality;
@@ -71,8 +75,8 @@ uint8_t* GPUJPEGEncoder::encodeFrame(uint8_t* _frameData, size_t& _outSize)
 
         // compress the image
         if (gpujpeg_encoder_encode(encoder, &param, &param_image, &encoder_input, &image_compressed, &image_compressed_size) != 0) {
-            std::cerr << "Error encoding frame" << std::endl;
-            exit(1);
+            QMessageBox::critical(nullptr, "GPUJPEGEncoder Error", QString("Error encoding frame"));
+            std::exit(EXIT_FAILURE);
         }
 
         _outSize = image_compressed_size;

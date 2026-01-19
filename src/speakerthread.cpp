@@ -2,8 +2,7 @@
  * speaker.cpp
  *
  * Author: Andrey Zhdanov
- * Copyright (C) 2014 BioMag Laboratory, Helsinki University Central Hospital
- *
+s *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
@@ -18,12 +17,12 @@
  */
 
 #include <iostream>
+#include <QMessageBox>
+#include <cstdlib>
 
 #include "config.h"
 #include "speakerthread.h"
 #include "settings.h"
-
-using namespace std;
 
 SpeakerThread::SpeakerThread(NonBlockingBuffer* _buffer)
 {
@@ -39,8 +38,8 @@ SpeakerThread::SpeakerThread(NonBlockingBuffer* _buffer)
     rc = snd_pcm_open(&sndHandle, audioSettings.outDev.toLocal8Bit().data(), SND_PCM_STREAM_PLAYBACK, 0);
     if (rc < 0)
     {
-        cerr << "unable to open pcm device: " << snd_strerror(rc) << endl;
-        exit(EXIT_FAILURE);
+        QMessageBox::critical(nullptr, "SpeakerThread Error", QString("Unable to open PCM device: %1").arg(snd_strerror(rc)));
+        std::exit(EXIT_FAILURE);
     }
 
     snd_pcm_hw_params_alloca(&params);          // Allocate a hardware parameters object
@@ -62,16 +61,16 @@ SpeakerThread::SpeakerThread(NonBlockingBuffer* _buffer)
     /* Set number of periods */
     if (snd_pcm_hw_params_set_periods(sndHandle, params, audioSettings.nPeriods, 0) < 0)
     {
-      cerr << "Error setting periods" << endl;
-      abort();
+        QMessageBox::critical(nullptr, "SpeakerThread Error", QString("Error setting periods"));
+        std::exit(EXIT_FAILURE);
     }
 
     // Write the parameters to the driver
     rc = snd_pcm_hw_params(sndHandle, params);
     if (rc < 0)
     {
-        cerr << "unable to set hw parameters: " << snd_strerror(rc) << endl;
-        exit(EXIT_FAILURE);
+        QMessageBox::critical(nullptr, "SpeakerThread Error", QString("Unable to set HW parameters: %1").arg(snd_strerror(rc)));
+        std::exit(EXIT_FAILURE);
     }
 
     // Verify the parameters
@@ -79,16 +78,16 @@ SpeakerThread::SpeakerThread(NonBlockingBuffer* _buffer)
     snd_pcm_hw_params_get_rate(params, &sampRate, NULL);
     if (sampRate != audioSettings.sampRate)
     {
-        cerr << "unable to set sampling rate: requested " << audioSettings.sampRate << ", actual " << sampRate << endl;
-        exit(EXIT_FAILURE);
+        QMessageBox::critical(nullptr, "SpeakerThread Error", QString("Unable to set sampling rate: requested %1, actual %2").arg(audioSettings.sampRate).arg(sampRate));
+        std::exit(EXIT_FAILURE);
     }
 
     framesPerPeriod = 0;
     snd_pcm_hw_params_get_period_size(params, &framesPerPeriod, NULL);
     if (audioSettings.framesPerPeriod != framesPerPeriod)
     {
-        cerr << "unable to set frames per period: requested " << audioSettings.framesPerPeriod << ", actual " << framesPerPeriod << endl;
-        exit(EXIT_FAILURE);
+        QMessageBox::critical(nullptr, "SpeakerThread Error", QString("Unable to set frames per period: requested %1, actual %2").arg(audioSettings.framesPerPeriod).arg(framesPerPeriod));
+        std::exit(EXIT_FAILURE);
     }
 }
 
@@ -113,16 +112,16 @@ void SpeakerThread::stoppableRun()
         if (rc == -EPIPE)
         {
             /* EPIPE means underrun */
-            cerr << "underrun occurred" << endl;
+            std::cerr << "underrun occurred" << std::endl;
             snd_pcm_prepare(sndHandle);
         }
         else if (rc < 0)
         {
-            cerr << "error from writei: " << snd_strerror(rc) << endl;
+            std::cerr << "error from write: " << snd_strerror(rc) << std::endl;
         }
         else if (rc != (int)audioSettings.framesPerPeriod)
         {
-            cerr << "short write, write " << rc << " frames" << endl;
+            std::cerr << "short write, write " << rc << " frames" << std::endl;
         }
     }
 }

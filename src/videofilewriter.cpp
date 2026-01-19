@@ -2,7 +2,6 @@
  * videofilewriter.cpp
  *
  * Author: Andrey Zhdanov
- * Copyright (C) 2014 BioMag Laboratory, Helsinki University Central Hospital
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +19,11 @@
 #include <iostream>
 #include <jpeglib.h>
 #include <stdlib.h>
+#include <QMessageBox>
+#include <cstdlib>
 
 #include "config.h"
 #include "videofilewriter.h"
-
-using namespace std;
 
 
 VideoFileWriter::VideoFileWriter(CycDataBuffer* _cycBuf, const char* _path, int _camId)
@@ -37,8 +36,8 @@ VideoFileWriter::VideoFileWriter(CycDataBuffer* _cycBuf, const char* _path, int 
 
     if(!buf)
     {
-        cerr << "Error allocating memory!" << endl;
-        abort();
+        QMessageBox::critical(nullptr, "VideoFileWriter Error", QString("Error allocating memory!"));
+        std::exit(EXIT_FAILURE);
     }
 
     memcpy(buf, MAGIC_VIDEO_STR, strlen(MAGIC_VIDEO_STR));          // string identifying the file type

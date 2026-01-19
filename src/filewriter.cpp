@@ -2,7 +2,6 @@
  * filewriter.cpp
  *
  * Author: Andrey Zhdanov
- * Copyright (C) 2014 BioMag Laboratory, Helsinki University Central Hospital
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +22,8 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <QFileInfo>
+#include <QMessageBox>
+#include <cstdlib>
 
 #include "filewriter.h"
 #include "config.h"
@@ -35,24 +36,21 @@ FileWriter::FileWriter(CycDataBuffer* _cycBuf, const char* _path, const char* _s
     streamId = _streamId;
 
     path = (char*)malloc(strlen(_path)+1);
-    if(!path)
-    {
-        cerr << "Cannot allocate memory!" << endl;
-        abort();
+    if(!path) {
+        QMessageBox::critical(nullptr, "FileWriter Error", QString("Cannot allocate memory!"));
+        std::exit(EXIT_FAILURE);
     }
 
     suffix = (char*)malloc(strlen(_suffix)+1);
-    if(!suffix)
-    {
-        cerr << "Cannot allocate memory!" << endl;
-        abort();
+    if(!suffix) {
+        QMessageBox::critical(nullptr, "FileWriter Error", QString("Cannot allocate memory!"));
+        std::exit(EXIT_FAILURE);
     }
 
     ext = (char*)malloc(strlen(_ext)+1);
-    if(!ext)
-    {
-        cerr << "Cannot allocate memory!" << endl;
-        abort();
+    if(!ext) {
+        QMessageBox::critical(nullptr, "FileWriter Error", QString("Cannot allocate memory!"));
+        std::exit(EXIT_FAILURE);
     }
 
     strcpy(path, _path);
@@ -92,7 +90,7 @@ void FileWriter::stoppableRun()
                 outData.close();
                 if (chmod(nameBuf, S_IRUSR | S_IRGRP | S_IROTH))
                 {
-                    cerr << "Could net set file read-only";
+                    cerr << "Could not set file read-only";
                 }
             }
             return;
@@ -123,11 +121,10 @@ void FileWriter::stoppableRun()
                         streamId,
                         ext);
                 outData.open(nameBuf, ios_base::out | ios_base::binary | ios_base::trunc);
-                if(outData.fail())
-                {
+                if(outData.fail()) {
                     // TODO: Add more elaborate error checking
-                    cerr << "Error opening the file " << nameBuf << endl;
-                    abort();
+                    QMessageBox::critical(nullptr, "FileWriter Error", QString("Error opening the file %1").arg(nameBuf));
+                    std::exit(EXIT_FAILURE);
                 }
                 readableFileName = QFileInfo(nameBuf).fileName();
                 header = getHeader(&headerLen);

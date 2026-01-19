@@ -19,7 +19,7 @@
 #include <cstdlib>
 #include <stdio.h>
 #include <assert.h>
-#include <iostream>
+#include <QMessageBox>
 
 #include "config.h"
 #include "videodecompressorthread.h"
@@ -59,8 +59,8 @@ void VideoDecompressorThread::stoppableRun()
         gpujpeg_decoder_output_set_default(&dec_output);
 
         if ( gpujpeg_decoder_decode(decoder, jpegImage, chunkAttrib.chunkSize, &dec_output) != 0) {
-            std::cerr << "Error decoding frame" << std::endl;
-            exit(1);
+            QMessageBox::critical(nullptr, "VideoDecompressorThread Error", QString("Error decoding frame"));
+            std::exit(EXIT_FAILURE);
         }
 
         // Emit the signal notifying about the new decoded frame

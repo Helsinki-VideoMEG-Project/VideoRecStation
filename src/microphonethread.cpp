@@ -2,7 +2,6 @@
  * microphonethread.cpp
  *
  * Author: Andrey Zhdanov
- * Copyright (C) 2014 BioMag Laboratory, Helsinki University Central Hospital
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,13 +18,13 @@
 
 #include <time.h>
 #include <iostream>
+#include <QMessageBox>
+#include <cstdlib>
 
 #include "microphonethread.h"
 #include "config.h"
 #include "settings.h"
 
-
-using namespace std;
 
 MicrophoneThread::MicrophoneThread(CycDataBuffer* _cycBuf)
 {
@@ -40,8 +39,8 @@ MicrophoneThread::MicrophoneThread(CycDataBuffer* _cycBuf)
     rc = snd_pcm_open(&pcmHandle, audioSettings.inpDev.toLocal8Bit().data(), SND_PCM_STREAM_CAPTURE, 0);
     if (rc < 0)
     {
-        cerr << "unable to open pcm device: " << snd_strerror(rc) << endl;
-        abort();
+        QMessageBox::critical(nullptr, "MicrophoneThread Error", QString("Unable to open PCM device: %1").arg(audioSettings.inpDev));
+        std::exit(EXIT_FAILURE);
     }
 
     /* Allocate a hardware parameters object. */
@@ -50,8 +49,8 @@ MicrophoneThread::MicrophoneThread(CycDataBuffer* _cycBuf)
     /* Fill it in with default values. */
     if (snd_pcm_hw_params_any(pcmHandle, params) < 0)
     {
-        cerr << "Can not configure PCM device: " << audioSettings.inpDev.toLocal8Bit().data() << endl;
-        abort();
+        QMessageBox::critical(nullptr, "MicrophoneThread Error", QString("Cannot configure PCM device: %1").arg(audioSettings.inpDev));
+        std::exit(EXIT_FAILURE);
     }
 
     /* Set the desired hardware parameters. */
@@ -76,38 +75,38 @@ MicrophoneThread::MicrophoneThread(CycDataBuffer* _cycBuf)
     /* Set number of periods */
     if (snd_pcm_hw_params_set_periods(pcmHandle, params, audioSettings.nPeriods, 0) < 0)
     {
-      cerr << "Error setting periods" << endl;
-      abort();
+        QMessageBox::critical(nullptr, "MicrophoneThread Error", QString("Error setting periods"));
+        std::exit(EXIT_FAILURE);
     }
 
     /* Write the parameters to the driver */
     rc = snd_pcm_hw_params(pcmHandle, params);
     if (rc < 0)
     {
-        cerr << "unable to set hw parameters: " << snd_strerror(rc) << endl;
-        abort();
+        QMessageBox::critical(nullptr, "MicrophoneThread Error", QString("Unable to set hw parameters: %1").arg(snd_strerror(rc)));
+        std::exit(EXIT_FAILURE);
     }
 
     snd_pcm_hw_params_get_rate(params, &val, NULL);
     if (val != audioSettings.sampRate)
     {
-        cout << "unable to set sampling rate: requested " << audioSettings.sampRate << ", actual " << val << endl;
-        abort();
+        QMessageBox::critical(nullptr, "MicrophoneThread Error", QString("Unable to set sampling rate: requested %1, actual %2").arg(audioSettings.sampRate).arg(val));
+        std::exit(EXIT_FAILURE);
     }
 
     snd_pcm_hw_params_get_period_size(params, &framesPerPeriod, NULL);
     if (audioSettings.framesPerPeriod != framesPerPeriod)
     {
-        cout << "unable to set frames per period: requested " << audioSettings.framesPerPeriod << ", actual " << framesPerPeriod << endl;
-        abort();
+        QMessageBox::critical(nullptr, "MicrophoneThread Error", QString("Unable to set frames per period: requested %1, actual %2").arg(audioSettings.framesPerPeriod).arg(framesPerPeriod));
+        std::exit(EXIT_FAILURE);
     }
 
     /* Use a buffer large enough to hold one period */
     periodBuffer = (unsigned char*)malloc(framesPerPeriod * N_CHANS * sizeof(AUDIO_DATA_TYPE));
     if (!periodBuffer)
     {
-        cerr << "Failed to allocate period buffer" << endl;
-        abort();
+        QMessageBox::critical(nullptr, "MicrophoneThread Error", QString("Failed to allocate period buffer"));
+        std::exit(EXIT_FAILURE);
     }
 }
 
@@ -139,16 +138,16 @@ void MicrophoneThread::stoppableRun()
         if (rc == -EPIPE)
         {
             // EPIPE means overrun
-            cerr << "Overrun occurred" << endl;
+            std::cerr << "Overrun occurred" << std::endl;
             snd_pcm_prepare(pcmHandle);
         }
         else if (rc < 0)
         {
-            cerr << "Error from read: " << snd_strerror(rc) << endl;
+            std::cerr << "Error from read: " << snd_strerror(rc) << std::endl;
         }
         else if (rc != (int)framesPerPeriod)
         {
-            cerr << "short read, read " << rc << " frames instead of " << framesPerPeriod << endl;
+            std::cerr << "short read, read " << rc << " frames instead of " << framesPerPeriod << std::endl;
         }
 
         msec = timestamp.tv_nsec / 1000000;

@@ -20,6 +20,8 @@
 #include <sched.h>
 #include <time.h>
 #include <QCoreApplication>
+#include <QMessageBox>
+#include <cstdlib>
 #include <stdlib.h>
 #include <thread>
 #include <chrono>
@@ -27,7 +29,6 @@
 #include "frameobserver.h"
 #include "config.h"
 
-using namespace std;
 using namespace VmbCPP;
 
 
@@ -62,10 +63,9 @@ void FrameObserver::FrameReceived(const FramePtr _frame)
     clock_gettime(CLOCK_REALTIME, &timestamp);
     chunkAttrib.timestamp = timestamp.tv_nsec / 1000000 + timestamp.tv_sec * 1000;
 
-    if (_frame->GetImage(rawImage) != VmbErrorSuccess)
-    {
-        cerr << "Could not get the image data" << endl;
-        abort();
+    if (_frame->GetImage(rawImage) != VmbErrorSuccess) {
+        QMessageBox::critical(nullptr, "FrameObserver Error", QString("Could not get the image data"));
+        std::exit(EXIT_FAILURE);
     }
 
     jpegImage = encoder->encodeFrame(rawImage, jpegSize);
@@ -76,7 +76,7 @@ void FrameObserver::FrameReceived(const FramePtr _frame)
     // When the frame has been processed, requeue it
     if (m_pCamera->QueueFrame(_frame) != VmbErrorSuccess)
     {
-        clog << "Could not requeue frame. Possibly acquisition has been stopped." << endl;
+        std::clog << "Could not requeue frame. Possibly acquisition has been stopped." << std::endl;
     }
 
     #ifdef QT_DEBUG

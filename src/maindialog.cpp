@@ -2,7 +2,6 @@
  * maindialog.cpp
  *
  * Author: Andrey Zhdanov
- * Copyright (C) 2014 BioMag Laboratory, Helsinki University Central Hospital
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,12 +22,13 @@
 #include <math.h>
 
 #include <QStorageInfo>
+#include <QMessageBox>
+#include <cstdlib>
 
 #include "config.h"
 #include "maindialog.h"
 #include "settingsdialog.h"
 
-using namespace std;
 using namespace VmbCPP;
 
 
@@ -312,16 +312,14 @@ void MainDialog::initVideo()
     CameraPtrVector camerasVec;
     VmbSystem& system = VmbSystem::GetInstance();
 
-    if(system.Startup() != VmbErrorSuccess)
-    {
-        cerr << "Could not start Vimba system" << endl;
-        abort();
+    if(system.Startup() != VmbErrorSuccess) {
+        QMessageBox::critical(nullptr, "MainDialog Error", QString("Could not start Vimba system"));
+        std::exit(EXIT_FAILURE);
     }
 
-    if (system.GetCameras(camerasVec) != VmbErrorSuccess)
-    {
-        cerr << "Could not get cameras" << endl;
-        abort();
+    if (system.GetCameras(camerasVec) != VmbErrorSuccess) {
+        QMessageBox::critical(nullptr, "MainDialog Error", QString("Could not get cameras"));
+        std::exit(EXIT_FAILURE);
     }
 
     numCameras = MAX_CAMERAS < camerasVec.size() ? MAX_CAMERAS : camerasVec.size();
@@ -336,42 +334,44 @@ void MainDialog::initVideo()
         VmbInt64_t maxHeight = 0;
                
         if ((cameras[i]->GetModel(cameraModel) != VmbErrorSuccess) || (cameras[i]->GetSerialNumber(cameraSN) != VmbErrorSuccess)) {
-            cerr << "Could not get camera model or serial number." << endl;
-            abort();
+            QMessageBox::critical(nullptr, "MainDialog Error", QString("Could not get camera model or serial number"));
+            std::exit(EXIT_FAILURE);
         }
 
         cameraSNs[i] = QString::fromStdString(cameraSN);
-        clog << "Using camera [" << cameraModel << "] with serial number [" << cameraSN << "]" << std::endl;
+        std::clog << "Using camera [" << cameraModel << "] with serial number [" << cameraSN << "]" << std::endl;
 
         // Check that the serial number is unique
         for (unsigned int j=0; j<i; j++) {
             if (cameraSNs[i] == cameraSNs[j]) {
-                cerr << "Multiple cameras with serial number [" << cameraSN << "] detected, aborting." << std::endl;
-                abort();
+                QMessageBox::critical(nullptr, "MainDialog Error", QString("Multiple cameras with serial number [%1] detected").arg(QString::fromStdString(cameraSN)));
+                std::exit(EXIT_FAILURE);
             }
         }
 
         // Get the maximum image size
         if (cameras[i]->Open(VmbAccessModeFull) != VmbErrorSuccess) {
-            cerr << "Could not open camera" << endl;
-            abort();
+            QMessageBox::critical(nullptr, "MainDialog Error", QString("Could not open camera"));
+            std::exit(EXIT_FAILURE);
         }
 
         if ((cameras[i]->GetFeatureByName("WidthMax", feature) != VmbErrorSuccess) ||
-            (feature->GetValue(maxWidth) != VmbErrorSuccess)) {
-            cerr << "Could not get the maximum image width." << endl;
-            abort();
+            (feature->GetValue(maxWidth) != VmbErrorSuccess))
+        {
+            QMessageBox::critical(nullptr, "MainDialog Error", QString("Could not get the maximum image width"));
+            std::exit(EXIT_FAILURE);
         }
 
         if ((cameras[i]->GetFeatureByName("HeightMax", feature) != VmbErrorSuccess) ||
-            (feature->GetValue(maxHeight) != VmbErrorSuccess)) {
-            cerr << "Could not get the maximum image height." << endl;
-            abort();
+            (feature->GetValue(maxHeight) != VmbErrorSuccess))
+        {
+            QMessageBox::critical(nullptr, "MainDialog Error", QString("Could not get the maximum image height"));
+            std::exit(EXIT_FAILURE);
         }
 
         if (cameras[i]->Close() != VmbErrorSuccess) {
-            cerr << "Could not close camera after reading the maximum image height and width." << endl;
-            abort();
+            QMessageBox::critical(nullptr, "MainDialog Error", QString("Could not close camera after reading the maximum image height and width"));
+            std::exit(EXIT_FAILURE);
         }
 
         cameraSettingConstraints[i].maxWidth = (unsigned int)maxWidth;
@@ -399,27 +399,22 @@ void MainDialog::initVideo()
 void MainDialog::onCamToggled(bool _state)
 {
     int idx = -1;
-    for (unsigned int i=0; i < numCameras; i++)
-    {
-        if (sender() == camCheckBoxes[i])
-        {
+    for (unsigned int i=0; i < numCameras; i++) {
+        if (sender() == camCheckBoxes[i]) {
             idx = i;
             break;
         }
     }
-    if (idx < 0)
-    {
-        cerr << "Could not ID camera" << endl;
-        abort();
+    if (idx < 0) {
+        QMessageBox::critical(nullptr, "MainDialog Error", QString("Could not ID camera"));
+        std::exit(EXIT_FAILURE);
     }
 
-    if(_state)
-    {
+    if(_state) {
         videoDialogs[idx] = new VideoDialog(cameras[idx], idx, cameraSNs[idx]);
         videoDialogs[idx]->show();
     }
-    else
-    {
+    else {
         delete videoDialogs[idx];
     }
 
