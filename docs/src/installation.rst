@@ -3,125 +3,12 @@ Installation Instructions
 
 Prerequisites
 ^^^^^^^^^^^^^
-VideoRecStation runs on Ubuntu 24.04 LTS (Jammy Jellyfish) on amd64 architecture. It might work on other versions of Ubuntu or other Linux distributions, but this has not been tested.
-
-Install 3-rd party components
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Before you can use VideoRecStation, you need to install VimbaX, GPUJPEG, OpenCV, and ALSA Scarlett Control Panel (alsa-scarlett-gui). The latter is, strictly speaking, optional, but it provides a convenient GUI for controlling the audio settings of your Scarlett interface.
-
-Install VimbaX
-++++++++++++++
-VimbaX is a software package for controlling USB cameras made by Allied Vision Technologies. You can download it from the `Allied Vision website <https://www.alliedvision.com/en/products/software/vimba-x-sdk/>`_. Assume you have downloaded it to ``~/Downloads/VimbaX_Setup-2025-3-Linux64.tar.gz``, and want to install it to ``/opt/VimbaX_2025-3``. You can do this by running the following commands:
+VideoRecStation runs on Ubuntu 24.04 LTS (Jammy Jellyfish) on amd64 architecture. It might work on other versions of Ubuntu or other Linux distributions, but this has not been tested. After installing Ubuntu, install additional packages needed to for the rest of the installation process:
 
 .. code-block:: bash
 
-   sudo mkdir /opt/VimbaX_2025-3
-   sudo tar -xvzf ~/Downloads/VimbaX_Setup-2025-3-Linux64.tar.gz -C /opt/VimbaX_2025-3 --strip-components=1
-
-Remove the camera simulators that come with VimbaX, so that they don't clutter the list of available cameras:
-
-.. code-block:: bash
-
-   sudo rm -f /opt/VimbaX_2025-3/cti/*Camera_Simulator*
-
-Now you need to install VimbaX transport layers. Run the following commands:
-
-.. code-block:: bash
-
-   cd /opt/VimbaX_2025-3/cti
-   sudo ./Install_GenTL_Path.sh
-
-and reboot your system. You can now test the VimbaX by connecting an Alvium USB camera to your computer and running:
-
-.. code-block:: bash
-
-   /opt/VimbaX_2025-3/bin/VimbaXViewer
-
-The Vimba X Viewer window should appear and you should see the camera in the list of detected cameras.
-
-Finally, add the VimbaX library path to your system's library path. You can do this by creating a new file in the ``/etc/ld.so.conf.d/`` directory:
-
-.. code-block:: bash
-
-   echo "/opt/VimbaX_2025-3/api/lib" | sudo tee /etc/ld.so.conf.d/vimbax.conf
-
-Then, update the linker cache:
-
-.. code-block:: bash
-
-   sudo ldconfig
-
-Install GPUJPEG library
-+++++++++++++++++++++++
-
-`GPUJPEG <https://github.com/CESNET/GPUJPEG>`_ is a library for JPEG encoding and decoding using NVIDIA (and, possibly, other) GPUs. To install it, download the latest release from the `GPUJPEG releases page <https://github.com/CESNET/GPUJPEG/releases>`_. Assume you have downloaded the file ``GPUJPEG.CI.Linux.build.all.CUDA.architetures.zip`` to ``~/Downloads``. Install it by running the following commands:
-
-.. code-block:: bash
-
-   sudo unzip ~/Downloads/GPUJPEG.CI.Linux.build.all.CUDA.architetures.zip -d /opt/GPUJPEG
-   echo "/opt/GPUJPEG/lib" | sudo tee /etc/ld.so.conf.d/gpujpeg.conf
-   sudo ldconfig
-
-.. note::
-
-   1. Make sure that you have the NVIDIA drivers and CUDA toolkit installed on your system.
-   2. The above instructions were tested with GPUJPEG version 0.27.8 in Dec 2025.
-
-Install OpenCV library
-++++++++++++++++++++++
-
-We use `OpenCV <https://opencv.org/>`_ library for debayering images coming from the camera.
-
-.. note::
-
-   Here we describe how to set up OpenCV from source tarball downloaded from GitHub. To avoid any conflicts, make sure you do not have it installed through your package manager:
-
-   .. code-block:: bash
-
-      sudo apt remove libopencv-core* libopencv-imgproc*
-
-Download the latest release of OpenCV from the `OpenCV releases page <https://github.com/opencv/opencv/releases>`_. Assume you have downloaded the file ``opencv-4.13.0.zip`` to ``~/Downloads``. Install it by running the following commands:
-
-.. code-block:: bash
-
-   unzip ~/Downloads/opencv-4.13.0.zip -d ~/Downloads
-   mkdir /tmp/opencv-4.13.0-build
-   cd /tmp/opencv-4.13.0-build
-   cmake ~/Downloads/opencv-4.13.0
-   make  # This might take a long time
-   sudo make install
-   echo "/usr/local/lib" | sudo tee /etc/ld.so.conf.d/local_lib.conf
-   sudo ldconfig
-
-Install ALSA Scarlett Control Panel
-+++++++++++++++++++++++++++++++++++
-The ALSA Scarlett Control Panel (alsa-scarlett-gui) is a graphical user interface for controlling the audio settings of your Scarlett audio interface box. You can install it by following the `instructions <https://github.com/geoffreybennett/alsa-scarlett-gui/blob/master/docs/INSTALL.md>`_ from the project's `GitHub page <https://github.com/geoffreybennett/alsa-scarlett-gui>`_. In a nutshell:
-
-Install the packages needed to build the software:
-
-.. code-block:: bash
-
-   sudo apt -y install git make gcc libgtk-4-dev libasound2-dev libssl-dev
-
-Clone the repository:
-
-.. code-block:: bash
-
-   git clone https://github.com/geoffreybennett/alsa-scarlett-gui.git
-
-Build and install the software:
-
-.. code-block:: bash
-
-   cd alsa-scarlett-gui/src
-   make -j$(nproc)
-   sudo make install
-
-You now should be able to run ALSA Scarlett Control Panel from the Ubuntu applications menu.
-
-.. note::
-
-   The installation instructions for VimbaX and ALSA Scarlett Control Panel were tested in Aug 2025. As these are provided by third parties, there are no guarantees that the instructions will work in the future (or that these components will be available at all for that matter). If you have problems with installing VimbaX and/or ALSA Scarlett Control Panel, try checking their respective web pages.
+   sudo apt -y install qt6-base-dev designer-qt6 libasound2-dev g++ make git pulseaudio-utils
+   sudo snap install cmake --classic
 
 Configure USB-related kernel parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -184,7 +71,103 @@ should show -1.
       sudo sh -c 'echo 1000 > /sys/module/usbcore/parameters/usbfs_memory_mb'
       sudo sh -c 'echo -1 > /sys/module/usbcore/parameters/autosuspend'
 
+Install 3-rd party components
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Before you can use VideoRecStation, you need to install VimbaX, GPUJPEG, OpenCV, and ALSA Scarlett Control Panel (alsa-scarlett-gui). The latter is, strictly speaking, optional, but it provides a convenient GUI for controlling the audio settings of your Scarlett interface.
 
+Install VimbaX
+++++++++++++++
+VimbaX is a software package for controlling USB cameras made by Allied Vision Technologies. You can download it from the `Allied Vision website <https://www.alliedvision.com/en/products/software/vimba-x-sdk/>`_. Assume you have downloaded it to ``~/Downloads/VimbaX_Setup-2025-3-Linux64.tar.gz``, and want to install it to ``/opt/VimbaX_2025-3``. You can do this by running the following commands:
+
+.. code-block:: bash
+
+   sudo mkdir /opt/VimbaX_2025-3
+   sudo tar -xvzf ~/Downloads/VimbaX_Setup-2025-3-Linux64.tar.gz -C /opt/VimbaX_2025-3 --strip-components=1
+
+Remove the camera simulators that come with VimbaX, so that they don't clutter the list of available cameras:
+
+.. code-block:: bash
+
+   sudo rm -f /opt/VimbaX_2025-3/cti/VimbaCameraSimulatorTL*
+
+Now you need to install VimbaX transport layers. Run the following commands:
+
+.. code-block:: bash
+
+   cd /opt/VimbaX_2025-3/cti
+   sudo ./Install_GenTL_Path.sh
+
+and reboot your system. You can now test the VimbaX by connecting an Alvium USB camera to your computer and running:
+
+.. code-block:: bash
+
+   /opt/VimbaX_2025-3/bin/VimbaXViewer
+
+The Vimba X Viewer window should appear and you should see the camera in the list of detected cameras.
+
+Finally, add the VimbaX library path to your system's library path. You can do this by creating a new file in the ``/etc/ld.so.conf.d/`` directory:
+
+.. code-block:: bash
+
+   echo "/opt/VimbaX_2025-3/api/lib" | sudo tee /etc/ld.so.conf.d/vimbax.conf
+
+Then, update the linker cache:
+
+.. code-block:: bash
+
+   sudo ldconfig
+
+Install GPUJPEG library
++++++++++++++++++++++++
+
+`GPUJPEG <https://github.com/CESNET/GPUJPEG>`_ is a library for JPEG encoding and decoding using NVIDIA (and, possibly, other) GPUs. To install it, download the latest release from the `GPUJPEG releases page <https://github.com/CESNET/GPUJPEG/releases>`_. Assume you have downloaded the file ``GPUJPEG-Linux-all.tar.xz`` to ``~/Downloads``. Install it by running the following commands:
+
+.. code-block:: bash
+
+   sudo tar -xf ~/Downloads/GPUJPEG-Linux-all.tar.xz -C /opt/
+   echo "/opt/GPUJPEG/lib" | sudo tee /etc/ld.so.conf.d/gpujpeg.conf
+   sudo ldconfig
+
+.. note::
+
+   1. Make sure that you have the NVIDIA drivers and CUDA toolkit installed on your system.
+   2. The above instructions were tested with GPUJPEG version 0.27.11 in Jan 2026.
+
+Install OpenCV library
+++++++++++++++++++++++
+
+We use `OpenCV <https://opencv.org/>`_ library for debayering images coming from the camera.
+
+.. note::
+
+   Here we describe how to set up OpenCV from source tarball downloaded from GitHub. To avoid any conflicts, make sure you do not have it installed through your package manager:
+
+   .. code-block:: bash
+
+      sudo apt remove libopencv-core* libopencv-imgproc*
+
+Download the latest release of OpenCV from the `OpenCV releases page <https://github.com/opencv/opencv/releases>`_. Assume you have downloaded the file ``opencv-4.13.0.zip`` to ``~/Downloads``. Install it by running the following commands:
+
+.. code-block:: bash
+
+   unzip ~/Downloads/opencv-4.13.0.zip -d ~/Downloads
+   mkdir /tmp/opencv-4.13.0-build
+   cd /tmp/opencv-4.13.0-build
+   cmake ~/Downloads/opencv-4.13.0
+   make  # This might take a long time
+   sudo make install
+   echo "/usr/local/lib" | sudo tee /etc/ld.so.conf.d/local_lib.conf
+   sudo ldconfig
+
+Install ALSA Scarlett Control Panel
++++++++++++++++++++++++++++++++++++
+The ALSA Scarlett Control Panel (`alsa-scarlett-gui <https://github.com/geoffreybennett/alsa-scarlett-gui>`_) is a graphical user interface for controlling the audio settings of your Scarlett audio interface box. To install it, download a ``.deb`` installation file (here we assume that it's called ``alsa-scarlett-gui_0.5.1_amd64.deb``) from the `project's releases page <https://github.com/geoffreybennett/alsa-scarlett-gui/releases>`_ into your ``~/Downloads`` folder and run:
+
+.. code-block:: bash
+
+   sudo apt install ./alsa-scarlett-gui_0.5.1_amd64.deb 
+
+You now should be able to run ALSA Scarlett Control Panel from the Ubuntu applications menu.
 
 Set up exclusive access by VideoRecStation to the audio device
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -265,12 +248,6 @@ Install the VideoRecStation software
 
 Build and install VideoRecStation binary
 ++++++++++++++++++++++++++++++++++++++++
-Install the packages needed to build VideoRecStation:
-
-.. code-block:: bash
-
-   sudo apt -y install qt6-base-dev designer-qt6 libasound2-dev g++
-
 Clone the repository:
 
 .. code-block:: bash
