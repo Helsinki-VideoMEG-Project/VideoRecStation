@@ -277,7 +277,7 @@ sudo<span class="w"> </span>snap<span class="w"> </span>install<span class="w"> 
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">GRUB_CMDLINE_LINUX_DEFAULT</span><span class="o">=</span><span class="s2">&quot;quiet splash&quot;</span>
 </pre></div>
 </div>
-<p>and add <code class="docutils literal notranslate"><span class="pre">usbcore.usbfs_memory_mb=1000</span></code> to it, so that it looks like this:</p>
+<p>and add <code class="docutils literal notranslate"><span class="pre">usbcore.usbfs_memory_mb=1000</span> <span class="pre">usbcore.autosuspend=-1</span></code> to it, so that it looks like this:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">GRUB_CMDLINE_LINUX_DEFAULT</span><span class="o">=</span><span class="s2">&quot;quiet splash usbcore.usbfs_memory_mb=1000 usbcore.autosuspend=-1&quot;</span>
 </pre></div>
 </div>
