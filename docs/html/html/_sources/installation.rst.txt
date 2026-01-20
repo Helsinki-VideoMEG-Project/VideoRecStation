@@ -117,6 +117,25 @@ Then, update the linker cache:
 
    sudo ldconfig
 
+.. note::
+
+   You may want to create a GUI application launcher for the VimbaX's ``VimbaXViever`` utility, which is handy for testing/troubleshooting/etc. To do this, create a file ``/tmp/VimbaXViever.desktop`` with the following content:
+
+   .. code-block:: 
+
+      [Desktop Entry]
+      Name=VimbaXViever
+      Exec=/opt/VimbaX_2025-3/bin/VimbaXViewer
+      Type=Application
+      StartupNotify=false
+
+   and run:
+
+   .. code-block:: bash
+
+      sudo desktop-file-install --dir=/usr/share/applications /tmp/VimbaXViever.desktop
+      sudo update-desktop-database
+
 Install GPUJPEG library
 +++++++++++++++++++++++
 
@@ -165,7 +184,7 @@ The ALSA Scarlett Control Panel (`alsa-scarlett-gui <https://github.com/geoffrey
 
 .. code-block:: bash
 
-   sudo apt install ./alsa-scarlett-gui_0.5.1_amd64.deb 
+   sudo apt install ~/Downloads/alsa-scarlett-gui_0.5.1_amd64.deb 
 
 You now should be able to run ALSA Scarlett Control Panel from the Ubuntu applications menu.
 
@@ -252,6 +271,7 @@ Clone the repository:
 
 .. code-block:: bash
 
+   cd ~
    git clone https://github.com/Helsinki-VideoMEG-Project/VideoRecStation.git
 
 Modify the ``INCLUDEPATH`` and ``LIBS`` sections of the file ``src/VideoRecStation.pro`` to reflect the location where you have installed VimbaX (e.g., ``/opt/VimbaX_2025-3/api/include`` and ``/opt/VimbaX_2025-3/api/lib`` if you installed VimbaX in ``/opt/VimbaX_2025-3``) and GPUJPEG (e.g., ``/opt/GPUJPEG/include`` and ``/opt/GPUJPEG/lib`` if you installed GPUJPEG in ``/opt/GPUJPEG``).
@@ -270,6 +290,25 @@ You now should be able to run VideoRecStation from the command line by typing:
 .. code-block:: bash
 
    VideoRecStation
+
+Install application launcher
+++++++++++++++++++++++++++++
+Copy the VideoRecStation icon to the system icons folder:
+
+.. code-block:: bash
+
+   sudo cp ~/VideoRecStation/install/videorecstation.png /usr/share/icons/hicolor/512x512/apps
+
+Install the application:
+
+.. code-block:: bash
+
+   sudo desktop-file-install --dir=/usr/share/applications ~/VideoRecStation/install/VideoRecStation.desktop
+   sudo update-desktop-database
+
+.. note::
+
+   The locations of the icon and the binary executable are specified in the ``~/VideoRecStation/install/VideoRecStation.desktop`` file. If you want to install them to a different location, modify the ``VideoRecStation.desktop`` file accordingly.
 
 Configure VideoRecStation
 +++++++++++++++++++++++++

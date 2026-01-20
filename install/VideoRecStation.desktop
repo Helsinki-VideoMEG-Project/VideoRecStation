@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Video Recording Station
+Exec=/usr/local/bin/VideoRecStation
+Type=Application
+StartupNotify=false
+Icon=/usr/share/icons/hicolor/512x512/apps/videorecstation.png
+
