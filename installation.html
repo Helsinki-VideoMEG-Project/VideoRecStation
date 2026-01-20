@@ -335,6 +335,22 @@ sudo<span class="w"> </span>./Install_GenTL_Path.sh
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>ldconfig
 </pre></div>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You may want to create a GUI application launcher for the VimbaX’s <code class="docutils literal notranslate"><span class="pre">VimbaXViever</span></code> utility, which is handy for testing/troubleshooting/etc. To do this, create a file <code class="docutils literal notranslate"><span class="pre">/tmp/VimbaXViever.desktop</span></code> with the following content:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">Desktop</span> <span class="n">Entry</span><span class="p">]</span>
+<span class="n">Name</span><span class="o">=</span><span class="n">VimbaXViever</span>
+<span class="n">Exec</span><span class="o">=/</span><span class="n">opt</span><span class="o">/</span><span class="n">VimbaX_2025</span><span class="o">-</span><span class="mi">3</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">VimbaXViewer</span>
+<span class="n">Type</span><span class="o">=</span><span class="n">Application</span>
+<span class="n">StartupNotify</span><span class="o">=</span><span class="n">false</span>
+</pre></div>
+</div>
+<p>and run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>desktop-file-install<span class="w"> </span>--dir<span class="o">=</span>/usr/share/applications<span class="w"> </span>/tmp/VimbaXViever.desktop
+sudo<span class="w"> </span>update-desktop-database
+</pre></div>
+</div>
+</div>
 </section>
 <section id="install-gpujpeg-library">
 <h3>Install GPUJPEG library<a class="headerlink" href="#install-gpujpeg-library" title="Link to this heading">¶</a></h3>
@@ -377,7 +393,7 @@ sudo<span class="w"> </span>ldconfig
 <section id="install-alsa-scarlett-control-panel">
 <h3>Install ALSA Scarlett Control Panel<a class="headerlink" href="#install-alsa-scarlett-control-panel" title="Link to this heading">¶</a></h3>
 <p>The ALSA Scarlett Control Panel (<a class="reference external" href="https://github.com/geoffreybennett/alsa-scarlett-gui">alsa-scarlett-gui</a>) is a graphical user interface for controlling the audio settings of your Scarlett audio interface box. To install it, download a <code class="docutils literal notranslate"><span class="pre">.deb</span></code> installation file (here we assume that it’s called <code class="docutils literal notranslate"><span class="pre">alsa-scarlett-gui_0.5.1_amd64.deb</span></code>) from the <a class="reference external" href="https://github.com/geoffreybennett/alsa-scarlett-gui/releases">project’s releases page</a> into your <code class="docutils literal notranslate"><span class="pre">~/Downloads</span></code> folder and run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>./alsa-scarlett-gui_0.5.1_amd64.deb
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>~/Downloads/alsa-scarlett-gui_0.5.1_amd64.deb
 </pre></div>
 </div>
 <p>You now should be able to run ALSA Scarlett Control Panel from the Ubuntu applications menu.</p>
@@ -450,7 +466,8 @@ sudo<span class="w"> </span>ldconfig
 <section id="build-and-install-videorecstation-binary">
 <h3>Build and install VideoRecStation binary<a class="headerlink" href="#build-and-install-videorecstation-binary" title="Link to this heading">¶</a></h3>
 <p>Clone the repository:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Helsinki-VideoMEG-Project/VideoRecStation.git
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>~
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Helsinki-VideoMEG-Project/VideoRecStation.git
 </pre></div>
 </div>
 <p>Modify the <code class="docutils literal notranslate"><span class="pre">INCLUDEPATH</span></code> and <code class="docutils literal notranslate"><span class="pre">LIBS</span></code> sections of the file <code class="docutils literal notranslate"><span class="pre">src/VideoRecStation.pro</span></code> to reflect the location where you have installed VimbaX (e.g., <code class="docutils literal notranslate"><span class="pre">/opt/VimbaX_2025-3/api/include</span></code> and <code class="docutils literal notranslate"><span class="pre">/opt/VimbaX_2025-3/api/lib</span></code> if you installed VimbaX in <code class="docutils literal notranslate"><span class="pre">/opt/VimbaX_2025-3</span></code>) and GPUJPEG (e.g., <code class="docutils literal notranslate"><span class="pre">/opt/GPUJPEG/include</span></code> and <code class="docutils literal notranslate"><span class="pre">/opt/GPUJPEG/lib</span></code> if you installed GPUJPEG in <code class="docutils literal notranslate"><span class="pre">/opt/GPUJPEG</span></code>).</p>
@@ -464,6 +481,22 @@ sudo<span class="w"> </span>cp<span class="w"> </span>VideoRecStation<span class
 <p>You now should be able to run VideoRecStation from the command line by typing:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>VideoRecStation
 </pre></div>
+</div>
+</section>
+<section id="install-application-launcher">
+<h3>Install application launcher<a class="headerlink" href="#install-application-launcher" title="Link to this heading">¶</a></h3>
+<p>Copy the VideoRecStation icon to the system icons folder:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>cp<span class="w"> </span>~/VideoRecStation/install/videorecstation.png<span class="w"> </span>/usr/share/icons/hicolor/512x512/apps
+</pre></div>
+</div>
+<p>Install the application:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>desktop-file-install<span class="w"> </span>--dir<span class="o">=</span>/usr/share/applications<span class="w"> </span>~/VideoRecStation/install/VideoRecStation.desktop
+sudo<span class="w"> </span>update-desktop-database
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The locations of the icon and the binary executable are specified in the <code class="docutils literal notranslate"><span class="pre">~/VideoRecStation/install/VideoRecStation.desktop</span></code> file. If you want to install them to a different location, modify the <code class="docutils literal notranslate"><span class="pre">VideoRecStation.desktop</span></code> file accordingly.</p>
 </div>
 </section>
 <section id="configure-videorecstation">
@@ -586,6 +619,7 @@ hw:CARD<span class="o">=</span>USB,DEV<span class="o">=</span><span class="m">0<
 <li><a class="reference internal" href="#set-up-exclusive-access-by-videorecstation-to-the-audio-device">Set up exclusive access by VideoRecStation to the audio device</a></li>
 <li><a class="reference internal" href="#install-the-videorecstation-software">Install the VideoRecStation software</a><ul>
 <li><a class="reference internal" href="#build-and-install-videorecstation-binary">Build and install VideoRecStation binary</a></li>
+<li><a class="reference internal" href="#install-application-launcher">Install application launcher</a></li>
 <li><a class="reference internal" href="#configure-videorecstation">Configure VideoRecStation</a><ul>
 <li><a class="reference internal" href="#configure-audio-settings">Configure audio settings</a></li>
 <li><a class="reference internal" href="#configure-data-storage-path">Configure data storage path</a></li>
