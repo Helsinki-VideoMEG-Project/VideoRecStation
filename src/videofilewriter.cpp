@@ -17,7 +17,6 @@
  */
 
 #include <iostream>
-#include <jpeglib.h>
 #include <stdlib.h>
 #include <QMessageBox>
 #include <cstdlib>

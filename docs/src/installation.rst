@@ -36,7 +36,7 @@ To increase the buffer size permanently to 1000MB (which is probably sufficient 
 
    GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
 
-and add ``usbcore.usbfs_memory_mb=1000`` to it, so that it looks like this:
+and add ``usbcore.usbfs_memory_mb=1000 usbcore.autosuspend=-1`` to it, so that it looks like this:
 
 .. code-block:: bash
 
