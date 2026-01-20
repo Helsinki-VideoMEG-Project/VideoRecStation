@@ -353,7 +353,7 @@ Assuming that the device name is ``hw:USB,0``, modify the ``[audio]`` section of
    output_audio_device="hw:USB,0"
    sampling_rate=44100
    speaker_buffer_size=4
-   use_speaker_feedback=true
+   use_speaker_feedback=false
 
 Configure data storage path
 """""""""""""""""""""""""""
